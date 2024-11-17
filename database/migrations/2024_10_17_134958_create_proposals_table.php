@@ -15,13 +15,13 @@ return new class extends Migration
     {
         Schema::create('proposals', function (Blueprint $table) {
             $table->id();
-            $table->string('nomor_agenda');
+            $table->string('nomor_agenda')->nullable();
             $table->date('tanggal_surat');
-            $table->string('nomor_surat');
+            $table->string('nomor_surat')->nullable();
             $table->string('asal_surat');
             $table->string('hal');
-            $table->date('diterima_tanggal');
-            $table->string('untuk');
+            $table->date('diterima_tanggal')->nullable();
+            $table->string('untuk')->nullable();
             $table->enum('status_disposisi', [
                 'Memproses',
                 'Menunggu Approval Dekan',
@@ -32,7 +32,7 @@ return new class extends Migration
                 'Approved Keuangan',
                 'Selesai',
                 'Ditolak',
-            ]);
+            ])->default('Memproses');
             $table->timestamps();
         });
     }
