@@ -206,6 +206,28 @@
     });
 </script>
 
+<script>
+    function validatePassword(form) {
+    const password = form.password.value;
+    const confirmation = form.password_confirmation.value;
+
+    // Hanya validasi jika password diisi
+    if (password) {
+        if (password.length < 8) {
+            alert('Password must be at least 8 characters long.');
+            return false; // Mencegah pengiriman form
+        }
+
+        if (password !== confirmation) {
+            alert('Passwords do not match.');
+            return false; // Mencegah pengiriman form
+        }
+    }
+
+    return true; // Mengizinkan pengiriman form jika valid
+}
+</script>
+
 <!-- Tambahkan CSS untuk transisi -->
 <style>
     .fade-out {
