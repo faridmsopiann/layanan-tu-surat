@@ -32,7 +32,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.proposals.index') }}" class="nav-link {{ Request::routeIs('admin.proposals.index') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-file-alt"></i>
-                        <p>Manajemen Proposal</p>
+                        <p>Manajemen Surat</p>
                     </a>
                 </li>
 

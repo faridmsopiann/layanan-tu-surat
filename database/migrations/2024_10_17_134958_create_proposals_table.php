@@ -25,6 +25,7 @@ return new class extends Migration
             $table->enum('status_disposisi', [
                 'Memproses',
                 'Menunggu Approval Dekan',
+                'Menunggu Approval Wadek',
                 'Approved Dekan',
                 'Menunggu Approval Kabag',
                 'Approved Kabag TU',

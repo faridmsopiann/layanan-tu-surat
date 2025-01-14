@@ -18,7 +18,7 @@ class DekanController extends Controller
         //     ->count();
 
         // Menghitung proposal dengan status_disposisi selain 'Selesai' atau 'Ditolak'
-        $pendingApprovals = Proposal::where('status_disposisi', 'Menunggu Approval Dekan')
+        $pendingApprovals = Proposal::whereIn('status_disposisi', ['Menunggu Approval Dekan', 'Menunggu Approval Wadek Akademik', 'Menunggu Approval Wadek Kemahasiswaan', 'Menunggu Approval Wadek Administrasi Umum'])
             ->count();
 
         // // Menghitung proposal yang status_disposisinya 'Selesai'

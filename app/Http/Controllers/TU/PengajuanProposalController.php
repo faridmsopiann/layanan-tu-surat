@@ -13,7 +13,7 @@ class PengajuanProposalController extends Controller
     public function index()
     {
         // $proposals = Proposal::all(); // Mengambil semua proposal
-        $proposals = Proposal::WhereIn('status_disposisi', ['Memproses', 'Menunggu Approval Kabag', 'Menunggu Approval Dekan', 'Menunggu Approval Keuangan', 'Ditolak'])
+        $proposals = Proposal::WhereIn('status_disposisi', ['Memproses', 'Menunggu Approval Kabag', 'Menunggu Approval Dekan', 'Menunggu Approval Wadek Akademik', 'Menunggu Approval Wadek Kemahasiswaan', 'Menunggu Approval Wadek Administrasi Umum', 'Menunggu Approval Keuangan', 'Ditolak', 'Selesai'])
             ->paginate(3);
         return view('tu.proposals.indexpengajuan', compact('proposals'));
     }
@@ -103,11 +103,10 @@ class PengajuanProposalController extends Controller
 
         // Update status proposal menjadi 'Ditolak' dan simpan alasan penolakan
         $proposal->update([
-            'status_disposisi' => 'Ditolak',
             'alasan_penolakan' => $request->alasan_penolakan, // Pastikan kolom ini ada di tabel proposals
         ]);
 
-        return redirect()->route('tu.proposals.indexpengajuan')->with('success', 'Proposal berhasil ditolak.');
+        return redirect()->route('tu.proposals.indexpengajuan')->with('success', 'Feedback proposal berhasil dikirim.');
     }
 
     // Hapus proposal

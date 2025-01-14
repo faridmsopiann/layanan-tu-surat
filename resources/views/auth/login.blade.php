@@ -59,6 +59,13 @@
                 </button>
             </div>
 
+            <!-- Tombol QR Login -->
+            <div class="mt-4 text-center">
+                <a href="{{ route('qr.login') }}" class="btn-qr-login">
+                    <i class="fas fa-qrcode"></i> QR Login
+                </a>
+            </div>
+
             <div class="mt-4 border-t pt-4 text-center">
                 @if (Route::has('register'))
                     <p class="text-sm text-gray-600">
@@ -178,6 +185,30 @@
     }
 
     .btn-login:hover {
+        background-color: #138496;
+    }
+
+    .btn-qr-login {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background-color: #2C3E50;
+        color: white;
+        border-radius: 5px;
+        font-size: 1rem;
+        text-decoration: none;
+        margin-top: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+    }
+
+    .btn-qr-login i {
+        margin-right: 0.5rem;
+    }
+
+    .btn-qr-login:hover {
         background-color: #138496;
     }
 

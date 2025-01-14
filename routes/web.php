@@ -7,11 +7,13 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Dekan\DekanController;
 use App\Http\Controllers\Dekan\DisposisiController as DekanDisposisiController;
 use App\Http\Controllers\Dekan\MonitoringController;
+use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\Keuangan\KeuanganController;
 use App\Http\Controllers\Keuangan\KeuanganDisposisiController;
 use App\Http\Controllers\Keuangan\MonitoringController as KeuanganMonitoringController;
 use App\Http\Controllers\Pemohon\PemohonController;
 use App\Http\Controllers\Pemohon\PengajuanSuratController;
+use App\Http\Controllers\QRCodeController;
 use App\Http\Controllers\TU\DisposisiController;
 use App\Http\Controllers\TU\PengajuanProposalController;
 use App\Http\Controllers\TU\ProposalMasukController;
@@ -37,6 +39,13 @@ Route::get('/', function () {
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
+
+Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
+Route::get('/qr-login', [QRCodeController::class, 'generateLoginQR'])->name('qr.login');
+
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {

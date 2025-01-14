@@ -47,7 +47,7 @@
                         <th class="text-sm">Tanggal Surat</th>
                         <th class="text-sm">Asal Surat</th>
                         <th class="text-sm">Perihal</th>
-                        <th class="text-sm">Jenis Proposal</th>
+                        <th class="text-sm">Jenis Surat</th>
                         <th class="text-sm">File PDF</th>
                         <th class="text-sm">Status</th>
                         <th class="text-sm">Aksi</th>
@@ -155,8 +155,8 @@
                                                                         {{ $m->status }}
                                                                     </span>
                                                                 </td>
-                                                                <td>{{ $m->tanggal_diterima }}</td>
-                                                                <td>{{ $m->tanggal_proses }}</td>
+                                                                <td>{{ \Carbon\Carbon::parse($m->tanggal_diterima)->format('Y-m-d H:i:s') }}</td>
+                                                                <td>{{ \Carbon\Carbon::parse($m->tanggal_proses)->format('Y-m-d H:i:s') }}</td>
                                                                 <td>{{ $m->diverifikasi_oleh }}</td>
                                                                 <td>{{ $m->keterangan }}</td> 
                                                             </tr>

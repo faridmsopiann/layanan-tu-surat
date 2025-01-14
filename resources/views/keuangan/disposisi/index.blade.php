@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container pt-4 pb-4 mb-5">
-    <h2 class="mb-4" style="font-weight: 700; color: #2C3E50;">Disposisi Proposal</h2>
+    <h2 class="mb-4" style="font-weight: 700; color: #2C3E50;">Disposisi Surat</h2>
 
     
     @if(session('success'))
@@ -87,7 +87,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header" style="background-color: #2C3E50; color: white;">
-                                <h5 class="modal-title" id="disposisiModalLabel">Form Disposisi Proposal</h5>
+                                <h5 class="modal-title" id="disposisiModalLabel">Form Disposisi Surat</h5>
                                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>

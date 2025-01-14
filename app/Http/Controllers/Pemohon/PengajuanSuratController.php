@@ -37,26 +37,34 @@ class PengajuanSuratController extends Controller
             'tanggal_surat' => 'required|date',
             'asal_surat' => 'required|string',
             'hal' => 'required|string',
-            'soft_file' => 'nullable|mimes:pdf|max:2048',
+            'soft_file' => 'nullable|mimes:pdf', // Validasi tipe file tanpa batasan ukuran
         ]);
 
         // Cek apakah ada file yang di-upload
         if ($request->hasFile('soft_file')) {
-            $filePath = $request->file('soft_file')->store('proposals', 'public'); // menyimpan ke folder 'storage/app/public/proposals'
+            $file = $request->file('soft_file');
+
+            // Validasi ukuran file
+            if ($file->getSize() > 614400) { // 300 KB = 307200 bytes
+                return redirect()->back()->withErrors(['soft_file' => 'Ukuran file tidak boleh lebih dari 600 KB.'])->withInput();
+            }
+
+            $filePath = $file->store('proposals', 'public'); // Simpan file yang valid ke storage
         } else {
-            $filePath = null; // jika tidak ada file diunggah
+            $filePath = null; // Tidak ada file yang diunggah
         }
 
         // Ambil tahun dan bulan dari tanggal saat ini
-        $tahun = now()->year;  // Ambil tahun saat ini
-        $bulan = now()->month; // Ambil bulan saat ini
+        $tahun = now()->year;
+        $bulan = now()->month;
 
         // Ambil nomor urut terakhir yang digunakan untuk kode_pengajuan
-        $lastProposal = Proposal::withTrashed() // Ambil semua proposal, termasuk yang dihapus
+        $lastProposal = Proposal::withTrashed()
             ->whereYear('created_at', $tahun)
             ->whereMonth('created_at', $bulan)
             ->latest()
             ->first();
+
         $increment = 1;
 
         if ($lastProposal) {
@@ -73,7 +81,7 @@ class PengajuanSuratController extends Controller
             'tanggal_surat' => $request->tanggal_surat,
             'asal_surat' => $request->asal_surat,
             'hal' => $request->hal,
-            'kode_pengajuan' => $kodePengajuan,  // Simpan kode_pengajuan
+            'kode_pengajuan' => $kodePengajuan,
             'jenis_proposal' => $request->jenis_proposal,
             'soft_file' => $filePath,
         ]);
@@ -90,6 +98,8 @@ class PengajuanSuratController extends Controller
 
         return redirect()->route('pemohon.proposals.index')->with('success', 'Pengajuan surat berhasil ditambahkan.');
     }
+
+
 
     // Hapus pengajuan surat
     public function destroy($id)

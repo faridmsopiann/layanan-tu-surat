@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container pt-4 pb-4 mb-5">
-    <h2 class="mb-4" style="font-weight: 700; color: #2C3E50;">Disposisi Proposal</h2>
+    <h2 class="mb-4" style="font-weight: 700; color: #2C3E50;">Disposisi Surat</h2>
 
     @if(session('success'))
         <div id="success-alert" class="alert alert-success mb-3 shadow-sm" style="border-left: 5px solid #28a745;">
@@ -102,7 +102,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header" style="background-color: #2C3E50; color: white;">
-                                <h5 class="modal-title" id="disposisiModalLabel{{ $proposal->id }}">Form Disposisi Proposal</h5>
+                                <h5 class="modal-title" id="disposisiModalLabel{{ $proposal->id }}">Form Disposisi Surat</h5>
                                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -129,9 +129,9 @@
                                             <select id="disposisi" class="form-control" name="disposisi" required>
                                                 @if($proposal->status_disposisi == 'Memproses')
                                                     <option value="Dekan">Dekan</option>
-                                                    <option value="Wadek Akademik">Wadek Akademik</option>
+                                                    {{-- <option value="Wadek Akademik">Wadek Akademik</option>
                                                     <option value="Wadek Kemahasiswaan">Wadek Kemahasiswaan</option>
-                                                    <option value="Wadek Administrasi Umum">Wadek Administrasi Umum</option>
+                                                    <option value="Wadek Administrasi Umum">Wadek Administrasi Umum</option> --}}
                                                 @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag' && $proposal->jenis_proposal == 'Disertai Pengajuan Dana')
                                                     <option value="Keuangan">Keuangan</option>
                                                 @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag' && $proposal->jenis_proposal == 'Tanpa Pengajuan Dana')

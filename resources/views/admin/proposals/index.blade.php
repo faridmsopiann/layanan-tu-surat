@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container pt-4 pb-4 mb-5" style="font-family: 'Roboto', sans-serif;">
-    <h2 style="font-weight: 700; color: #2C3E50;">Manajemen Proposal</h2>
+    <h2 style="font-weight: 700; color: #2C3E50;">Manajemen Surat</h2>
 
     @if(session('success'))
     <div id="success-alert" class="alert alert-success mb-3 shadow-sm" style="border-left: 5px solid #28a745;">
@@ -14,7 +14,7 @@
 
     <!-- Tombol Tambah Proposal (Trigger Modal) -->
     <button type="button" class="btn btn-primary mb-3 shadow-sm" data-toggle="modal" data-target="#createProposalModal" style="background-color: #3498DB; border: none; border-radius: 50px; padding: 8px 20px;">
-       <i class="fas fa-plus-circle"></i> Buat Proposal Baru
+       <i class="fas fa-plus-circle"></i> Buat Surat Baru
     </button>
 
     <!-- Tabel Proposal -->

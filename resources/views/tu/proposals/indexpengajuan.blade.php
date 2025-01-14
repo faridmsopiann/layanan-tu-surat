@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container pt-4 pb-4 mb-5">
-    <h2 class="mb-4" style="font-weight: 700; color: #2C3E50;">Pengajuan Proposal</h2>
+    <h2 class="mb-4" style="font-weight: 700; color: #2C3E50;">Pengajuan Surat</h2>
 
     @if(session('success'))
         <div id="success-alert" class="alert alert-success mb-3 shadow-sm" style="border-left: 5px solid #28a745;">
@@ -60,7 +60,7 @@
                     <td class="text-sm">
                         @if($proposal->status_disposisi == 'Memproses')
                         <span class="badge badge-pill badge-warning">{{ $proposal->status_disposisi }}</span>
-                        @elseif($proposal->status_disposisi == 'Menunggu Approval Dekan')
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval Dekan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Akademik' || $proposal->status_disposisi == 'Menunggu Approval Wadek Kemahasiswaan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Administrasi Umum')
                             <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
                         @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag')
                             <span class="badge badge-pill badge-success">{{ $proposal->status_disposisi }}</span>
@@ -110,7 +110,7 @@
                                                 <p><strong>Status Terkini:</strong> 
                                                     @if($proposal->status_disposisi == 'Memproses')
                                                         <span class="badge badge-pill badge-warning">{{ $proposal->status_disposisi }}</span>
-                                                    @elseif($proposal->status_disposisi == 'Menunggu Approval Dekan')
+                                                    @elseif($proposal->status_disposisi == 'Menunggu Approval Dekan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Akademik' || $proposal->status_disposisi == 'Menunggu Approval Wadek Kemahasiswaan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Administrasi Umum')
                                                         <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
                                                     @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag')
                                                         <span class="badge badge-pill badge-success">{{ $proposal->status_disposisi }}</span>
@@ -122,6 +122,18 @@
                                                         <span class="badge badge-pill badge-danger">{{ $proposal->status_disposisi }}</span>
                                                     @endif
                                                 </p>
+                                                @if ($proposal->status_disposisi == 'Selesai')
+                                                    
+                                                        <p>
+                                                            <strong>Selesai Dalam:</strong>
+                                                            {{
+                                                                \Carbon\Carbon::parse($proposal->diterima_tanggal)
+                                                                    ->diff(\Carbon\Carbon::parse($proposal->updated_at))
+                                                                    ->format('%d hari, %h jam, %i menit, %s detik')
+                                                            }}
+                                                        </p>
+                                                    
+                                                @endif
                                             </div>
                                         </div>
     
@@ -150,8 +162,8 @@
                                                                 {{ $m->status }}
                                                             </span>
                                                         </td>
-                                                        <td>{{ $m->tanggal_diterima }}</td>
-                                                        <td>{{ $m->tanggal_proses }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($m->tanggal_diterima)->format('Y-m-d H:i:s') }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($m->tanggal_proses)->format('Y-m-d H:i:s') }}</td>
                                                         <td>{{ $m->diverifikasi_oleh }}</td>
                                                         <td>{{ $m->keterangan }}</td> 
                                                     </tr>
@@ -165,7 +177,7 @@
                             </div>
                         </div>
                         
-                        @if($proposal->status_disposisi !== 'Ditolak')
+                        @if($proposal->status_disposisi !== 'Ditolak' && $proposal->status_disposisi !== 'Selesai')
                             <!-- Tombol Edit -->
                             <button class="btn btn-outline-warning btn-sm mr-1" data-toggle="modal" data-target="#editProposalModal-{{ $proposal->id }}">
                                 <i class="fas fa-user-edit"></i>
@@ -213,8 +225,8 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="edit_diterima_tanggal" class="form-label">Diterima Tanggal</label>
-                                                        <input type="date" class="form-control" id="edit_diterima_tanggal" name="diterima_tanggal" value="{{ $proposal->diterima_tanggal }}" required>
-                                                    </div>
+                                                        <input type="datetime-local" class="form-control" id="edit_diterima_tanggal" name="diterima_tanggal" value="{{ \Carbon\Carbon::parse($proposal->diterima_tanggal)->format('Y-m-d\TH:i') }}" required>
+                                                    </div>                                                    
                                                     <div class="mb-3">
                                                         <label for="edit_untuk" class="form-label">Untuk</label>
                                                         <input type="text" class="form-control" id="edit_untuk" name="untuk" value="{{ $proposal->untuk }}" required>
@@ -240,19 +252,21 @@
                         </div>
                         <!-- End Modal Edit Proposal -->
 
-                        <!-- Icon action Reject -->
-                        @if($proposal->status_disposisi == 'Ditolak')
-                            <button class="btn btn-outline-danger btn-sm mr-1" data-toggle="modal" data-target="#rejectProposalModal-{{ $proposal->id }}">
-                                <i class="fas fa-ban"></i>
-                            </button>
+                        <!-- Icon action Edit -->
+                        @if($proposal->status_disposisi == 'Ditolak' || $proposal->status_disposisi == 'Selesai')
+                        <button class="btn btn-outline-success btn-sm mr-1" data-toggle="modal" data-target="#feedbackProposalModal-{{ $proposal->id }}">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
                         @endif
 
                         <!-- Modal untuk penolakan -->
-                        <div class="modal fade" id="rejectProposalModal-{{ $proposal->id }}" tabindex="-1" aria-labelledby="rejectProposalModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="feedbackProposalModal-{{ $proposal->id }}" tabindex="-1" aria-labelledby="rejectProposalModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header" style="background-color: #2C3E50; color: white;">
-                                        <h5 class="modal-title" id="rejectProposalModalLabel">Alasan Penolakan</h5>
+                                        <h5 class="modal-title" id="editProposalModalLabel">
+                                            {{ $proposal->status_disposisi == 'Ditolak' ? 'Alasan Penolakan' : 'Pesan Tindak Lanjut' }}
+                                        </h5>
                                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -262,13 +276,17 @@
                                         @method('PUT') 
                                         <div class="modal-body">
                                             <div class="form-group">
-                                                <label for="alasan_penolakan" class="form-label">Alasan Penolakan</label>
+                                                <label for="edit_message" class="form-label">
+                                                    {{ $proposal->status_disposisi == 'Ditolak' ? 'Alasan Penolakan' : 'Pesan Tindak Lanjut' }}
+                                                </label>
                                                 <textarea class="form-control" name="alasan_penolakan" id="alasan_penolakan" rows="4" required>{{ $proposal->alasan_penolakan ?? '' }}</textarea>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-danger">Tolak Proposal</button>
+                                            <button type="submit" class="btn {{ $proposal->status_disposisi == 'Selesai' ? 'btn-success' : 'btn-danger' }}">
+                                                {{ $proposal->status_disposisi == 'Selesai' ? 'Kirim' : 'Kirim' }}
+                                            </button>
                                         </div>
                                     </form>
                                 </div>

@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container pb-4" style="font-family: 'Roboto', sans-serif;">
-    <h1 class="mt-4" style="font-weight: 700; color: #2C3E50;">Pengajuan Proposal</h1>
+    <h1 class="mt-4" style="font-weight: 700; color: #2C3E50;">Pengajuan Surat</h1>
 
     @if(session('success'))
         <div id="success-alert" class="alert alert-success mb-3 shadow-sm" style="border-left: 5px solid #28a745;">
@@ -10,9 +10,19 @@
         </div>
     @endif
 
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
     <!-- Tombol Ajukan Proposal Baru -->
     <button type="button" class="btn btn-primary mb-3 shadow-sm" data-toggle="modal" data-target="#createModal" style="background-color: #3498DB; border: none; border-radius: 50px; padding: 8px 20px;">
-        <i class="fas fa-plus-circle"></i> Ajukan Proposal Baru
+        <i class="fas fa-plus-circle"></i> Ajukan Surat Baru
     </button>
 
     <!-- Modal Create Proposal -->
@@ -20,7 +30,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content shadow-sm">
                 <div class="modal-header" style="background-color: #2C3E50; color: white;">
-                    <h5 class="modal-title" id="createModalLabel">Ajukan Proposal Baru</h5>
+                    <h5 class="modal-title" id="createModalLabel">Ajukan Surat Baru</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -37,7 +47,7 @@
                             <input type="text" name="asal_surat" id="asal_surat" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="jenis_proposal"><strong>Jenis Proposal</strong></label>
+                            <label for="jenis_proposal"><strong>Jenis Surat</strong></label>
                             <div class="dropdown-wrapper" style="position: relative;">
                                 <select name="jenis_proposal" id="jenis_proposal" class="form-control" required style="appearance: none; padding-right: 30px;">
                                     <option value="Disertai Pengajuan Dana">Disertai Pengajuan Dana</option>
@@ -60,7 +70,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Ajukan Proposal</button>
+                        <button type="submit" class="btn btn-primary">Ajukan Surat</button>
                     </div>
                 </form>
             </div>
@@ -176,8 +186,8 @@
                                                                 {{ $m->status }}
                                                             </span>
                                                         </td>
-                                                        <td>{{ \Carbon\Carbon::parse($m->tanggal_diterima)->format('d-m-Y') }}</td>
-                                                        <td>{{ \Carbon\Carbon::parse($m->tanggal_proses)->format('d-m-Y') }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($m->tanggal_diterima)->format('Y-m-d H:i:s') }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($m->tanggal_proses)->format('Y-m-d H:i:s') }}</td>
                                                         <td>{{ $m->diverifikasi_oleh }}</td>
                                                         <td>{{ $m->keterangan }}</td>
                                                     </tr>
@@ -194,9 +204,9 @@
                         </div>
 
                         <!-- Button Alasan Penolakan (Jika ditolak) -->
-                        @if ($p->status_disposisi == 'Ditolak' && $p->alasan_penolakan)
-                        <a href="#" data-toggle="modal" data-target="#alasanModal{{ $p->id }}" class="btn btn-outline-danger btn-sm mr-1">
-                            <i class="fas fa-times-circle"></i>
+                        @if ($p->status_disposisi == 'Ditolak' || $p->status_disposisi == 'Selesai' && $p->alasan_penolakan)
+                        <a href="#" data-toggle="modal" data-target="#alasanModal{{ $p->id }}" class="btn btn-outline-warning btn-sm mr-1">
+                            <i class="fas fa-exclamation-circle"></i>
                         </a>
                         @endif
 
@@ -205,13 +215,15 @@
                             <div class="modal-dialog modal-lg modal-center" role="document">
                                 <div class="modal-content shadow-sm">
                                     <div class="modal-header" style="background-color: #2C3E50; color: white;">
-                                        <h5 class="modal-title" id="alasanModalLabel{{ $p->id }}">Alasan Penolakan Proposal</h5>
+                                        <h5 class="modal-title" id="alasanModalLabel{{ $p->id }}">
+                                            {{ $p->status_disposisi == 'Selesai' ? 'Pesan Tindak Lanjut Proposal' : 'Alasan Penolakan Proposal' }}
+                                        </h5>
                                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body" style="font-size: 15px;">
-                                        <p><strong>Alasan Penolakan:</strong></p>
+                                        <p><strong>{{ $p->status_disposisi == 'Selesai' ? 'Pesan Tindak Lanjut:' : 'Alasan Penolakan:' }}</strong></p>
                                         <p>{{ $p->alasan_penolakan }}</p>
                                     </div>
                                     <div class="modal-footer">

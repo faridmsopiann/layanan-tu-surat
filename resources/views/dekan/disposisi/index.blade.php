@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container pt-4 pb-4 mb-5">
-    <h2 class="mb-4" style="font-weight: 700; color: #2C3E50;">Disposisi Proposal</h2>
+    <h2 class="mb-4" style="font-weight: 700; color: #2C3E50;">Disposisi Surat</h2>
 
     
     @if(session('success'))
@@ -55,7 +55,7 @@
                     <td class="text-sm">
                         @if($proposal->status_disposisi == 'Memproses')
                         <span class="badge badge-warning">{{ $proposal->status_disposisi }}</span>
-                        @elseif($proposal->status_disposisi == 'Menunggu Approval Dekan')
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval Dekan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Akademik' || $proposal->status_disposisi == 'Menunggu Approval Wadek Kemahasiswaan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Administrasi Umum')
                             <span class="badge badge-primary">{{ $proposal->status_disposisi }}</span>
                         @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag')
                             <span class="badge badge-success">{{ $proposal->status_disposisi }}</span>
@@ -70,9 +70,9 @@
                     <td class="text-sm">{{ $proposal->dari }}</td>
                     <td class="text-sm">{{ $proposal->tujuan_disposisi }}</td>
                     <td class="text-sm">{{ $proposal->pesan_disposisi }}</td>
-                    <td class="d-flex">
+                    <td class="">
                         <!-- Tombol Disposisi -->
-                        <button class="btn btn-info btn-sm mr-1 w-100" data-toggle="modal" data-target="#disposisiModal-{{ $proposal->id }}">
+                        <button class="btn btn-info btn-sm mb-1 w-100" data-toggle="modal" data-target="#disposisiModal-{{ $proposal->id }}">
                             <i class="fas fa-share"></i> 
                         </button>
                         <!-- Tombol Reject -->
@@ -87,7 +87,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header" style="background-color: #2C3E50; color: white;">
-                                <h5 class="modal-title" id="disposisiModalLabel">Form Disposisi Proposal</h5>
+                                <h5 class="modal-title" id="disposisiModalLabel">Form Disposisi Surat</h5>
                                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -100,17 +100,24 @@
                                     <div class="form-group">
                                         <label for="dari">Dari</label>
                                         <select class="form-control" id="dari" name="dari">
-                                            <option value="Dekan">Dekan</option>
-                                            <option value="Wadek Akademik">Wadek Akademik</option>
-                                            <option value="Wadek Kemahasiswaan">Wadek Kemahasiswaan</option>
-                                            <option value="Wadek Administrasi Umum">Wadek Administrasi Umum</option>
+                                            @if ($proposal->tujuan_disposisi == 'Dekan')
+                                                <option value="Dekan">Dekan</option>
+                                            @elseif(in_array($proposal->tujuan_disposisi, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum']))
+                                                <option value="{{ $proposal->tujuan_disposisi }}">{{ $proposal->tujuan_disposisi }}</option>
+                                            @endif
                                         </select>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="disposisi">Tujuan Disposisi</label>
-                                        <select id="disposisi" class="form-control" name="disposisi" disabled>
-                                            <option value="Kabag Tata Usaha">Kabag Tata Usaha</option>
+                                        <select id="disposisi" class="form-control" name="disposisi">
+                                            @if ($proposal->tujuan_disposisi == 'Dekan')
+                                                <option value="Wadek Akademik">Wadek Akademik</option>
+                                                <option value="Wadek Kemahasiswaan">Wadek Kemahasiswaan</option>
+                                                <option value="Wadek Administrasi Umum">Wadek Administrasi Umum</option>
+                                            @elseif(in_array($proposal->tujuan_disposisi, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum']))
+                                                <option value="Kabag TU">Kabag TU</option>
+                                            @endif
                                         </select>
                                     </div>
 
@@ -144,10 +151,11 @@
                                     <div class="form-group">
                                         <label for="dari">Dari</label>
                                         <select class="form-control" id="dari" name="dari">
-                                            <option value="Dekan">Dekan</option>
-                                            <option value="Wadek Akademik">Wadek Akademik</option>
-                                            <option value="Wadek Kemahasiswaan">Wadek Kemahasiswaan</option>
-                                            <option value="Wadek Administrasi Umum">Wadek Administrasi Umum</option>
+                                            @if ($proposal->tujuan_disposisi == 'Dekan')
+                                                <option value="Dekan">Dekan</option>
+                                            @elseif(in_array($proposal->tujuan_disposisi, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum']))
+                                                <option value="{{ $proposal->tujuan_disposisi }}">{{ $proposal->tujuan_disposisi }}</option>
+                                            @endif
                                         </select>
                                     </div>
 
