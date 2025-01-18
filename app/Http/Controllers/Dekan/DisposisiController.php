@@ -71,7 +71,7 @@ class DisposisiController extends Controller
             'status' => 'Disetujui',
             'tanggal_diterima' => $modal->tanggal_diterima,  // Tetap gunakan tanggal_diterima yang sudah ada
             'tanggal_proses' => now()->format('Y-m-d H:i:s'),  // Update dengan tanggal saat ini
-            'diverifikasi_oleh' => auth()->user()->name,  // Nama user yang sedang login
+            'diverifikasi_oleh' => $request->dari,  // Nama user yang sedang login
             'keterangan' => $request->pesan_disposisi,  // Pesan dari request
         ]);
 
@@ -120,7 +120,7 @@ class DisposisiController extends Controller
             'status' => 'Ditolak',
             'tanggal_diterima' => $modal->tanggal_diterima,  // Tetap gunakan tanggal_diterima yang sudah ada
             'tanggal_proses' => now()->format('Y-m-d H:i:s'),  // Update dengan tanggal saat ini
-            'diverifikasi_oleh' => auth()->user()->name,  // Nama user yang sedang login
+            'diverifikasi_oleh' => $request->dari,  // Nama user yang sedang login
             'keterangan' => $request->pesan_disposisi,  // Pesan dari request
         ]);
 

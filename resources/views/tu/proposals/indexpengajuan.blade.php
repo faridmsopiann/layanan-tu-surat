@@ -94,19 +94,7 @@
                                                 <p><strong>Nomor Agenda:</strong> {{ $proposal->nomor_agenda }}</p>
                                                 <p><strong>Tanggal Surat:</strong> {{ $proposal->tanggal_surat }}</p>
                                                 <p><strong>Nomor Surat:</strong> {{ $proposal->nomor_surat }}</p>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <p><strong>Asal Surat:</strong> {{ $proposal->asal_surat }}</p>
-                                                <p><strong>Hal:</strong> {{ $proposal->hal }}</p>
-                                                <p><strong>Nama Pemohon:</strong> {{ $proposal->pemohon->name }}</p>
-                                                <p><strong>Diterima Tanggal:</strong> {{ $proposal->diterima_tanggal }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
                                                 <p><strong>Untuk:</strong> {{ $proposal->untuk }}</p>
-                                            </div>
-                                            <div class="col-md-6">
                                                 <p><strong>Status Terkini:</strong> 
                                                     @if($proposal->status_disposisi == 'Memproses')
                                                         <span class="badge badge-pill badge-warning">{{ $proposal->status_disposisi }}</span>
@@ -122,9 +110,15 @@
                                                         <span class="badge badge-pill badge-danger">{{ $proposal->status_disposisi }}</span>
                                                     @endif
                                                 </p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Asal Surat:</strong> {{ $proposal->asal_surat }}</p>
+                                                <p><strong>Hal:</strong> {{ $proposal->hal }}</p>
+                                                <p><strong>Nama Pemohon:</strong> {{ $proposal->pemohon->name }}</p>
+                                                <p><strong>Diterima Tanggal:</strong> {{ $proposal->diterima_tanggal }}</p>
                                                 @if ($proposal->status_disposisi == 'Selesai')
                                                     
-                                                        <p>
+                                                        <p class="text-success">
                                                             <strong>Selesai Dalam:</strong>
                                                             {{
                                                                 \Carbon\Carbon::parse($proposal->diterima_tanggal)
@@ -133,9 +127,27 @@
                                                             }}
                                                         </p>
                                                     
+                                                @elseif($proposal->status_disposisi == 'Ditolak')
+                                                    <p class="text-danger">
+                                                        <strong>Ditolak Dalam:</strong>
+                                                        {{
+                                                            \Carbon\Carbon::parse($proposal->diterima_tanggal)
+                                                                ->diff(\Carbon\Carbon::parse($proposal->updated_at))
+                                                                ->format('%d hari, %h jam, %i menit, %s detik')
+                                                        }}
+                                                    </p>
                                                 @endif
                                             </div>
                                         </div>
+                                        {{-- <div class="row">
+                                            <div class="col-md-6">
+                                                
+                                            </div>
+                                            <div class="col-md-6">
+                                                
+                                               
+                                            </div>
+                                        </div> --}}
     
                                         <!-- Tabel Detail Disposisi -->
                                         <h5>Detail Disposisi:</h5>
@@ -170,7 +182,6 @@
                                                     @endforeach
                                                 </tbody>
                                             </table>
-                                            {!! $proposals->links('pagination::bootstrap-5') !!}
                                         </div>
                                     </div>
                                 </div>

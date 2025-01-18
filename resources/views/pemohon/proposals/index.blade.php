@@ -141,24 +141,55 @@
                                         </button>
                                     </div>
                                     <div class="modal-body" style="font-size: 15px;">
-                                        <div class="row">
+                                         <div class="row">
                                             <div class="col-md-6">
                                                 <p><strong>Kode Pengajuan:</strong> {{ $p->kode_pengajuan }}</p>
                                                 <p><strong>Nomor Agenda:</strong> {{ $p->nomor_agenda }}</p>
-                                                <p><strong>Tanggal Surat:</strong> {{ \Carbon\Carbon::parse($p->tanggal_surat)->format('d-m-Y') }}</p>
+                                                <p><strong>Tanggal Surat:</strong> {{ $p->tanggal_surat }}</p>
                                                 <p><strong>Nomor Surat:</strong> {{ $p->nomor_surat }}</p>
-                                                <p><strong>Asal Surat:</strong> {{ $p->asal_surat }}</p>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <p><strong>Hal:</strong> {{ $p->hal }}</p>
-                                                <p><strong>Nama Pemohon:</strong> {{ $p->pemohon->name }}</p>
-                                                <p><strong>Diterima Tanggal:</strong> {{ \Carbon\Carbon::parse($p->diterima_tanggal)->format('d-m-Y') }}</p>
                                                 <p><strong>Untuk:</strong> {{ $p->untuk }}</p>
                                                 <p><strong>Status Terkini:</strong> 
-                                                    <span class="badge badge-pill {{ $statusColors[$p->status_disposisi] ?? 'badge-secondary' }}" data-toggle="tooltip" title="{{ $p->status_disposisi }}">
-                                                        {{ $p->status_disposisi }}
-                                                    </span>
+                                                    @if($p->status_disposisi == 'Memproses')
+                                                        <span class="badge badge-pill badge-warning">{{ $p->status_disposisi }}</span>
+                                                    @elseif($p->status_disposisi == 'Menunggu Approval Dekan' || $p->status_disposisi == 'Menunggu Approval Wadek Akademik' || $p->status_disposisi == 'Menunggu Approval Wadek Kemahasiswaan' || $p->status_disposisi == 'Menunggu Approval Wadek Administrasi Umum')
+                                                        <span class="badge badge-pill badge-primary">{{ $p->status_disposisi }}</span>
+                                                    @elseif($p->status_disposisi == 'Menunggu Approval Kabag')
+                                                        <span class="badge badge-pill badge-success">{{ $p->status_disposisi }}</span>
+                                                    @elseif($p->status_disposisi == 'Menunggu Approval Keuangan')
+                                                        <span class="badge badge-pill badge-info">{{ $p->status_disposisi }}</span>
+                                                    @elseif($p->status_disposisi == 'Selesai')
+                                                        <span class="badge badge-pill badge-success">{{ $p->status_disposisi }}</span>
+                                                    @elseif($p->status_disposisi == 'Ditolak')
+                                                        <span class="badge badge-pill badge-danger">{{ $p->status_disposisi }}</span>
+                                                    @endif
                                                 </p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Asal Surat:</strong> {{ $p->asal_surat }}</p>
+                                                <p><strong>Hal:</strong> {{ $p->hal }}</p>
+                                                <p><strong>Nama Pemohon:</strong> {{ $p->pemohon->name }}</p>
+                                                <p><strong>Diterima Tanggal:</strong> {{ $p->diterima_tanggal }}</p>
+                                                @if ($p->status_disposisi == 'Selesai')
+                                                    
+                                                        <p class="text-success">
+                                                            <strong>Selesai Dalam:</strong>
+                                                            {{
+                                                                \Carbon\Carbon::parse($p->diterima_tanggal)
+                                                                    ->diff(\Carbon\Carbon::parse($p->updated_at))
+                                                                    ->format('%d hari, %h jam, %i menit, %s detik')
+                                                            }}
+                                                        </p>
+                                                    
+                                                @elseif($p->status_disposisi == 'Ditolak')
+                                                    <p class="text-danger">
+                                                        <strong>Ditolak Dalam:</strong>
+                                                        {{
+                                                            \Carbon\Carbon::parse($p->diterima_tanggal)
+                                                                ->diff(\Carbon\Carbon::parse($p->updated_at))
+                                                                ->format('%d hari, %h jam, %i menit, %s detik')
+                                                        }}
+                                                    </p>
+                                                @endif
                                             </div>
                                         </div>
 

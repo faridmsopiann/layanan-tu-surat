@@ -107,27 +107,49 @@
                                                         <p><strong>Nomor Agenda:</strong> {{ $proposal->nomor_agenda }}</p>
                                                         <p><strong>Tanggal Surat:</strong> {{ $proposal->tanggal_surat }}</p>
                                                         <p><strong>Nomor Surat:</strong> {{ $proposal->nomor_surat }}</p>
-                                                        <p><strong>Asal Surat:</strong> {{ $proposal->asal_surat }}</p>
+                                                        <p><strong>Untuk:</strong> {{ $proposal->untuk }}</p>
+                                                        <p><strong>Status Terkini:</strong> 
+                                                            @if($proposal->status_disposisi == 'Memproses')
+                                                                <span class="badge badge-pill badge-warning">{{ $proposal->status_disposisi }}</span>
+                                                            @elseif($proposal->status_disposisi == 'Menunggu Approval Dekan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Akademik' || $proposal->status_disposisi == 'Menunggu Approval Wadek Kemahasiswaan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Administrasi Umum')
+                                                                <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
+                                                            @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag')
+                                                                <span class="badge badge-pill badge-success">{{ $proposal->status_disposisi }}</span>
+                                                            @elseif($proposal->status_disposisi == 'Menunggu Approval Keuangan')
+                                                                <span class="badge badge-pill badge-info">{{ $proposal->status_disposisi }}</span>
+                                                            @elseif($proposal->status_disposisi == 'Selesai')
+                                                                <span class="badge badge-pill badge-success">{{ $proposal->status_disposisi }}</span>
+                                                            @elseif($proposal->status_disposisi == 'Ditolak')
+                                                                <span class="badge badge-pill badge-danger">{{ $proposal->status_disposisi }}</span>
+                                                            @endif
+                                                        </p>
                                                     </div>
                                                     <div class="col-md-6">
+                                                        <p><strong>Asal Surat:</strong> {{ $proposal->asal_surat }}</p>
                                                         <p><strong>Hal:</strong> {{ $proposal->hal }}</p>
                                                         <p><strong>Nama Pemohon:</strong> {{ $proposal->pemohon->name }}</p>
                                                         <p><strong>Diterima Tanggal:</strong> {{ $proposal->diterima_tanggal }}</p>
-                                                        <p><strong>Untuk:</strong> {{ $proposal->untuk }}</p>
-                                                        @php
-                                                        $statusColors = [
-                                                            'Memproses' => 'badge-warning',
-                                                            'Menunggu Approval Dekan' => 'badge-primary',
-                                                            'Menunggu Approval Kabag' => 'badge-success',
-                                                            'Menunggu Approval Keuangan' => 'badge-info',
-                                                            'Selesai' => 'badge-success',
-                                                            'Ditolak' => 'badge-danger',
-                                                            ];
-                                                        @endphp
-                                                        <p>
-                                                           <strong>Status Terkini:</strong> <span class="badge badge-pill {{ $statusColors[$proposal->status_disposisi] ?? 'badge-secondary' }}">{{ $proposal->status_disposisi }}</span>
-                                                        </p>
-                                                        
+                                                        @if ($proposal->status_disposisi == 'Selesai')
+                                                            
+                                                                <p class="text-success">
+                                                                    <strong>Selesai Dalam:</strong>
+                                                                    {{
+                                                                        \Carbon\Carbon::parse($proposal->diterima_tanggal)
+                                                                            ->diff(\Carbon\Carbon::parse($proposal->updated_at))
+                                                                            ->format('%d hari, %h jam, %i menit, %s detik')
+                                                                    }}
+                                                                </p>
+                                                            
+                                                        @elseif($proposal->status_disposisi == 'Ditolak')
+                                                            <p class="text-danger">
+                                                                <strong>Ditolak Dalam:</strong>
+                                                                {{
+                                                                    \Carbon\Carbon::parse($proposal->diterima_tanggal)
+                                                                        ->diff(\Carbon\Carbon::parse($proposal->updated_at))
+                                                                        ->format('%d hari, %h jam, %i menit, %s detik')
+                                                                }}
+                                                            </p>
+                                                        @endif
                                                     </div>
                                                 </div>
         
