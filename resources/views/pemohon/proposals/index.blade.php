@@ -2,19 +2,19 @@
 
 @section('content')
 <div class="container pb-4" style="font-family: 'Roboto', sans-serif;">
-    <h1 class="mt-4" style="font-weight: 700; color: #2C3E50;">Pengajuan Surat</h1>
+    <h1 class="pt-4" style="font-weight: 700; color: #2C3E50;">Pengajuan Surat</h1>
 
     @if(session('success'))
-        <div id="success-alert" class="alert alert-success mb-3 shadow-sm" style="border-left: 5px solid #28a745;">
-            {{ session('success') }}
-        </div>
+    <div id="success-alert" class="alert alert-success mb-3 shadow-sm" style="border-left: 5px solid #28a745;">
+        {{ session('success') }}
+    </div>
     @endif
 
     @if ($errors->any())
     <div class="alert alert-danger">
         <ul>
             @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
+            <li>{{ $error }}</li>
             @endforeach
         </ul>
     </div>
@@ -58,7 +58,7 @@
                                     <i class="fas fa-chevron-down" style="color: #999;"></i>
                                 </span>
                             </div>
-                        </div>                        
+                        </div>
                         <div class="form-group">
                             <label for="hal"><strong>Hal</strong></label>
                             <input type="text" name="hal" id="hal" class="form-control" required>
@@ -102,34 +102,43 @@
                     <td>{{ $p->hal }}</td>
                     <td>
                         @php
-                            $statusColors = [
-                                'Memproses' => 'badge-warning',
-                                'Menunggu Approval Dekan' => 'badge-primary',
-                                'Menunggu Approval Kabag' => 'badge-success',
-                                'Menunggu Approval Keuangan' => 'badge-info',
-                                'Selesai' => 'badge-success',
-                                'Ditolak' => 'badge-danger',
-                            ];
+                        $statusColors = [
+                        'Memproses' => 'badge-warning',
+                        'Menunggu Approval Dekan' => 'badge-primary',
+                        'Menunggu Approval Kabag' => 'badge-success',
+                        'Menunggu Approval Keuangan' => 'badge-info',
+                        'Selesai' => 'badge-success',
+                        'Ditolak' => 'badge-danger',
+                        ];
                         @endphp
                         <span class="badge badge-pill {{ $statusColors[$p->status_disposisi] ?? 'badge-secondary' }}">{{ $p->status_disposisi }}</span>
                     </td>
 
                     <td>
                         @if ($p->soft_file)
-                            <a href="{{ asset('storage/' . $p->soft_file) }}" target="_blank" style="color: #2980B9; text-decoration: none;">
-                                <i class="fas fa-file-pdf"></i> Lihat PDF
-                            </a>
+                        <a href="{{ asset('storage/' . $p->soft_file) }}" target="_blank" style="color: #2980B9; text-decoration: none;">
+                            <i class="fas fa-file-pdf"></i> Lihat PDF
+                        </a>
                         @else
-                            <span style="color: #7f8c8d;">Tidak ada</span>
+                        <span style="color: #7f8c8d;">Tidak ada</span>
                         @endif
                     </td>
                     <td class="d-flex">
+                        <!-- Button Upload SPJ -->
+                        @if (!$p->spj)
+                        @if ($p->status_disposisi == 'Selesai' && $p->jenis_proposal == 'Disertai Pengajuan Dana')
+                        <a href="{{ route('pemohon.spj.create', ['id' => $p->id]) }}" class="btn btn-outline-warning btn-sm mr-1">
+                            <i class="fas fa-file"></i> SPJ
+                        </a>
+                        @endif
+                        @endif
+
                         <!-- Button Detail -->
                         <a href="#" data-toggle="modal" data-target="#detailModal{{ $p->id }}" class="btn btn-outline-info btn-sm mr-1">
                             <i class="fas fa-eye"></i>
                         </a>
 
-                       <!-- Modal Detail -->
+                        <!-- Modal Detail -->
                         <div class="modal fade" id="detailModal{{ $p->id }}" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel{{ $p->id }}" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document" style="max-width: 70%; margin: 40px auto 0;">
 
@@ -154,7 +163,7 @@
                                                 <p><strong>Nama Pemohon:</strong> {{ $p->pemohon->name }}</p>
                                                 <p><strong>Diterima Tanggal:</strong> {{ \Carbon\Carbon::parse($p->diterima_tanggal)->format('d-m-Y') }}</p>
                                                 <p><strong>Untuk:</strong> {{ $p->untuk }}</p>
-                                                <p><strong>Status Terkini:</strong> 
+                                                <p><strong>Status Terkini:</strong>
                                                     <span class="badge badge-pill {{ $statusColors[$p->status_disposisi] ?? 'badge-secondary' }}" data-toggle="tooltip" title="{{ $p->status_disposisi }}">
                                                         {{ $p->status_disposisi }}
                                                     </span>
@@ -233,7 +242,7 @@
                             </div>
                         </div>
 
-
+                        @if ($p->status_disposisi != 'Selesai')
                         <form action="{{ route('pemohon.proposals.destroy', $p->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
@@ -241,6 +250,7 @@
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </form>
+                        @endif
                     </td>
                 </tr>
                 @endforeach
@@ -280,6 +290,7 @@
         justify-content: center;
         min-height: 90vh;
     }
+
     .modal-dialog {
         margin: 0;
     }

@@ -3,7 +3,7 @@
     <div class="sidebar">
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                
+
                 <li class="nav-item">
                     <a href="{{ route('pemohon.dashboard') }}" class="brand-link logo-switch" style="display: flex; align-items: center;">
                         <!-- Logo kecil untuk sidebar collapsed -->
@@ -28,6 +28,14 @@
                     </a>
                 </li>
 
+                <!-- SPJ -->
+                <li class="nav-item">
+                    <a href="{{ route('pemohon.spj.index') }}" class="nav-link {{ Request::routeIs('pemohon.spj.index') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-clipboard-list"></i>
+                        <p>Pengajuan SPJ</p>
+                    </a>
+                </li>
+
                 {{-- <!-- Arsip Pengajuan Menu Item -->
                 <li class="nav-item">
                     <a href="#" class="nav-link">
@@ -38,20 +46,20 @@
 
                 <li class="nav-item">
                     {{-- <a href="{{ route('admin.manage-users') }}" class="nav-link">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>Manage Users</p>
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Manage Users</p>
                     </a> --}}
                 </li>
 
                 <li class="nav-item">
                     {{-- <a href="{{ route('admin.proposals') }}" class="nav-link">
-                        <i class="nav-icon fas fa-file-alt"></i>
-                        <p>Manage Proposals</p>
+                    <i class="nav-icon fas fa-file-alt"></i>
+                    <p>Manage Proposals</p>
                     </a> --}}
                 </li>
 
-                 <!-- Logout Button -->
-                 <li class="nav-item">
+                <!-- Logout Button -->
+                <li class="nav-item">
                     <a href="{{ route('logout') }}" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="nav-icon fas fa-sign-out-alt"></i>
                         <p>Logout</p>

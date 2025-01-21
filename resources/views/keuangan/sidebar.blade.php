@@ -3,7 +3,7 @@
     <div class="sidebar">
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                
+
                 <li class="nav-item">
                     <a href="{{ route('keuangan.dashboard') }}" class="brand-link logo-switch" style="display: flex; align-items: center;">
                         <!-- Logo kecil untuk sidebar collapsed -->
@@ -28,16 +28,24 @@
                     </a>
                 </li>
 
+                <!-- SPJ -->
+                <li class="nav-item">
+                    <a href="{{ route('keuangan.spj.index') }}" class="nav-link {{ Request::routeIs('keuangan.spj.index') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-clipboard-list"></i>
+                        <p>Pengajuan SPJ</p>
+                    </a>
+                </li>
+
                 {{-- <!-- Monitoring Menu Item -->
                 <li class="nav-item">
                     <a href="{{ route('keuangan.monitoring.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-eye"></i>
-                        <p>Monitoring</p>
-                    </a>
+                <i class="nav-icon fas fa-eye"></i>
+                <p>Monitoring</p>
+                </a>
                 </li> --}}
 
-                 <!-- Logout Button -->
-                 <li class="nav-item">
+                <!-- Logout Button -->
+                <li class="nav-item">
                     <a href="{{ route('logout') }}" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="nav-icon fas fa-sign-out-alt"></i>
                         <p>Logout</p>

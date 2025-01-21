@@ -16,7 +16,7 @@ class PengajuanSuratController extends Controller
     public function index()
     {
         // Ambil semua proposal yang belum dihapus (soft delete)
-        $proposals = Proposal::with(['pemohon', 'modalDisposisi'])
+        $proposals = Proposal::with(['pemohon', 'modalDisposisi', 'spj'])
             ->where('pemohon_id', auth()->id())
             ->whereNull('deleted_at')
             ->paginate(5);

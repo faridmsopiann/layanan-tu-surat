@@ -41,4 +41,9 @@ class Proposal extends Model
     {
         return $this->hasMany(ModalDisposisi::class, 'proposal_id');
     }
+
+    public function spj()
+    {
+        return $this->belongsTo(Spj::class, 'id', 'proposal_id');
+    }
 }

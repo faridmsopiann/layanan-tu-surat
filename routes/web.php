@@ -10,10 +10,13 @@ use App\Http\Controllers\Dekan\MonitoringController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\Keuangan\KeuanganController;
 use App\Http\Controllers\Keuangan\KeuanganDisposisiController;
+use App\Http\Controllers\Keuangan\KeuanganSPJController;
 use App\Http\Controllers\Keuangan\MonitoringController as KeuanganMonitoringController;
 use App\Http\Controllers\Pemohon\PemohonController;
 use App\Http\Controllers\Pemohon\PengajuanSuratController;
+use App\Http\Controllers\Pemohon\PemohonSPJController;
 use App\Http\Controllers\QRCodeController;
+use App\Http\Controllers\SpjDocumentCategoryController;
 use App\Http\Controllers\TU\DisposisiController;
 use App\Http\Controllers\TU\PengajuanProposalController;
 use App\Http\Controllers\TU\ProposalMasukController;
@@ -90,6 +93,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/pemohon/proposals', [PengajuanSuratController::class, 'store'])->name('pemohon.proposals.store');
         Route::delete('/pemohon/proposals/{id}', [PengajuanSuratController::class, 'destroy'])->name('pemohon.proposals.destroy');
         Route::get('/pemohon/proposals/{id}', [PengajuanSuratController::class, 'show'])->name('pemohon.proposals.show');
+
+        // SPJ Document Category
+        Route::post('/pemohon/spj-document-category', [SpjDocumentCategoryController::class, 'store'])->name('pemohon.spj.document.category.store');
+
+        // SPJ
+        Route::get('/pemohon/spj', [PemohonSPJController::class, 'index'])->name('pemohon.spj.index');
+        Route::get('/pemohon/spj/create', [PemohonSPJController::class, 'create'])->name('pemohon.spj.create');
+        Route::get('/pemohon/spj/{id}', [PemohonSPJController::class, 'show'])->name('pemohon.spj.show');
+        Route::post('/pemohon/spj', [PemohonSPJController::class, 'store'])->name('pemohon.spj.store');
+        Route::put('/pemohon/spj/{id}/edit', [PemohonSPJController::class, 'edit'])->name('pemohon.spj.edit');
+        Route::post('/pemohon/spj/rating', [PemohonSPJController::class, 'rating'])->name('pemohon.spj.rating');
     });
 
     Route::middleware(['auth', 'role:tu'])->group(function () {
@@ -146,6 +160,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/keuangan/disposisi/{proposal}', [KeuanganDisposisiController::class, 'updateDisposisi'])->name('keuangan.disposisi.updateDisposisi');
         Route::get('/keuangan/disposisi/{id}/reject', [KeuanganDisposisiController::class, 'reject'])->name('keuangan.disposisi.reject');
         Route::put('/keuangan/disposisi/{proposal}/reject', [KeuanganDisposisiController::class, 'updateReject'])->name('keuangan.disposisi.updateReject');
+
+        // SPJ
+        Route::get('/keuangan/spj', [KeuanganSPJController::class, 'index'])->name('keuangan.spj.index');
+        Route::get('/keuangan/spj/{id}', [KeuanganSPJController::class, 'show'])->name('keuangan.spj.show');
+        Route::put('/keuangan/spj/{id}/edit', [KeuanganSPJController::class, 'edit'])->name('keuangan.spj.edit');
     });
 });
 
