@@ -75,6 +75,11 @@
 
                 <hr>
 
+                <div class="form-group">
+                    <label>Catatan</label>
+                    <textarea class="form-control" placeholder="Masukan catatan..." name="catatan" rows="3" cols="3" id="catatan" required readonly>{{ $spj->catatan }}</textarea>
+                </div>
+
                 <div class="float-right">
                     <a href="{{ route('pemohon.spj.index') }}" class="btn btn-sm btn-secondary">Kembali</a>
 

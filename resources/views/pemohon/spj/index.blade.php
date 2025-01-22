@@ -88,7 +88,7 @@
                     </td>
                     <td>
                         @if($spj->status == 'Selesai' && !$spj->rating)
-                        <button type="button" class="btn btn-sm btn-outline-info" data-toggle="modal" data-target="#ratingModal"><i class="fas fa-star"></i></button>
+                        <button type="button" class="btn btn-sm btn-outline-info" data-toggle="modal" data-id="{{ $spj->id }}" data-target="#ratingModal"><i class="fas fa-star"></i></button>
                         @endif
                         <a href="{{ route('pemohon.spj.show', $spj->id) }}" class="btn btn-outline-info btn-sm">
                             <i class="fas fa-share"></i>
@@ -102,7 +102,7 @@
                                     @csrf
                                     @method('POST')
 
-                                    <input type="hidden" name="spj_id" value="{{ $spj->id }}">
+                                    <input type="hidden" name="spj_id" id="spj_id">
 
                                     <div class="modal-body text-center">
                                         <div id="starRating" class="rating" data-selected="0">
@@ -199,7 +199,17 @@
         });
     })
 </script>
+<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 <script>
+    $(document).ready(function() {
+        $('#ratingModal').on('shown.bs.modal', function(e) {
+            $('#name').focus();
+            let button = $(e.relatedTarget)
+            let modal = $(this)
+            modal.find('#spj_id').val(button.data('id'));
+        })
+    });
+
     document.addEventListener("DOMContentLoaded", function() {
         var successAlert = document.getElementById("success-alert");
 
