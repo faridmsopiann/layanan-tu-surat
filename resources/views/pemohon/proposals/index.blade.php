@@ -46,7 +46,7 @@
                             <label for="asal_surat"><strong>Asal Surat</strong></label>
                             <input type="text" name="asal_surat" id="asal_surat" class="form-control" required>
                         </div>
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="jenis_proposal"><strong>Jenis Surat</strong></label>
                             <div class="dropdown-wrapper" style="position: relative;">
                                 <select name="jenis_proposal" id="jenis_proposal" class="form-control" required style="appearance: none; padding-right: 30px;">
@@ -58,7 +58,7 @@
                                     <i class="fas fa-chevron-down" style="color: #999;"></i>
                                 </span>
                             </div>
-                        </div>                        
+                        </div>                         --}}
                         <div class="form-group">
                             <label for="hal"><strong>Hal</strong></label>
                             <input type="text" name="hal" id="hal" class="form-control" required>
@@ -85,7 +85,7 @@
                     <th>No</th>
                     <th>Tanggal Surat</th>
                     <th>Asal Surat</th>
-                    <th>Jenis</th>
+                    {{-- <th>Jenis</th> --}}
                     <th>Hal</th>
                     <th>Status</th>
                     <th>Soft File</th>
@@ -98,7 +98,7 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $p->tanggal_surat }}</td>
                     <td>{{ $p->asal_surat }}</td>
-                    <td>{{ $p->jenis_proposal }}</td>
+                    {{-- <td>{{ $p->jenis_proposal }}</td> --}}
                     <td>{{ $p->hal }}</td>
                     <td>
                         @php

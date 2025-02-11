@@ -13,7 +13,8 @@ class PengajuanProposalController extends Controller
     public function index()
     {
         // $proposals = Proposal::all(); // Mengambil semua proposal
-        $proposals = Proposal::WhereIn('status_disposisi', ['Memproses', 'Menunggu Approval Kabag', 'Menunggu Approval Dekan', 'Menunggu Approval Wadek Akademik', 'Menunggu Approval Wadek Kemahasiswaan', 'Menunggu Approval Wadek Administrasi Umum', 'Menunggu Approval Keuangan', 'Ditolak', 'Selesai'])
+        $proposals = Proposal::withTrashed()
+            ->WhereIn('status_disposisi', ['Memproses', 'Menunggu Approval Kabag', 'Menunggu Approval Dekan', 'Menunggu Approval Wadek Akademik', 'Menunggu Approval Wadek Kemahasiswaan', 'Menunggu Approval Wadek Administrasi Umum', 'Menunggu Approval Prodi', 'Menunggu Approval Keuangan', 'Menunggu Approval PLT',  'Menunggu Approval Akademik', 'Menunggu Approval Umum', 'Menunggu Approval Perpus', 'Ditolak', 'Selesai'])
             ->paginate(3);
         return view('tu.proposals.indexpengajuan', compact('proposals'));
     }
@@ -61,6 +62,7 @@ class PengajuanProposalController extends Controller
             'diterima_tanggal' => 'required|date',
             'untuk' => 'required|string|max:255',
             'status_disposisi' => 'required|string|max:255',
+            'jenis_surat' => 'required|string|max:255',
         ]);
 
         $proposal->update([
@@ -71,7 +73,8 @@ class PengajuanProposalController extends Controller
             'hal' => $request->hal,
             'diterima_tanggal' => $request->diterima_tanggal,
             'untuk' => $request->untuk,
-            'status_disposisi' => $request->status_disposisi,  // Pastikan ini terupdate
+            'status_disposisi' => $request->status_disposisi,
+            'jenis_proposal' => $request->jenis_surat,  // Pastikan ini terupdate
         ]);
 
         // Ambil modal_disposisi yang terkait dengan proposal

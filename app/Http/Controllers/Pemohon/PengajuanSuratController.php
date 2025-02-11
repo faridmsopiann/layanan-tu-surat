@@ -45,8 +45,8 @@ class PengajuanSuratController extends Controller
             $file = $request->file('soft_file');
 
             // Validasi ukuran file
-            if ($file->getSize() > 614400) { // 300 KB = 307200 bytes
-                return redirect()->back()->withErrors(['soft_file' => 'Ukuran file tidak boleh lebih dari 600 KB.'])->withInput();
+            if ($file->getSize() > 10485760) { // 300 KB = 307200 bytes
+                return redirect()->back()->withErrors(['soft_file' => 'Ukuran file tidak boleh lebih dari 10 MB.'])->withInput();
             }
 
             $filePath = $file->store('proposals', 'public'); // Simpan file yang valid ke storage
@@ -76,14 +76,21 @@ class PengajuanSuratController extends Controller
         // Format kode_pengajuan (misal: P2024211001)
         $kodePengajuan = 'P' . $tahun . $bulan . str_pad($increment, 4, '0', STR_PAD_LEFT);
 
+        // Hitung jumlah proposal dalam tahun ini yang tidak dihapus (soft delete)
+        $nomorAgenda = Proposal::withTrashed()
+            ->whereYear('created_at', $tahun)
+            ->count() + 1;
+
+
         $proposal = Proposal::create([
             'pemohon_id' => auth()->id(),
             'tanggal_surat' => $request->tanggal_surat,
             'asal_surat' => $request->asal_surat,
             'hal' => $request->hal,
             'kode_pengajuan' => $kodePengajuan,
-            'jenis_proposal' => $request->jenis_proposal,
+            // 'jenis_proposal' => $request->jenis_proposal,
             'soft_file' => $filePath,
+            'nomor_agenda' => $nomorAgenda,
         ]);
 
         ModalDisposisi::create([

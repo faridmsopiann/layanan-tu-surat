@@ -1,4 +1,4 @@
-@extends('dekan.layouts.app')
+@extends('plt.layouts.app')
 
 @section('title', 'Sistem Informasi Pelayanan TU Fakultas Sains dan Teknologi')
 
@@ -21,7 +21,6 @@
                     <th class="text-sm">No</th>
                     <th class="text-sm">Nomor Agenda</th>
                     <th class="text-sm">File</th>
-                    <th class="text-sm">Jenis</th>
                     <th class="text-sm">Tanggal Surat</th>
                     <th class="text-sm">Nomor Surat</th>
                     <th class="text-sm">Asal Surat</th>
@@ -48,25 +47,14 @@
                             <span style="color: #7f8c8d;">Tidak ada</span>
                         @endif
                     </td>
-                    <td class="text-sm">{{ $proposal->jenis_proposal }}</td>
                     <td class="text-sm">{{ $proposal->tanggal_surat }}</td>
                     <td class="text-sm">{{ $proposal->nomor_surat }}</td>
                     <td class="text-sm">{{ $proposal->asal_surat }}</td>
                     <td class="text-sm">{{ $proposal->hal }}</td>
                     <td class="text-sm">{{ $proposal->diterima_tanggal }}</td>
                     <td class="text-sm">
-                        @if($proposal->status_disposisi == 'Memproses')
-                        <span class="badge badge-warning">{{ $proposal->status_disposisi }}</span>
-                        @elseif($proposal->status_disposisi == 'Menunggu Approval Dekan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Akademik' || $proposal->status_disposisi == 'Menunggu Approval Wadek Kemahasiswaan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Administrasi Umum')
+                        @if($proposal->status_disposisi == 'Menunggu Approval PLT') 
                             <span class="badge badge-primary">{{ $proposal->status_disposisi }}</span>
-                        @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag')
-                            <span class="badge badge-success">{{ $proposal->status_disposisi }}</span>
-                        @elseif($proposal->status_disposisi == 'Menunggu Approval Keuangan')
-                            <span class="badge badge-info">{{ $proposal->status_disposisi }}</span>
-                        @elseif($proposal->status_disposisi == 'Selesai')
-                            <span class="badge badge-success">{{ $proposal->status_disposisi }}</span>
-                        @elseif($proposal->status_disposisi == 'Ditolak')
-                            <span class="badge badge-danger">{{ $proposal->status_disposisi }}</span>
                         @endif
                     </td>
                     <td class="text-sm">{{ $proposal->dari }}</td>
@@ -95,34 +83,22 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form method="POST" action="{{ route('disposisi.updateDisposisi', $proposal->id) }}">
+                                <form method="POST" action="{{ route('plt.disposisi.updateDisposisi', $proposal->id) }}">
                                     @csrf
                                     @method('PUT')
 
                                     <div class="form-group">
                                         <label for="dari">Dari</label>
                                         <select class="form-control" id="dari" name="dari">
-                                            @if ($proposal->tujuan_disposisi == 'Dekan')
-                                                <option value="Dekan">Dekan</option>
-                                            @elseif(in_array($proposal->tujuan_disposisi, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum']))
-                                                <option value="{{ $proposal->tujuan_disposisi }}">{{ $proposal->tujuan_disposisi }}</option>
-                                            @endif
+                                            <option value="PLT">PLT</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="disposisi">Tujuan Disposisi</label>
                                         <select id="disposisi" class="form-control" name="disposisi">
-                                            @if ($proposal->tujuan_disposisi == 'Dekan' && $proposal->jenis_proposal == 'Surat Pembayaran')
-                                                <option value="Wadek Administrasi Umum">Wadek Administrasi Umum</option>
-                                            @elseif ($proposal->tujuan_disposisi == 'Dekan' && $proposal->jenis_proposal == 'Surat Masuk')
-                                                <option value="Wadek Akademik">Wadek Akademik</option>
-                                                <option value="Wadek Kemahasiswaan">Wadek Kemahasiswaan</option>
-                                                <option value="PLT">PLT</option>
-                                            @elseif(in_array($proposal->tujuan_disposisi, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum']))
-                                                <option value="Kabag TU">Kabag TU</option>
-                                                <option value="Prodi">Prodi</option>
-                                            @endif
+                                            <option value="Kabag TU">Kabag TU</option>
+                                            <option value="Prodi">Prodi</option>
                                         </select>
                                     </div>
 
@@ -149,18 +125,14 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form method="POST" action="{{ route('disposisi.updateReject', $proposal->id) }}">
+                                <form method="POST" action="{{ route('plt.disposisi.updateReject', $proposal->id) }}">
                                     @csrf
                                     @method('PUT')
 
                                     <div class="form-group">
                                         <label for="dari">Dari</label>
-                                        <select class="form-control" id="dari" name="dari">
-                                            @if ($proposal->tujuan_disposisi == 'Dekan')
-                                                <option value="Dekan">Dekan</option>
-                                            @elseif(in_array($proposal->tujuan_disposisi, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum']))
-                                                <option value="{{ $proposal->tujuan_disposisi }}">{{ $proposal->tujuan_disposisi }}</option>
-                                            @endif
+                                        <select class="form-control" id="dari" name="dari" disabled>
+                                            <option value="PLT">PLT</option>
                                         </select>
                                     </div>
 

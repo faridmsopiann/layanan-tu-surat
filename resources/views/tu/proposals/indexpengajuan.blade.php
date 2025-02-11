@@ -64,7 +64,17 @@
                             <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
                         @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag')
                             <span class="badge badge-pill badge-success">{{ $proposal->status_disposisi }}</span>
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval Prodi')
+                            <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
                         @elseif($proposal->status_disposisi == 'Menunggu Approval Keuangan')
+                            <span class="badge badge-pill badge-info">{{ $proposal->status_disposisi }}</span>
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval PLT')
+                            <span class="badge badge-pill badge-info">{{ $proposal->status_disposisi }}</span>
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval Akademik')
+                            <span class="badge badge-pill badge-info">{{ $proposal->status_disposisi }}</span>
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval Umum')
+                            <span class="badge badge-pill badge-info">{{ $proposal->status_disposisi }}</span>
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval Perpus')
                             <span class="badge badge-pill badge-info">{{ $proposal->status_disposisi }}</span>
                         @elseif($proposal->status_disposisi == 'Selesai')
                             <span class="badge badge-pill badge-success">{{ $proposal->status_disposisi }}</span>
@@ -213,7 +223,7 @@
                                                 <div class="col-md-6">
                                                     <div class="mb-3">
                                                         <label for="edit_nomor_agenda" class="form-label">Nomor Agenda</label>
-                                                        <input type="text" class="form-control" id="edit_nomor_agenda" name="nomor_agenda" value="{{ $proposal->nomor_agenda }}" required>
+                                                        <input type="text" class="form-control" id="edit_nomor_agenda" name="nomor_agenda" value="{{ $proposal->nomor_agenda }}" readonly required>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="edit_tanggal_surat" class="form-label">Tanggal Surat</label>
@@ -227,6 +237,19 @@
                                                         <label for="edit_asal_surat" class="form-label">Asal Surat</label>
                                                         <input type="text" class="form-control" id="edit_asal_surat" name="asal_surat" value="{{ $proposal->asal_surat }}" required>
                                                     </div>
+                                                    <div class="form-group">
+                                                        <label for="jenis_surat"><strong>Jenis Surat</strong></label>
+                                                        <div class="dropdown-wrapper" style="position: relative;">
+                                                            <select name="jenis_surat" id="jenis_surat" class="form-control" required style="appearance: none; padding-right: 30px;">
+                                                                <option value="Surat Pembayaran">Surat Pembayaran</option>
+                                                                <option value="Surat Masuk">Surat Masuk</option>
+                                                            </select>
+                                                            <!-- Icon panah bawah -->
+                                                            <span class="dropdown-icon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none;">
+                                                                <i class="fas fa-chevron-down" style="color: #999;"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>                        
                                                 </div>
     
                                                 <div class="col-md-6">
@@ -247,6 +270,7 @@
                                                         <select class="form-select" id="edit_status_disposisi" name="status_disposisi" required>
                                                             <option value="Memproses" {{ $proposal->status_disposisi == 'Memproses' ? 'selected' : '' }}>Memproses</option>
                                                             <option value="Menunggu Approval Dekan" {{ $proposal->status_disposisi == 'Menunggu Approval Dekan' ? 'selected' : '' }}>Menunggu Approval Dekan</option>
+                                                            <option value="Menunggu Approval Wadek Akademik" {{ $proposal->status_disposisi == 'Menunggu Approval Wadek Akademik' ? 'selected' : '' }}>Menunggu Approval Wadek Akademik</option>
                                                             <option value="Menunggu Approval Kabag" {{ $proposal->status_disposisi == 'Menunggu Approval Kabag' ? 'selected' : '' }}>Menunggu Approval Kabag</option>
                                                             <option value="Menunggu Approval Keuangan" {{ $proposal->status_disposisi == 'Menunggu Approval Keuangan' ? 'selected' : '' }}>Menunggu Approval Keuangan</option>
                                                             <option value="Selesai" {{ $proposal->status_disposisi == 'Selesai' ? 'selected' : '' }}>Selesai</option>

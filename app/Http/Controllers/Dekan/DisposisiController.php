@@ -41,10 +41,14 @@ class DisposisiController extends Controller
         ]);
 
         $status_disposisi = '';
-        if ($request->disposisi == 'Kabag TU') {
-            $status_disposisi = 'Menunggu Approval Kabag';
+        if ($request->disposisi == 'PLT') {
+            $status_disposisi = 'Menunggu Approval PLT';
         } elseif (in_array($request->disposisi, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum'])) {
             $status_disposisi = 'Menunggu Approval ' . $request->disposisi;
+        } elseif ($request->disposisi == 'Prodi') {
+            $status_disposisi = 'Menunggu Approval Prodi';
+        } elseif ($request->disposisi == 'Kabag TU') {
+            $status_disposisi = 'Menunggu Approval Kabag';
         }
 
         // Update status dan tujuan disposisi ke Wadek
@@ -55,15 +59,25 @@ class DisposisiController extends Controller
             'status_disposisi' => $status_disposisi,
         ]);
 
+        $dekanUser = '';
+
         if ($request->dari == 'Dekan') {
             // Ambil modal_disposisi yang terkait dengan proposal
             $modal = ModalDisposisi::where('proposal_id', $proposal->id)
                 ->where('tujuan', 'Dekan')
                 ->first();
+            $dekanUser = 'Husni Teja Sukmana, ST., M.Sc., Ph.D';
         } elseif (in_array($request->dari, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum'])) {
             $modal = ModalDisposisi::where('proposal_id', $proposal->id)
                 ->whereIn('tujuan', ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum'])
                 ->first();
+            if ($request->dari == 'Wadek Akademik') {
+                $dekanUser = 'Dr. LA Ode Sumarlin, M.Si';
+            } elseif ($request->dari == 'Wadek Kemahasiswaan') {
+                $dekanUser = 'Khodijah Hulliyah, M.Si., Ph.D';
+            } elseif ($request->dari == 'Wadek Administrasi Umum') {
+                $dekanUser = 'Dr. Ambran Hartono, M.Si ';
+            }
         }
 
         $modal->update([
@@ -71,7 +85,7 @@ class DisposisiController extends Controller
             'status' => 'Disetujui',
             'tanggal_diterima' => $modal->tanggal_diterima,  // Tetap gunakan tanggal_diterima yang sudah ada
             'tanggal_proses' => now()->format('Y-m-d H:i:s'),  // Update dengan tanggal saat ini
-            'diverifikasi_oleh' => $request->dari,  // Nama user yang sedang login
+            'diverifikasi_oleh' => $dekanUser,  // Nama user yang sedang login
             'keterangan' => $request->pesan_disposisi,  // Pesan dari request
         ]);
 
@@ -104,15 +118,26 @@ class DisposisiController extends Controller
             'status_disposisi' => 'Ditolak',
         ]);
 
+        $dekanUser = '';
+
         if ($request->dari == 'Dekan') {
             // Ambil modal_disposisi yang terkait dengan proposal
             $modal = ModalDisposisi::where('proposal_id', $proposal->id)
                 ->where('tujuan', 'Dekan')
                 ->first();
+
+            $dekanUser = 'Husni Teja Sukmana, ST., M.Sc., Ph.D';
         } elseif (in_array($request->dari, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum'])) {
             $modal = ModalDisposisi::where('proposal_id', $proposal->id)
                 ->whereIn('tujuan', ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum'])
                 ->first();
+            if ($request->dari == 'Wadek Akademik') {
+                $dekanUser = 'Dr. LA Ode Sumarlin, M.Si';
+            } elseif ($request->dari == 'Wadek Kemahasiswaan') {
+                $dekanUser = 'Khodijah Hulliyah, M.Si., Ph.D';
+            } elseif ($request->dari == 'Wadek Administrasi Umum') {
+                $dekanUser = 'Dr. Ambran Hartono, M.Si ';
+            }
         }
 
         $modal->update([
@@ -120,7 +145,7 @@ class DisposisiController extends Controller
             'status' => 'Ditolak',
             'tanggal_diterima' => $modal->tanggal_diterima,  // Tetap gunakan tanggal_diterima yang sudah ada
             'tanggal_proses' => now()->format('Y-m-d H:i:s'),  // Update dengan tanggal saat ini
-            'diverifikasi_oleh' => $request->dari,  // Nama user yang sedang login
+            'diverifikasi_oleh' => $dekanUser,  // Nama user yang sedang login
             'keterangan' => $request->pesan_disposisi,  // Pesan dari request
         ]);
 
@@ -130,7 +155,7 @@ class DisposisiController extends Controller
             'status' => 'Ditolak',
             'tanggal_diterima' => now()->format('Y-m-d H:i:s'),
             'tanggal_proses' => now()->format('Y-m-d H:i:s'),
-            'diverifikasi_oleh' => 'Bu Susi',
+            'diverifikasi_oleh' => 'Susi Sundari. SE',
             'keterangan' => 'Selesai',
         ]);
 

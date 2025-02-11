@@ -10,6 +10,11 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @method bool hasRole(string $role) Cek apakah user memiliki role tertentu
+ */
+
+
 class User extends Authenticatable
 {
     use HasApiTokens;
@@ -17,6 +22,18 @@ class User extends Authenticatable
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
+
+    // Relasi many-to-many ke Role
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    // Helper method untuk mengecek role
+    public function hasRole($role)
+    {
+        return $this->roles->contains('name', $role);
+    }
 
     /**
      * The attributes that are mass assignable.

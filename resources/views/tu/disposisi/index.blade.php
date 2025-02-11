@@ -132,10 +132,13 @@
                                                     {{-- <option value="Wadek Akademik">Wadek Akademik</option>
                                                     <option value="Wadek Kemahasiswaan">Wadek Kemahasiswaan</option>
                                                     <option value="Wadek Administrasi Umum">Wadek Administrasi Umum</option> --}}
-                                                @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag' && $proposal->jenis_proposal == 'Disertai Pengajuan Dana')
+                                                @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag' && $proposal->jenis_proposal == 'Surat Pembayaran')
                                                     <option value="Keuangan">Keuangan</option>
-                                                @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag' && $proposal->jenis_proposal == 'Tanpa Pengajuan Dana')
-                                                    <option value="Staff TU">Staff TU</option>
+                                                @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag' && $proposal->jenis_proposal == 'Surat Masuk')
+                                                    <option value="Akademik">Akademik</option>
+                                                    <option value="Umum">Umum</option>
+                                                    <option value="Perpus">Perpus</option>
+                                                    <option value="Prodi">Prodi</option>
                                                 @endif
                                             </select>
                                             <!-- Icon panah bawah -->

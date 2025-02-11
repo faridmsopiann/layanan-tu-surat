@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -12,7 +13,8 @@ class UserController extends Controller
     public function index()
     {
         $users = User::paginate(5); // Mendapatkan semua user
-        return view('admin.users.index', compact('users'));
+        $roles = Role::all();
+        return view('admin.users.index', compact('users', 'roles'));
     }
 
     public function create()
@@ -22,11 +24,12 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        // Validasi input
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role' => 'required|string',
-            'password' => 'required|string|min:8|confirmed', // Validasi password
+            'role' => 'required|string|exists:roles,name', // Pastikan role ada di tabel roles
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         if ($validator->fails()) {
@@ -34,12 +37,20 @@ class UserController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-        User::create([
+
+        // Buat user baru
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
+            // Kolom 'role' dihapus karena sudah menggunakan pivot tabel
         ]);
+
+        // Ambil role berdasarkan nama dari request
+        $role = Role::where('name', $request->role)->first();
+
+        // Attach role ke user melalui pivot tabel
+        $user->roles()->attach($role);
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
@@ -57,7 +68,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
-            'role' => 'required|string',
+            'role' => 'required|string|exists:roles,name', // Validasi role
             'password' => 'nullable|string|min:8|confirmed', // Validasi password (nullable)
         ]);
 
@@ -67,14 +78,21 @@ class UserController extends Controller
                 ->withInput();
         }
 
+        // Update data user
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'role' => $request->role,
         ]);
+
+        // Ambil role yang baru
+        $role = Role::where('name', $request->role)->first();
+
+        // Update relasi role di pivot table
+        $user->roles()->sync([$role->id]); // Sync memastikan hanya role yang dipilih yang ada di pivot
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
+
 
     public function destroy($id)
     {

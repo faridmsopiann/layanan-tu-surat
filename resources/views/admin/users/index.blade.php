@@ -80,12 +80,18 @@
 
                                         <div class="form-group">
                                             <label for="role">Role:</label>
-                                            <select class="form-control" id="role" name="role" required>
+                                            {{-- <select class="form-control" id="role" name="role" required>
                                                 <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
                                                 <option value="pemohon" {{ $user->role == 'pemohon' ? 'selected' : '' }}>Pemohon</option>
                                                 <option value="tu" {{ $user->role == 'tu' ? 'selected' : '' }}>TU</option>
                                                 <option value="dekan" {{ $user->role == 'dekan' ? 'selected' : '' }}>Dekan</option>
                                                 <option value="keuangan" {{ $user->role == 'keuangan' ? 'selected' : '' }}>Keuangan</option>
+                                            </select> --}}
+
+                                            <select name="role" class="form-control">
+                                                @foreach($roles as $role)
+                                                    <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
 
@@ -140,12 +146,10 @@
 
                     <div class="form-group">
                         <label for="role">Role:</label>
-                        <select class="form-control" id="role" name="role" required>
-                            <option value="admin">Admin</option>
-                            <option value="pemohon">Pemohon</option>
-                            <option value="tu">TU</option>
-                            <option value="dekan">Dekan</option>
-                            <option value="keuangan">Keuangan</option>
+                        <select name="role" class="form-control">
+                            @foreach($roles as $role)
+                                <option value="{{ $role->name }}">{{ $role->name }}</option>
+                            @endforeach
                         </select>
                     </div>
 

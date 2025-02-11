@@ -1,4 +1,4 @@
-@extends('dekan.layouts.app')
+@extends('umum.layouts.app')
 
 @section('title', 'Sistem Informasi Pelayanan TU Fakultas Sains dan Teknologi')
 
@@ -13,15 +13,14 @@
     </div>
     @endif
 
+    <!-- Tabel Proposal -->
     <div class="table-responsive">
-        <!-- Tabel Proposal -->
         <table class="table table-bordered">
             <thead class="bg-info">
                 <tr>
                     <th class="text-sm">No</th>
                     <th class="text-sm">Nomor Agenda</th>
                     <th class="text-sm">File</th>
-                    <th class="text-sm">Jenis</th>
                     <th class="text-sm">Tanggal Surat</th>
                     <th class="text-sm">Nomor Surat</th>
                     <th class="text-sm">Asal Surat</th>
@@ -48,44 +47,33 @@
                             <span style="color: #7f8c8d;">Tidak ada</span>
                         @endif
                     </td>
-                    <td class="text-sm">{{ $proposal->jenis_proposal }}</td>
                     <td class="text-sm">{{ $proposal->tanggal_surat }}</td>
                     <td class="text-sm">{{ $proposal->nomor_surat }}</td>
                     <td class="text-sm">{{ $proposal->asal_surat }}</td>
                     <td class="text-sm">{{ $proposal->hal }}</td>
                     <td class="text-sm">{{ $proposal->diterima_tanggal }}</td>
                     <td class="text-sm">
-                        @if($proposal->status_disposisi == 'Memproses')
-                        <span class="badge badge-warning">{{ $proposal->status_disposisi }}</span>
-                        @elseif($proposal->status_disposisi == 'Menunggu Approval Dekan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Akademik' || $proposal->status_disposisi == 'Menunggu Approval Wadek Kemahasiswaan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Administrasi Umum')
-                            <span class="badge badge-primary">{{ $proposal->status_disposisi }}</span>
-                        @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag')
-                            <span class="badge badge-success">{{ $proposal->status_disposisi }}</span>
-                        @elseif($proposal->status_disposisi == 'Menunggu Approval Keuangan')
-                            <span class="badge badge-info">{{ $proposal->status_disposisi }}</span>
-                        @elseif($proposal->status_disposisi == 'Selesai')
-                            <span class="badge badge-success">{{ $proposal->status_disposisi }}</span>
-                        @elseif($proposal->status_disposisi == 'Ditolak')
-                            <span class="badge badge-danger">{{ $proposal->status_disposisi }}</span>
+                        @if($proposal->status_disposisi == 'Menunggu Approval Umum')
+                        <span class="badge badge-primary">{{ $proposal->status_disposisi }}</span>
                         @endif
                     </td>
                     <td class="text-sm">{{ $proposal->dari }}</td>
                     <td class="text-sm">{{ $proposal->tujuan_disposisi }}</td>
                     <td class="text-sm">{{ $proposal->pesan_disposisi }}</td>
-                    <td class="">
+                    <td class="d-flex">
                         <!-- Tombol Disposisi -->
-                        <button class="btn btn-info btn-sm mb-1 w-100" data-toggle="modal" data-target="#disposisiModal-{{ $proposal->id }}">
+                        <button type="button" class="btn btn-info btn-sm d-inline-block mr-1 w-100" data-toggle="modal" data-target="#disposisiModal{{ $proposal->id }}">
                             <i class="fas fa-share"></i> 
                         </button>
                         <!-- Tombol Reject -->
-                        <button class="btn btn-danger btn-sm w-100" data-toggle="modal" data-target="#rejectModal-{{ $proposal->id }}">
-                            <i class="fas fa-times"></i> 
+                        <button type="button" class="btn btn-danger btn-sm d-inline-block w-100" data-toggle="modal" data-target="#rejectModal{{ $proposal->id }}">
+                            <i class="fas fa-times"></i>
                         </button>
                     </td>
                 </tr>
-
+    
                 <!-- Modal Disposisi -->
-                <div class="modal fade" id="disposisiModal-{{ $proposal->id }}" tabindex="-1" role="dialog" aria-labelledby="disposisiModalLabel" aria-hidden="true">
+                <div class="modal fade" id="disposisiModal{{ $proposal->id }}" tabindex="-1" role="dialog" aria-labelledby="disposisiModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header" style="background-color: #2C3E50; color: white;">
@@ -95,51 +83,38 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form method="POST" action="{{ route('disposisi.updateDisposisi', $proposal->id) }}">
+                                <form method="POST" action="{{ route('umum.disposisi.updateDisposisi', $proposal->id) }}">
                                     @csrf
                                     @method('PUT')
-
+    
                                     <div class="form-group">
                                         <label for="dari">Dari</label>
                                         <select class="form-control" id="dari" name="dari">
-                                            @if ($proposal->tujuan_disposisi == 'Dekan')
-                                                <option value="Dekan">Dekan</option>
-                                            @elseif(in_array($proposal->tujuan_disposisi, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum']))
-                                                <option value="{{ $proposal->tujuan_disposisi }}">{{ $proposal->tujuan_disposisi }}</option>
-                                            @endif
+                                            <option value="Umum">Umum</option>
                                         </select>
                                     </div>
-
+    
                                     <div class="form-group">
                                         <label for="disposisi">Tujuan Disposisi</label>
                                         <select id="disposisi" class="form-control" name="disposisi">
-                                            @if ($proposal->tujuan_disposisi == 'Dekan' && $proposal->jenis_proposal == 'Surat Pembayaran')
-                                                <option value="Wadek Administrasi Umum">Wadek Administrasi Umum</option>
-                                            @elseif ($proposal->tujuan_disposisi == 'Dekan' && $proposal->jenis_proposal == 'Surat Masuk')
-                                                <option value="Wadek Akademik">Wadek Akademik</option>
-                                                <option value="Wadek Kemahasiswaan">Wadek Kemahasiswaan</option>
-                                                <option value="PLT">PLT</option>
-                                            @elseif(in_array($proposal->tujuan_disposisi, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum']))
-                                                <option value="Kabag TU">Kabag TU</option>
-                                                <option value="Prodi">Prodi</option>
-                                            @endif
+                                            <option value="Staff TU">Staff TU</option>
                                         </select>
                                     </div>
-
+    
                                     <div class="form-group">
                                         <label for="pesan_disposisi">Pesan Disposisi</label>
                                         <textarea id="pesan_disposisi" class="form-control" name="pesan_disposisi" rows="3" required>{{ old('pesan_disposisi') }}</textarea>
                                     </div>
-
+    
                                     <button type="submit" class="btn btn-primary">Disposisi</button>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
-
+    
                 <!-- Modal Reject -->
-                <div class="modal fade" id="rejectModal-{{ $proposal->id }}" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                <div class="modal fade" id="rejectModal{{ $proposal->id }}" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header" style="background-color: #2C3E50; color: white;">
@@ -149,33 +124,29 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form method="POST" action="{{ route('disposisi.updateReject', $proposal->id) }}">
+                                <form method="POST" action="{{ route('umum.disposisi.updateReject', $proposal->id) }}">
                                     @csrf
                                     @method('PUT')
-
+    
                                     <div class="form-group">
                                         <label for="dari">Dari</label>
                                         <select class="form-control" id="dari" name="dari">
-                                            @if ($proposal->tujuan_disposisi == 'Dekan')
-                                                <option value="Dekan">Dekan</option>
-                                            @elseif(in_array($proposal->tujuan_disposisi, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum']))
-                                                <option value="{{ $proposal->tujuan_disposisi }}">{{ $proposal->tujuan_disposisi }}</option>
-                                            @endif
+                                            <option value="Umum">Umum</option>
                                         </select>
                                     </div>
-
+    
                                     <div class="form-group">
                                         <label for="disposisi">Tujuan Reject</label>
                                         <select id="disposisi" class="form-control" name="disposisi" disabled>
                                             <option value="Staff TU">Staff TU</option>
                                         </select>
                                     </div>
-
+    
                                     <div class="form-group">
                                         <label for="pesan_disposisi">Pesan Reject</label>
                                         <textarea id="pesan_disposisi" class="form-control" name="pesan_disposisi" rows="3" required>{{ old('pesan_disposisi') }}</textarea>
                                     </div>
-
+    
                                     <button type="submit" class="btn btn-danger">Reject</button>
                                 </form>
                             </div>

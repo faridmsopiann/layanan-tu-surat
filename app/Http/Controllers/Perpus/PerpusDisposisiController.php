@@ -1,35 +1,35 @@
 <?php
 
-namespace App\Http\Controllers\Keuangan;
+namespace App\Http\Controllers\Perpus;
 
 use App\Http\Controllers\Controller;
 use App\Models\ModalDisposisi;
 use App\Models\Proposal;
 use Illuminate\Http\Request;
 
-class KeuanganDisposisiController extends Controller
+class PerpusDisposisiController extends Controller
 {
     // Menampilkan semua proposal untuk disposisi oleh Dekan
     public function index()
     {
-        $proposals = Proposal::where('status_disposisi', 'Menunggu Approval Keuangan')
-            ->orWhere('tujuan_disposisi', 'Keuangan')
+        $proposals = Proposal::where('status_disposisi', 'Menunggu Approval Perpus')
+            ->orWhere('tujuan_disposisi', 'Prodi')
             ->paginate(5);
-        return view('keuangan.disposisi.index', compact('proposals'));
+        return view('perpus.disposisi.index', compact('proposals'));
     }
 
     // Menampilkan form disposisi untuk proposal
     public function edit($id)
     {
         $proposal = Proposal::findOrFail($id);
-        return view('keuangan.disposisi.disposisi_form', compact('proposal'));
+        return view('perpus.disposisi.disposisi_form', compact('proposal'));
     }
 
     // Menampilkan form reject untuk proposal
     public function reject($id)
     {
         $proposal = Proposal::findOrFail($id);
-        return view('keuangan.disposisi.reject_form', compact('proposal'));
+        return view('perpus.disposisi.reject_form', compact('proposal'));
     }
 
     // Menyimpan disposisi proposal
@@ -40,17 +40,22 @@ class KeuanganDisposisiController extends Controller
             'dari' => 'required|string',
         ]);
 
+        $status_disposisi = '';
+        if ($request->disposisi == 'Staff TU') {
+            $status_disposisi = 'Selesai';
+        }
+
         // Update status dan tujuan disposisi ke Kabag TU
         $proposal->update([
-            'dari' => 'Staff Keuangan',
-            'tujuan_disposisi' => 'Staff Tata Usaha',
+            'dari' => $request->dari,
+            'tujuan_disposisi' => $request->disposisi,
             'pesan_disposisi' => $request->pesan_disposisi,
-            'status_disposisi' => 'Selesai',
+            'status_disposisi' => $status_disposisi,
         ]);
 
         // Ambil modal_disposisi yang terkait dengan proposal
         $modal = ModalDisposisi::where('proposal_id', $proposal->id)
-            ->where('tujuan', 'Keuangan')
+            ->where('tujuan', 'Perpus')
             ->first();
 
 
@@ -59,7 +64,7 @@ class KeuanganDisposisiController extends Controller
             'status' => 'Disetujui',
             'tanggal_diterima' => $modal->tanggal_diterima,  // Tetap gunakan tanggal_diterima yang sudah ada
             'tanggal_proses' => now(),  // Update dengan tanggal saat ini
-            'diverifikasi_oleh' => 'Nia Sumianingsih, SE',  // Nama user yang sedang login
+            'diverifikasi_oleh' => auth()->user()->name,  // Nama user yang sedang login
             'keterangan' => $request->pesan_disposisi,  // Pesan dari request
         ]);
 
@@ -73,7 +78,29 @@ class KeuanganDisposisiController extends Controller
             'keterangan' => 'Selesai',
         ]);
 
-        return redirect()->route('keuangan.disposisi.index')->with('success', 'Proposal berhasil didisposisi.');
+        // if ($request->disposisi == 'Keuangan') {
+        //     ModalDisposisi::create([
+        //         'proposal_id' => $proposal->id,
+        //         'tujuan' => $request->disposisi,
+        //         'status' => 'Diproses',
+        //         'tanggal_diterima' => now(),
+        //         'tanggal_proses' => null,
+        //         'diverifikasi_oleh' => null,
+        //         'keterangan' => null,
+        //     ]);
+        // } else {
+        //     ModalDisposisi::create([
+        //         'proposal_id' => $proposal->id,
+        //         'tujuan' => 'Staff TU',
+        //         'status' => 'Disetujui',
+        //         'tanggal_diterima' => now(),
+        //         'tanggal_proses' => now(),
+        //         'diverifikasi_oleh' => 'Bu Susi',
+        //         'keterangan' => 'Selesai',
+        //     ]);
+        // }
+
+        return redirect()->route('perpus.disposisi.index')->with('success', 'Proposal berhasil didisposisi.');
     }
 
     // Menyimpan reject proposal
@@ -86,22 +113,22 @@ class KeuanganDisposisiController extends Controller
 
         // Update status menjadi Ditolak
         $proposal->update([
-            'dari' => 'Staff Keuangan',
-            'tujuan_disposisi' => 'Staff Tata Usaha',
+            'dari' => $request->dari,
+            'tujuan_disposisi' => $request->disposisi,
             'pesan_disposisi' => $request->pesan_disposisi,
             'status_disposisi' => 'Ditolak',
         ]);
 
         $modal = ModalDisposisi::where('proposal_id', $proposal->id)
-            ->where('tujuan', 'Keuangan')
+            ->where('tujuan', 'Perpus')
             ->first();
 
         $modal->update([
-            'tujuan' => 'Keuangan',  // Update tujuan dari request
+            'tujuan' => 'Perpus',  // Update tujuan dari request
             'status' => 'Ditolak',
             'tanggal_diterima' => $modal->tanggal_diterima,  // Tetap gunakan tanggal_diterima yang sudah ada
             'tanggal_proses' => now(),  // Update dengan tanggal saat ini
-            'diverifikasi_oleh' => 'Nia Sumianingsih, SE',  // Nama user yang sedang login
+            'diverifikasi_oleh' => auth()->user()->name,  // Nama user yang sedang login
             'keterangan' => $request->pesan_disposisi,  // Pesan dari request
         ]);
 
@@ -115,6 +142,6 @@ class KeuanganDisposisiController extends Controller
             'keterangan' => 'Selesai',
         ]);
 
-        return redirect()->route('keuangan.disposisi.index')->with('success', 'Proposal berhasil ditolak.');
+        return redirect()->route('perpus.disposisi.index')->with('success', 'Proposal berhasil ditolak.');
     }
 }

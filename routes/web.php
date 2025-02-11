@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Akademik\AkademikController;
+use App\Http\Controllers\Akademik\AkademikDisposisiController;
 use App\Http\Controllers\ArsipSuratController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
@@ -13,12 +15,22 @@ use App\Http\Controllers\Keuangan\KeuanganDisposisiController;
 use App\Http\Controllers\Keuangan\MonitoringController as KeuanganMonitoringController;
 use App\Http\Controllers\Pemohon\PemohonController;
 use App\Http\Controllers\Pemohon\PengajuanSuratController;
+use App\Http\Controllers\Perpus\PerpusController;
+use App\Http\Controllers\Perpus\PerpusDisposisiController;
+use App\Http\Controllers\Plt\PltController;
+use App\Http\Controllers\Plt\PltDisposisiController;
+use App\Http\Controllers\Prodi\ProdiController;
+use App\Http\Controllers\Prodi\ProdiDisposisiController;
 use App\Http\Controllers\QRCodeController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TU\DisposisiController;
 use App\Http\Controllers\TU\PengajuanProposalController;
 use App\Http\Controllers\TU\ProposalMasukController;
 use App\Http\Controllers\TU\TUController;
+use App\Http\Controllers\Umum\UmumController;
+use App\Http\Controllers\Umum\UmumDisposisiController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,16 +61,30 @@ Route::get('/qr-login', [QRCodeController::class, 'generateLoginQR'])->name('qr.
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
-        if (auth()->user()->role === 'admin') {
+        $user = Auth::user();
+
+        if ($user->hasRole('admin')) {
             return redirect()->route('admin.dashboard');
-        } elseif (auth()->user()->role === 'pemohon') {
+        } elseif ($user->hasRole('pemohon')) {
             return redirect()->route('pemohon.dashboard');
-        } elseif (auth()->user()->role === 'tu') {
+        } elseif ($user->hasRole('tu')) {
             return redirect()->route('tu.dashboard');
-        } elseif (auth()->user()->role === 'dekan') {
+        } elseif ($user->hasRole('dekan')) {
             return redirect()->route('dekan.dashboard');
-        } elseif (auth()->user()->role === 'keuangan') {
+        } elseif ($user->hasRole('keuangan')) {
             return redirect()->route('keuangan.dashboard');
+        } elseif ($user->hasRole('prodi')) {
+            return redirect()->route('prodi.dashboard');
+        } elseif ($user->hasRole('akademik')) {
+            return redirect()->route('akademik.dashboard');
+        } elseif ($user->hasRole('umum')) {
+            return redirect()->route('umum.dashboard');
+        } elseif ($user->hasRole('perpus')) {
+            return redirect()->route('perpus.dashboard');
+        } elseif ($user->hasRole('PLT')) {
+            return redirect()->route('plt.dashboard');
+        } else {
+            abort(403, 'Unauthorized action.');
         }
     })->name('dashboard');
 
@@ -80,6 +106,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/proposals/{proposal}/edit', [App\Http\Controllers\Admin\ProposalController::class, 'edit'])->name('admin.proposals.edit');
         Route::put('/admin/proposals/{proposal}', [App\Http\Controllers\Admin\ProposalController::class, 'update'])->name('admin.proposals.update');
         Route::delete('/admin/proposals/{proposal}', [App\Http\Controllers\Admin\ProposalController::class, 'destroy'])->name('admin.proposals.destroy');
+
+        // Manajemen Role
+        Route::resource('roles', RoleController::class);
     });
 
     Route::middleware(['auth', 'role:pemohon'])->group(function () {
@@ -134,6 +163,61 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/dekan/disposisi/{proposal}', [DekanDisposisiController::class, 'updateDisposisi'])->name('disposisi.updateDisposisi');
         Route::get('/dekan/disposisi/{id}/reject', [DekanDisposisiController::class, 'reject'])->name('disposisi.reject');
         Route::put('/dekan/disposisi/{proposal}/reject', [DekanDisposisiController::class, 'updateReject'])->name('disposisi.updateReject');
+    });
+
+    Route::middleware(['auth', 'role:PLT'])->group(function () {
+        // Plt routes
+        Route::get('/plt/dashboard', [PltController::class, 'dashboard'])->name('plt.dashboard');
+
+        Route::get('/plt/disposisi', [PltDisposisiController::class, 'index'])->name('plt.disposisi.index');
+        Route::get('/plt/disposisi/{id}/edit', [PltDisposisiController::class, 'edit'])->name('plt.disposisi.edit');
+        Route::put('/plt/disposisi/{proposal}', [PltDisposisiController::class, 'updateDisposisi'])->name('plt.disposisi.updateDisposisi');
+        Route::get('/plt/disposisi/{id}/reject', [PltDisposisiController::class, 'reject'])->name('plt.disposisi.reject');
+        Route::put('/plt/disposisi/{proposal}/reject', [PltDisposisiController::class, 'updateReject'])->name('plt.disposisi.updateReject');
+    });
+
+    Route::middleware(['auth', 'role:akademik'])->group(function () {
+        // Plt routes
+        Route::get('/akademik/dashboard', [AkademikController::class, 'dashboard'])->name('akademik.dashboard');
+
+        Route::get('/akademik/disposisi', [AkademikDisposisiController::class, 'index'])->name('akademik.disposisi.index');
+        Route::get('/akademik/disposisi/{id}/edit', [AkademikDisposisiController::class, 'edit'])->name('akademik.disposisi.edit');
+        Route::put('/akademik/disposisi/{proposal}', [AkademikDisposisiController::class, 'updateDisposisi'])->name('akademik.disposisi.updateDisposisi');
+        Route::get('/akademik/disposisi/{id}/reject', [AkademikDisposisiController::class, 'reject'])->name('akademik.disposisi.reject');
+        Route::put('/akademik/disposisi/{proposal}/reject', [AkademikDisposisiController::class, 'updateReject'])->name('akademik.disposisi.updateReject');
+    });
+
+    Route::middleware(['auth', 'role:umum'])->group(function () {
+        // Plt routes
+        Route::get('/umum/dashboard', [UmumController::class, 'dashboard'])->name('umum.dashboard');
+
+        Route::get('/umum/disposisi', [UmumDisposisiController::class, 'index'])->name('umum.disposisi.index');
+        Route::get('/umum/disposisi/{id}/edit', [UmumDisposisiController::class, 'edit'])->name('umum.disposisi.edit');
+        Route::put('/umum/disposisi/{proposal}', [UmumDisposisiController::class, 'updateDisposisi'])->name('umum.disposisi.updateDisposisi');
+        Route::get('/umum/disposisi/{id}/reject', [UmumDisposisiController::class, 'reject'])->name('umum.disposisi.reject');
+        Route::put('/umum/disposisi/{proposal}/reject', [UmumDisposisiController::class, 'updateReject'])->name('umum.disposisi.updateReject');
+    });
+
+    Route::middleware(['auth', 'role:perpus'])->group(function () {
+        // Plt routes
+        Route::get('/perpus/dashboard', [PerpusController::class, 'dashboard'])->name('perpus.dashboard');
+
+        Route::get('/perpus/disposisi', [PerpusDisposisiController::class, 'index'])->name('perpus.disposisi.index');
+        Route::get('/perpus/disposisi/{id}/edit', [PerpusDisposisiController::class, 'edit'])->name('perpus.disposisi.edit');
+        Route::put('/perpus/disposisi/{proposal}', [PerpusDisposisiController::class, 'updateDisposisi'])->name('perpus.disposisi.updateDisposisi');
+        Route::get('/perpus/disposisi/{id}/reject', [PerpusDisposisiController::class, 'reject'])->name('perpus.disposisi.reject');
+        Route::put('/perpus/disposisi/{proposal}/reject', [PerpusDisposisiController::class, 'updateReject'])->name('perpus.disposisi.updateReject');
+    });
+
+    Route::middleware(['auth', 'role:prodi'])->group(function () {
+        // Dekan routes
+        Route::get('/prodi/dashboard', [ProdiController::class, 'dashboard'])->name('prodi.dashboard');
+
+        Route::get('/prodi/disposisi', [ProdiDisposisiController::class, 'index'])->name('prodi.disposisi.index');
+        Route::get('/prodi/disposisi/{id}/edit', [ProdiDisposisiController::class, 'edit'])->name('prodi.disposisi.edit');
+        Route::put('/prodi/disposisi/{proposal}', [ProdiDisposisiController::class, 'updateDisposisi'])->name('prodi.disposisi.updateDisposisi');
+        Route::get('/prodi/disposisi/{id}/reject', [ProdiDisposisiController::class, 'reject'])->name('prodi.disposisi.reject');
+        Route::put('/prodi/disposisi/{proposal}/reject', [ProdiDisposisiController::class, 'updateReject'])->name('prodi.disposisi.updateReject');
     });
 
     Route::middleware(['auth', 'role:keuangan'])->group(function () {

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,41 +15,54 @@ class UsersTableSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
-        User::create([
+        // Buat user admin
+        $admin = User::create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
             'password' => Hash::make('password123'),
-            'role' => 'admin',
         ]);
+        $admin->roles()->attach(Role::where('name', 'admin')->first());
 
-        User::create([
+        // Buat user pemohon
+        $pemohon = User::create([
             'name' => 'Pemohon User',
             'email' => 'pemohon@example.com',
             'password' => Hash::make('password123'),
-            'role' => 'pemohon',
         ]);
+        $pemohon->roles()->attach(Role::where('name', 'pemohon')->first());
 
-        User::create([
+        // Buat user TU
+        $tu = User::create([
             'name' => 'TU User',
             'email' => 'tu@example.com',
             'password' => Hash::make('password123'),
-            'role' => 'tu',
         ]);
+        $tu->roles()->attach(Role::where('name', 'tu')->first());
 
-        User::create([
+        // Buat user dekan
+        $dekan = User::create([
             'name' => 'Dekan User',
             'email' => 'dekan@example.com',
             'password' => Hash::make('password123'),
-            'role' => 'dekan',
         ]);
+        $dekan->roles()->attach(Role::where('name', 'dekan')->first());
 
-        User::create([
+        // Buat user keuangan
+        $keuangan = User::create([
             'name' => 'Keuangan User',
             'email' => 'keuangan@example.com',
             'password' => Hash::make('password123'),
-            'role' => 'keuangan',
         ]);
+        $keuangan->roles()->attach(Role::where('name', 'keuangan')->first());
+
+        // Buat user prodi
+        $prodi = User::create([
+            'name' => 'Prodi User',
+            'email' => 'prodi@example.com',
+            'password' => Hash::make('password123'),
+        ]);
+        $prodi->roles()->attach(Role::where('name', 'prodi')->first());
     }
 }
