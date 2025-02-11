@@ -3,7 +3,7 @@
 @section('title', 'Sistem Informasi Pelayanan TU Fakultas Sains dan Teknologi')
 
 @section('content_header')
-    <h1>Welcome to the Pemohon Dashboard</h1>
+    <h1>Selamat Datang di Pemohon Dashboard</h1>
 @stop
 
 @section('content')
@@ -12,7 +12,7 @@
             <div class="small-box bg-info mt-4">
                 <div class="inner">
                     <h3>{{ $totalProposals }}</h3>
-                    <p>Total Proposals</p>
+                    <p>Total Surat</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-file-alt"></i>
@@ -24,7 +24,7 @@
             <div class="small-box bg-warning">
                 <div class="inner">
                     <h3>{{ $pendingApprovals }}</h3>
-                    <p>Pending Approvals</p>
+                    <p>Menunggu Persetujuan</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-clock"></i>
@@ -36,7 +36,7 @@
             <div class="small-box bg-success">
                 <div class="inner">
                     <h3>{{ $approvedProposals }}</h3>
-                    <p>Approved Proposals</p>
+                    <p>Surat Disetujui</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-check-circle"></i>
@@ -48,7 +48,7 @@
             <div class="small-box bg-danger">
                 <div class="inner">
                     <h3>{{ $rejectedProposals }}</h3>
-                    <p>Rejected Proposals</p>
+                    <p>Surat Ditolak</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-ban"></i>

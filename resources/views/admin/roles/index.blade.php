@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mt-4" style="font-family: 'Roboto', sans-serif;">
-    <h2 style="font-weight: 700; color: #2C3E50;">Manage Roles</h2>
+    <h2 style="font-weight: 700; color: #2C3E50;">Manajemen Roles</h2>
 
     @if(session('success'))
     <div id="success-alert" class="alert alert-success mb-3 shadow-sm" style="border-left: 5px solid #28a745;">

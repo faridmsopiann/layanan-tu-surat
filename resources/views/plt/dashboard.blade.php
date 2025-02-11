@@ -3,7 +3,7 @@
 @section('title', 'Sistem Informasi Pelayanan TU Fakultas Sains dan Teknologi')
 
 @section('content_header')
-    <h1>Welcome to the PLT Dashboard</h1>
+    <h1>Selamat Datang di PLT Dashboard</h1>
 @stop
 
 @section('content')
@@ -12,7 +12,7 @@
             <div class="small-box bg-warning">
                 <div class="inner">
                     <h3>{{ $pendingApprovals }}</h3>
-                    <p>Pending Approvals</p>
+                    <p>Menunggu Persetujuan</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-clock"></i>
