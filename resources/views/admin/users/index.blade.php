@@ -80,20 +80,15 @@
 
                                         <div class="form-group">
                                             <label for="role">Role:</label>
-                                            {{-- <select class="form-control" id="role" name="role" required>
-                                                <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                                                <option value="pemohon" {{ $user->role == 'pemohon' ? 'selected' : '' }}>Pemohon</option>
-                                                <option value="tu" {{ $user->role == 'tu' ? 'selected' : '' }}>TU</option>
-                                                <option value="dekan" {{ $user->role == 'dekan' ? 'selected' : '' }}>Dekan</option>
-                                                <option value="keuangan" {{ $user->role == 'keuangan' ? 'selected' : '' }}>Keuangan</option>
-                                            </select> --}}
-
                                             <select name="role" class="form-control">
                                                 @foreach($roles as $role)
-                                                    <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                                    <option value="{{ $role->name }}" 
+                                                        {{ $user->roles->contains('name', $role->name) ? 'selected' : '' }}>
+                                                        {{ $role->name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
-                                        </div>
+                                        </div>                                        
 
                                         <div class="form-group">
                                             <label for="password">Password:</label>
