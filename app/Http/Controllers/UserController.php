@@ -84,6 +84,13 @@ class UserController extends Controller
             'email' => $request->email,
         ]);
 
+        // Update password jika diisi
+        if ($request->filled('password')) {
+            $user->update([
+                'password' => Hash::make($request->password),
+            ]);
+        }
+
         // Ambil role yang baru
         $role = Role::where('name', $request->role)->first();
 
