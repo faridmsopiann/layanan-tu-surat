@@ -46,26 +46,17 @@
                             <label for="asal_surat"><strong>Asal Surat</strong></label>
                             <input type="text" name="asal_surat" id="asal_surat" class="form-control" required>
                         </div>
-                        {{-- <div class="form-group">
-                            <label for="jenis_proposal"><strong>Jenis Surat</strong></label>
-                            <div class="dropdown-wrapper" style="position: relative;">
-                                <select name="jenis_proposal" id="jenis_proposal" class="form-control" required style="appearance: none; padding-right: 30px;">
-                                    <option value="Disertai Pengajuan Dana">Disertai Pengajuan Dana</option>
-                                    <option value="Tanpa Pengajuan Dana">Tanpa Pengajuan Dana</option>
-                                </select>
-                                <!-- Icon panah bawah -->
-                                <span class="dropdown-icon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none;">
-                                    <i class="fas fa-chevron-down" style="color: #999;"></i>
-                                </span>
-                            </div>
-                        </div>                         --}}
                         <div class="form-group">
                             <label for="hal"><strong>Hal</strong></label>
                             <input type="text" name="hal" id="hal" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="soft_file"><strong>Upload Soft File (PDF)</strong></label>
-                            <input type="file" name="soft_file" id="soft_file" class="form-control-file" accept=".pdf" required>
+                            <label for="soft_file"><strong>Upload Soft File</strong></label>
+                            <input type="file" name="soft_file[]" id="soft_file" class="form-control-file" multiple>
+                        </div>                        
+                        <div class="form-group">
+                            <label for="file_link"><strong>Atau Masukkan Link</strong> (jika tidak ingin upload file)</label>
+                            <input type="url" name="file_link" id="file_link" class="form-control" placeholder="Masukkan URL file">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -116,11 +107,37 @@
 
                     <td>
                         @if ($p->soft_file)
-                            <a href="{{ asset('storage/' . $p->soft_file) }}" target="_blank" style="color: #2980B9; text-decoration: none;">
-                                <i class="fas fa-file-pdf"></i> Lihat PDF
-                            </a>
-                        @else
-                            <span style="color: #7f8c8d;">Tidak ada</span>
+                            @php
+                                $files = json_decode($p->soft_file, true) ?? []; // Jika null, set sebagai array kosong
+                            @endphp
+
+                            @if (count($files) == 1)
+                                <div class="mt-0">
+                                    <a href="{{ asset('storage/' . $files[0]) }}" class="btn-sm btn-info" download>
+                                        <i class="fas fa-download"></i> Download File
+                                    </a>
+                                </div>
+                            @elseif (count($files) > 1)
+                                <div class="mt-0">
+                                    <a href="{{ route('pemohon.proposals.downloadZip', $p->id) }}" class="btn-sm btn-info">
+                                        <i class="fas fa-file-archive"></i> Download ZIP
+                                    </a>
+                                </div>
+                            @endif
+                        @endif
+
+                        @if ($p->soft_file_link)
+                            <div class="mt-3">
+                                <p>Link Terkait Dokumen:
+                                    <a href="{{ $p->soft_file_link }}" target="_blank">
+                                        {{ $p->soft_file_link }}
+                                    </a>
+                                </p>
+                            </div>
+                        @endif
+
+                        @if (!$p->soft_file && !$p->soft_file_link)
+                            <p class="text-muted">Tidak ada file atau link yang diunggah.</p>
                         @endif
                     </td>
                     <td class="d-flex">
@@ -230,6 +247,70 @@
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Button Edit -->
+                        <a href="#" data-toggle="modal" data-target="#editModal{{ $p->id }}" class="btn btn-outline-warning btn-sm mr-1">
+                            <i class="fas fa-edit"></i>
+                        </a>
+
+                        <!-- Modal Edit Proposal -->
+                        <div class="modal fade" id="editModal{{ $p->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ $p->id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content shadow-sm">
+                                    <div class="modal-header" style="background-color: #FFC107; color: black;">
+                                        <h5 class="modal-title" id="editModalLabel{{ $p->id }}">Edit Proposal</h5>
+                                        <button type="button" class="close text-black" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form action="{{ route('pemohon.proposals.update', $p->id) }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="modal-body" style="font-size: 15px;">
+                                            <div class="form-group">
+                                                <label for="tanggal_surat"><strong>Tanggal Surat</strong></label>
+                                                <input type="date" name="tanggal_surat" id="tanggal_surat" class="form-control" value="{{ $p->tanggal_surat }}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="asal_surat"><strong>Asal Surat</strong></label>
+                                                <input type="text" name="asal_surat" id="asal_surat" class="form-control" value="{{ $p->asal_surat }}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="hal"><strong>Hal</strong></label>
+                                                <input type="text" name="hal" id="hal" class="form-control" value="{{ $p->hal }}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="soft_file"><strong>Upload Soft File</strong></label>
+                                                <input type="file" name="soft_file[]" id="soft_file" class="form-control-file" multiple>
+                                                <small class="text-muted">File sebelumnya: 
+                                                    @if ($p->soft_file)
+                                                        @php
+                                                            $files = json_decode($p->soft_file, true); // Pastikan ini array
+                                                        @endphp
+                                                
+                                                        @if (count($files) == 1)
+                                                            <a href="{{ asset('storage/'.$files[0]) }}" target="_blank">📂 Lihat File</a>
+                                                        @elseif (count($files) > 1)
+                                                            <a href="{{ route('pemohon.proposals.downloadZip', $p->id) }}">📁 Download ZIP</a>
+                                                        @endif
+                                                    @else
+                                                        Tidak ada file
+                                                    @endif
+                                                </small>                                                
+                                            </div>                        
+                                            <div class="form-group">
+                                                <label for="file_link"><strong>Atau Masukkan Link</strong> (jika tidak ingin upload file)</label>
+                                                <input type="url" name="file_link" id="file_link" class="form-control" placeholder="Masukkan URL file" value="{{ $p->soft_file_link }}">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>

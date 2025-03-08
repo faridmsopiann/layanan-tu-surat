@@ -60,6 +60,7 @@ class DisposisiController extends Controller
 
         $modal_kabag_tu = ModalDisposisi::where('proposal_id', $proposal->id)
             ->where('tujuan', 'Kabag TU')
+            ->where('status', 'Diproses')
             ->first();
 
         $tuUser = '';
@@ -95,47 +96,24 @@ class DisposisiController extends Controller
                 'keterangan' => $request->pesan_disposisi,
             ]);
 
-            if ($request->disposisi == 'Keuangan') {
+            if ($request->disposisi == 'Staff TU') {
+                $proposal->update([
+                    'dari' => $request->dari,
+                    'tujuan_disposisi' => 'Staff Tata Usaha',
+                    'pesan_disposisi' => $request->pesan_disposisi,
+                    'status_disposisi' => 'Selesai',
+                ]);
+
                 ModalDisposisi::create([
                     'proposal_id' => $proposal->id,
-                    'tujuan' => $request->disposisi,
-                    'status' => 'Diproses',
-                    'tanggal_diterima' => now()->format('Y-m-d H:i:s'),
-                    'tanggal_proses' => null,
-                    'diverifikasi_oleh' => null,
-                    'keterangan' => null,
+                    'tujuan' => 'Staff TU',
+                    'status' => 'Disetujui',
+                    'tanggal_diterima' => now(),
+                    'tanggal_proses' => now(),
+                    'diverifikasi_oleh' => 'Susi Sundari. SE',
+                    'keterangan' => 'Selesai',
                 ]);
-            } elseif ($request->disposisi == 'Akademik') {
-                ModalDisposisi::create([
-                    'proposal_id' => $proposal->id,
-                    'tujuan' => $request->disposisi,
-                    'status' => 'Diproses',
-                    'tanggal_diterima' => now()->format('Y-m-d H:i:s'),
-                    'tanggal_proses' => null,
-                    'diverifikasi_oleh' => null,
-                    'keterangan' => null,
-                ]);
-            } elseif ($request->disposisi == 'Umum') {
-                ModalDisposisi::create([
-                    'proposal_id' => $proposal->id,
-                    'tujuan' => $request->disposisi,
-                    'status' => 'Diproses',
-                    'tanggal_diterima' => now()->format('Y-m-d H:i:s'),
-                    'tanggal_proses' => null,
-                    'diverifikasi_oleh' => null,
-                    'keterangan' => null,
-                ]);
-            } elseif ($request->disposisi == 'Perpus') {
-                ModalDisposisi::create([
-                    'proposal_id' => $proposal->id,
-                    'tujuan' => $request->disposisi,
-                    'status' => 'Diproses',
-                    'tanggal_diterima' => now()->format('Y-m-d H:i:s'),
-                    'tanggal_proses' => null,
-                    'diverifikasi_oleh' => null,
-                    'keterangan' => null,
-                ]);
-            } elseif ($request->disposisi == 'Prodi') {
+            } else {
                 ModalDisposisi::create([
                     'proposal_id' => $proposal->id,
                     'tujuan' => $request->disposisi,
@@ -242,6 +220,18 @@ class DisposisiController extends Controller
             return 'Menunggu Approval Prodi';
         } elseif ($tujuan == 'Dekan') {
             return 'Menunggu Approval Dekan';
+        } elseif ($tujuan == 'Kabag TU') {
+            return 'Menunggu Approval Kabag';
+        } elseif ($tujuan == 'Wadek Akademik') {
+            return 'Menunggu Approval Wadek Akademik';
+        } elseif ($tujuan == 'Wadek Kemahasiswaan') {
+            return 'Menunggu Approval Wadek Kemahasiswaan';
+        } elseif ($tujuan == 'Wadek Administrasi Umum') {
+            return 'Menunggu Approval Wadek Administrasi Umum';
+        } elseif ($tujuan == 'PLT') {
+            return 'Menunggu Approval PLT';
+        } elseif ($tujuan == 'Staff TU') {
+            return 'Selesai';
         }
     }
 }

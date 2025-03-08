@@ -119,6 +119,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/pemohon/proposals', [PengajuanSuratController::class, 'store'])->name('pemohon.proposals.store');
         Route::delete('/pemohon/proposals/{id}', [PengajuanSuratController::class, 'destroy'])->name('pemohon.proposals.destroy');
         Route::get('/pemohon/proposals/{id}', [PengajuanSuratController::class, 'show'])->name('pemohon.proposals.show');
+        Route::put('/pemohon/proposal/update/{id}', [PengajuanSuratController::class, 'update'])->name('pemohon.proposals.update');
+        Route::get('/pemohon/proposal/{id}/download-zip', [PengajuanSuratController::class, 'downloadZip'])->name('pemohon.proposals.downloadZip');
     });
 
     Route::middleware(['auth', 'role:tu'])->group(function () {
@@ -134,6 +136,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/tu/proposal/{proposal}/edit', [PengajuanProposalController::class, 'edit'])->name('tu.proposals.edit');
         Route::put('/tu/proposal/{proposal}', [PengajuanProposalController::class, 'update'])->name('tu.proposals.update');
         Route::delete('/tu/proposal/{proposal}', [PengajuanProposalController::class, 'destroy'])->name('tu.proposals.destroy');
+        Route::get('/tu/proposal/{id}/download-zip', [PengajuanProposalController::class, 'downloadZip'])->name('tu.proposals.downloadZip');
 
         // Route untuk fitur Disposisi Proposal
         Route::get('/tu/disposisi-proposal', [DisposisiController::class, 'index'])->name('tu.disposisi.index');
@@ -163,6 +166,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/dekan/disposisi/{proposal}', [DekanDisposisiController::class, 'updateDisposisi'])->name('disposisi.updateDisposisi');
         Route::get('/dekan/disposisi/{id}/reject', [DekanDisposisiController::class, 'reject'])->name('disposisi.reject');
         Route::put('/dekan/disposisi/{proposal}/reject', [DekanDisposisiController::class, 'updateReject'])->name('disposisi.updateReject');
+        Route::get('/dekan/proposal/{id}/download-zip', [DekanDisposisiController::class, 'downloadZip'])->name('dekan.proposals.downloadZip');
     });
 
     Route::middleware(['auth', 'role:PLT'])->group(function () {
@@ -174,6 +178,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/plt/disposisi/{proposal}', [PltDisposisiController::class, 'updateDisposisi'])->name('plt.disposisi.updateDisposisi');
         Route::get('/plt/disposisi/{id}/reject', [PltDisposisiController::class, 'reject'])->name('plt.disposisi.reject');
         Route::put('/plt/disposisi/{proposal}/reject', [PltDisposisiController::class, 'updateReject'])->name('plt.disposisi.updateReject');
+        Route::get('/plt/proposal/{id}/download-zip', [PltDisposisiController::class, 'downloadZip'])->name('plt.proposals.downloadZip');
     });
 
     Route::middleware(['auth', 'role:akademik'])->group(function () {
@@ -185,6 +190,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/akademik/disposisi/{proposal}', [AkademikDisposisiController::class, 'updateDisposisi'])->name('akademik.disposisi.updateDisposisi');
         Route::get('/akademik/disposisi/{id}/reject', [AkademikDisposisiController::class, 'reject'])->name('akademik.disposisi.reject');
         Route::put('/akademik/disposisi/{proposal}/reject', [AkademikDisposisiController::class, 'updateReject'])->name('akademik.disposisi.updateReject');
+        Route::get('/akademik/proposal/{id}/download-zip', [AkademikDisposisiController::class, 'downloadZip'])->name('akademik.proposals.downloadZip');
     });
 
     Route::middleware(['auth', 'role:umum'])->group(function () {
@@ -196,6 +202,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/umum/disposisi/{proposal}', [UmumDisposisiController::class, 'updateDisposisi'])->name('umum.disposisi.updateDisposisi');
         Route::get('/umum/disposisi/{id}/reject', [UmumDisposisiController::class, 'reject'])->name('umum.disposisi.reject');
         Route::put('/umum/disposisi/{proposal}/reject', [UmumDisposisiController::class, 'updateReject'])->name('umum.disposisi.updateReject');
+        Route::get('/umum/proposal/{id}/download-zip', [UmumDisposisiController::class, 'downloadZip'])->name('umum.proposals.downloadZip');
     });
 
     Route::middleware(['auth', 'role:perpus'])->group(function () {
@@ -207,6 +214,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/perpus/disposisi/{proposal}', [PerpusDisposisiController::class, 'updateDisposisi'])->name('perpus.disposisi.updateDisposisi');
         Route::get('/perpus/disposisi/{id}/reject', [PerpusDisposisiController::class, 'reject'])->name('perpus.disposisi.reject');
         Route::put('/perpus/disposisi/{proposal}/reject', [PerpusDisposisiController::class, 'updateReject'])->name('perpus.disposisi.updateReject');
+        Route::get('/perpus/proposal/{id}/download-zip', [PerpusDisposisiController::class, 'downloadZip'])->name('perpus.proposals.downloadZip');
     });
 
     Route::middleware(['auth', 'role:prodi'])->group(function () {
@@ -218,6 +226,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/prodi/disposisi/{proposal}', [ProdiDisposisiController::class, 'updateDisposisi'])->name('prodi.disposisi.updateDisposisi');
         Route::get('/prodi/disposisi/{id}/reject', [ProdiDisposisiController::class, 'reject'])->name('prodi.disposisi.reject');
         Route::put('/prodi/disposisi/{proposal}/reject', [ProdiDisposisiController::class, 'updateReject'])->name('prodi.disposisi.updateReject');
+        Route::get('/prodi/proposal/{id}/download-zip', [ProdiDisposisiController::class, 'downloadZip'])->name('prodi.proposals.downloadZip');
     });
 
     Route::middleware(['auth', 'role:keuangan'])->group(function () {
@@ -230,6 +239,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/keuangan/disposisi/{proposal}', [KeuanganDisposisiController::class, 'updateDisposisi'])->name('keuangan.disposisi.updateDisposisi');
         Route::get('/keuangan/disposisi/{id}/reject', [KeuanganDisposisiController::class, 'reject'])->name('keuangan.disposisi.reject');
         Route::put('/keuangan/disposisi/{proposal}/reject', [KeuanganDisposisiController::class, 'updateReject'])->name('keuangan.disposisi.updateReject');
+        Route::get('/keuangan/proposal/{id}/download-zip', [KeuanganDisposisiController::class, 'downloadZip'])->name('keuangan.proposals.downloadZip');
     });
 });
 

@@ -42,11 +42,37 @@
                     <td class="text-sm">{{ $proposal->pemohon->name }}</td>
                     <td>
                         @if ($proposal->soft_file)
-                            <a href="{{ asset('storage/' . $proposal->soft_file) }}" style="color: #2980B9;" target="_blank">
-                                <i class="fas fa-file-pdf"></i> Lihat PDF
-                            </a>
-                        @else
-                            <span>Tidak ada</span>
+                            @php
+                                $files = json_decode($proposal->soft_file, true);
+                            @endphp
+
+                            @if (count($files) == 1)
+                                <div class="mt-0">
+                                    <a href="{{ asset('storage/' . $files[0]) }}" class="btn-sm btn-info" download>
+                                        <i class="fas fa-download"></i> Download File
+                                    </a>
+                                </div>
+                            @elseif (count($files) > 1)
+                                <div class="mt-0">
+                                    <a href="{{ route('tu.proposals.downloadZip', $proposal->id) }}" class="btn-sm btn-info">
+                                        <i class="fas fa-file-archive"></i> Download ZIP
+                                    </a>
+                                </div>
+                            @endif
+                        @endif
+
+                        @if ($proposal->soft_file_link)
+                            <div class="mt-3">
+                                <p>Link Terkait Dokumen:
+                                    <a href="{{ $proposal->soft_file_link }}" target="_blank">
+                                        {{ $proposal->soft_file_link }}
+                                    </a>
+                                </p>
+                            </div>
+                        @endif
+
+                        @if (!$proposal->soft_file && !$proposal->soft_file_link)
+                            <p class="text-muted">Tidak ada file atau link yang diunggah.</p>
                         @endif
                     </td>
                     <td class="text-sm">{{ $proposal->nomor_agenda }}</td>
@@ -201,7 +227,7 @@
                         @if($proposal->status_disposisi !== 'Ditolak' && $proposal->status_disposisi !== 'Selesai')
                             <!-- Tombol Edit -->
                             <button class="btn btn-outline-warning btn-sm mr-1" data-toggle="modal" data-target="#editProposalModal-{{ $proposal->id }}">
-                                <i class="fas fa-user-edit"></i>
+                                <i class="fas fa-edit"></i>
                             </button>
                         @endif
     
@@ -209,7 +235,7 @@
                         <div class="modal fade" id="editProposalModal-{{ $proposal->id }}" tabindex="-1" aria-labelledby="editProposalModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
-                                    <div class="modal-header" style="background-color: #2C3E50; color: white;">
+                                    <div class="modal-header" style="background-color: #FFC107; color: white;">
                                         <h5 class="modal-title" id="editProposalModalLabel">Edit Proposal</h5>
                                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>

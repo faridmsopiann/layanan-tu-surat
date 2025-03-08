@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ModalDisposisi;
 use App\Models\Proposal;
 use Illuminate\Http\Request;
+use ZipArchive;
 
 class PengajuanProposalController extends Controller
 {
@@ -23,6 +24,33 @@ class PengajuanProposalController extends Controller
     public function create()
     {
         return view('tu.proposals.create');
+    }
+
+    public function downloadZip($id)
+    {
+        $proposal = Proposal::findOrFail($id);
+        $files = json_decode($proposal->soft_file, true);
+
+        if (!$files || count($files) == 0) {
+            return redirect()->back()->withErrors(['error' => 'Tidak ada file untuk diunduh.']);
+        }
+
+        // Buat nama file ZIP
+        $zipFileName = 'proposal_' . $proposal->id . '.zip';
+        $zipPath = storage_path('app/public/proposals/' . $zipFileName);
+
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+            foreach ($files as $file) {
+                $filePath = storage_path('app/public/' . $file);
+                if (file_exists($filePath)) {
+                    $zip->addFile($filePath, basename($file));
+                }
+            }
+            $zip->close();
+        }
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 
     // Menyimpan proposal baru ke database

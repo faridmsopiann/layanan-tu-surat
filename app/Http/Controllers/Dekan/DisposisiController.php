@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ModalDisposisi;
 use App\Models\Proposal;
 use Illuminate\Http\Request;
+use ZipArchive;
 
 class DisposisiController extends Controller
 {
@@ -16,6 +17,33 @@ class DisposisiController extends Controller
             ->orWhereIn('tujuan_disposisi', ['Dekan', 'Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum'])
             ->paginate(5);
         return view('dekan.disposisi.index', compact('proposals'));
+    }
+
+    public function downloadZip($id)
+    {
+        $proposal = Proposal::findOrFail($id);
+        $files = json_decode($proposal->soft_file, true);
+
+        if (!$files || count($files) == 0) {
+            return redirect()->back()->withErrors(['error' => 'Tidak ada file untuk diunduh.']);
+        }
+
+        // Buat nama file ZIP
+        $zipFileName = 'proposal_' . $proposal->id . '.zip';
+        $zipPath = storage_path('app/public/proposals/' . $zipFileName);
+
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+            foreach ($files as $file) {
+                $filePath = storage_path('app/public/' . $file);
+                if (file_exists($filePath)) {
+                    $zip->addFile($filePath, basename($file));
+                }
+            }
+            $zip->close();
+        }
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 
     // Menampilkan form disposisi untuk proposal
@@ -40,16 +68,7 @@ class DisposisiController extends Controller
             'dari' => 'required|string',
         ]);
 
-        $status_disposisi = '';
-        if ($request->disposisi == 'PLT') {
-            $status_disposisi = 'Menunggu Approval PLT';
-        } elseif (in_array($request->disposisi, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum'])) {
-            $status_disposisi = 'Menunggu Approval ' . $request->disposisi;
-        } elseif ($request->disposisi == 'Prodi') {
-            $status_disposisi = 'Menunggu Approval Prodi';
-        } elseif ($request->disposisi == 'Kabag TU') {
-            $status_disposisi = 'Menunggu Approval Kabag';
-        }
+        $status_disposisi = $this->getStatusDisposisi($request->disposisi);
 
         // Update status dan tujuan disposisi ke Wadek
         $proposal->update([
@@ -65,11 +84,13 @@ class DisposisiController extends Controller
             // Ambil modal_disposisi yang terkait dengan proposal
             $modal = ModalDisposisi::where('proposal_id', $proposal->id)
                 ->where('tujuan', 'Dekan')
+                ->where('status', 'Diproses')
                 ->first();
             $dekanUser = 'Husni Teja Sukmana, ST., M.Sc., Ph.D';
         } elseif (in_array($request->dari, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum'])) {
             $modal = ModalDisposisi::where('proposal_id', $proposal->id)
                 ->whereIn('tujuan', ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum'])
+                ->where('status', 'Diproses')
                 ->first();
             if ($request->dari == 'Wadek Akademik') {
                 $dekanUser = 'Dr. LA Ode Sumarlin, M.Si';
@@ -89,15 +110,34 @@ class DisposisiController extends Controller
             'keterangan' => $request->pesan_disposisi,  // Pesan dari request
         ]);
 
-        ModalDisposisi::create([
-            'proposal_id' => $proposal->id,
-            'tujuan' => $request->disposisi,
-            'status' => 'Diproses',
-            'tanggal_diterima' => now()->format('Y-m-d H:i:s'),
-            'tanggal_proses' => null,
-            'diverifikasi_oleh' => null,
-            'keterangan' => null,
-        ]);
+        if ($request->disposisi == 'Staff TU') {
+            $proposal->update([
+                'dari' => $request->dari,
+                'tujuan_disposisi' => 'Staff Tata Usaha',
+                'pesan_disposisi' => $request->pesan_disposisi,
+                'status_disposisi' => 'Selesai',
+            ]);
+
+            ModalDisposisi::create([
+                'proposal_id' => $proposal->id,
+                'tujuan' => 'Staff TU',
+                'status' => 'Disetujui',
+                'tanggal_diterima' => now(),
+                'tanggal_proses' => now(),
+                'diverifikasi_oleh' => 'Susi Sundari. SE',
+                'keterangan' => 'Selesai',
+            ]);
+        } else {
+            ModalDisposisi::create([
+                'proposal_id' => $proposal->id,
+                'tujuan' => $request->disposisi,
+                'status' => 'Diproses',
+                'tanggal_diterima' => now()->format('Y-m-d H:i:s'),
+                'tanggal_proses' => null,
+                'diverifikasi_oleh' => null,
+                'keterangan' => null,
+            ]);
+        }
 
         return redirect()->route('disposisi.index')->with('success', 'Proposal berhasil didisposisi.');
     }
@@ -160,5 +200,35 @@ class DisposisiController extends Controller
         ]);
 
         return redirect()->route('disposisi.index')->with('success', 'Proposal berhasil ditolak.');
+    }
+
+    private function getStatusDisposisi($tujuan)
+    {
+        // Status disposisi untuk Keuangan
+        if ($tujuan == 'Keuangan') {
+            return 'Menunggu Approval Keuangan';
+        } elseif ($tujuan == 'Umum') {
+            return 'Menunggu Approval Umum';
+        } elseif ($tujuan == 'Akademik') {
+            return 'Menunggu Approval Akademik';
+        } elseif ($tujuan == 'Perpus') {
+            return 'Menunggu Approval Perpus';
+        } elseif ($tujuan == 'Prodi') {
+            return 'Menunggu Approval Prodi';
+        } elseif ($tujuan == 'Dekan') {
+            return 'Menunggu Approval Dekan';
+        } elseif ($tujuan == 'Wadek Akademik') {
+            return 'Menunggu Approval Wadek Akademik';
+        } elseif ($tujuan == 'Wadek Kemahasiswaan') {
+            return 'Menunggu Approval Wadek Kemahasiswaan';
+        } elseif ($tujuan == 'Wadek Administrasi Umum') {
+            return 'Menunggu Approval Wadek Administrasi Umum';
+        } elseif ($tujuan == 'Kabag TU') {
+            return 'Menunggu Approval Kabag';
+        } elseif ($tujuan == 'PLT') {
+            return 'Menunggu Approval PLT';
+        } elseif ($tujuan == 'Staff TU') {
+            return 'Selesai';
+        }
     }
 }

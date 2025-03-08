@@ -12,7 +12,7 @@ class UmumController extends Controller
     {
 
         // Menghitung proposal dengan status_disposisi selain 'Selesai' atau 'Ditolak'
-        $pendingApprovals = Proposal::where('status_disposisi', 'Menunggu Approval Prodi')
+        $pendingApprovals = Proposal::where('status_disposisi', 'Menunggu Approval Umum')
             ->count();
 
         // Mengirim data ke view

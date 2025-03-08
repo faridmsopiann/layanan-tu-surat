@@ -28,6 +28,7 @@ class Proposal extends Model
         'alasan_penolakan',
         'pemohon_id',
         'soft_file',
+        'soft_file_link',
     ];
 
     // Di dalam model Proposal (app/Models/Proposal.php)

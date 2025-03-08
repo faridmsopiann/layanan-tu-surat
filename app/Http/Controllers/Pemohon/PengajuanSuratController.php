@@ -9,6 +9,7 @@ use App\Models\PengajuanSurat;
 use App\Models\Proposal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use ZipArchive;
 
 class PengajuanSuratController extends Controller
 {
@@ -30,6 +31,33 @@ class PengajuanSuratController extends Controller
         return view('pemohon.proposals.create');
     }
 
+    public function downloadZip($id)
+    {
+        $proposal = Proposal::findOrFail($id);
+        $files = json_decode($proposal->soft_file, true);
+
+        if (!$files || count($files) == 0) {
+            return redirect()->back()->withErrors(['error' => 'Tidak ada file untuk diunduh.']);
+        }
+
+        // Buat nama file ZIP
+        $zipFileName = 'proposal_' . $proposal->id . '.zip';
+        $zipPath = storage_path('app/public/proposals/' . $zipFileName);
+
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+            foreach ($files as $file) {
+                $filePath = storage_path('app/public/' . $file);
+                if (file_exists($filePath)) {
+                    $zip->addFile($filePath, basename($file));
+                }
+            }
+            $zip->close();
+        }
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
+    }
+
     // Simpan pengajuan surat
     public function store(Request $request)
     {
@@ -37,21 +65,18 @@ class PengajuanSuratController extends Controller
             'tanggal_surat' => 'required|date',
             'asal_surat' => 'required|string',
             'hal' => 'required|string',
-            'soft_file' => 'nullable|mimes:pdf', // Validasi tipe file tanpa batasan ukuran
+            'soft_file.*' => 'nullable|file|max:10240', // Bisa lebih dari satu file (10 MB per file)
+            'file_link' => 'nullable|url', // Validasi link jika diisi
         ]);
 
-        // Cek apakah ada file yang di-upload
+        $softFilePaths = [];
+        $softFileLink = $request->input('file_link'); // Simpan link jika ada
+
         if ($request->hasFile('soft_file')) {
-            $file = $request->file('soft_file');
-
-            // Validasi ukuran file
-            if ($file->getSize() > 10485760) { // 300 KB = 307200 bytes
-                return redirect()->back()->withErrors(['soft_file' => 'Ukuran file tidak boleh lebih dari 10 MB.'])->withInput();
+            foreach ($request->file('soft_file') as $file) {
+                $path = $file->store('proposals', 'public'); // Simpan file ke storage
+                $softFilePaths[] = $path;
             }
-
-            $filePath = $file->store('proposals', 'public'); // Simpan file yang valid ke storage
-        } else {
-            $filePath = null; // Tidak ada file yang diunggah
         }
 
         // Ambil tahun dan bulan dari tanggal saat ini
@@ -66,14 +91,12 @@ class PengajuanSuratController extends Controller
             ->first();
 
         $increment = 1;
-
         if ($lastProposal) {
-            // Jika ada proposal sebelumnya, ambil nomor urut terakhir dan tambahkan 1
             $lastKode = substr($lastProposal->kode_pengajuan, -4);
             $increment = (int)$lastKode + 1;
         }
 
-        // Format kode_pengajuan (misal: P2024211001)
+        // Format kode_pengajuan (misal: P2024311001)
         $kodePengajuan = 'P' . $tahun . $bulan . str_pad($increment, 4, '0', STR_PAD_LEFT);
 
         // Hitung jumlah proposal dalam tahun ini yang tidak dihapus (soft delete)
@@ -81,15 +104,14 @@ class PengajuanSuratController extends Controller
             ->whereYear('created_at', $tahun)
             ->count() + 1;
 
-
         $proposal = Proposal::create([
             'pemohon_id' => auth()->id(),
             'tanggal_surat' => $request->tanggal_surat,
             'asal_surat' => $request->asal_surat,
             'hal' => $request->hal,
             'kode_pengajuan' => $kodePengajuan,
-            // 'jenis_proposal' => $request->jenis_proposal,
-            'soft_file' => $filePath,
+            'soft_file' => count($softFilePaths) > 0 ? json_encode($softFilePaths) : null,
+            'soft_file_link' => $softFileLink,
             'nomor_agenda' => $nomorAgenda,
         ]);
 
@@ -106,6 +128,36 @@ class PengajuanSuratController extends Controller
         return redirect()->route('pemohon.proposals.index')->with('success', 'Pengajuan surat berhasil ditambahkan.');
     }
 
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'tanggal_surat' => 'required|date',
+            'asal_surat' => 'required|string',
+            'hal' => 'required|string',
+            'soft_file.*' => 'nullable|file|max:10240',
+            'file_link' => 'nullable|url',
+        ]);
+
+        $proposal = Proposal::findOrFail($id);
+
+        if ($request->hasFile('soft_file')) {
+            $filePaths = [];
+            foreach ($request->file('soft_file') as $file) {
+                $filePaths[] = $file->store('proposals', 'public');
+            }
+            $proposal->soft_file = json_encode($filePaths); // Simpan dalam format JSON
+        }
+
+        $proposal->update([
+            'tanggal_surat' => $request->tanggal_surat,
+            'asal_surat' => $request->asal_surat,
+            'hal' => $request->hal,
+            'soft_file_link' => $request->file_link,
+        ]);
+
+        return redirect()->back()->with('success', 'Proposal berhasil diperbarui.');
+    }
 
 
     // Hapus pengajuan surat
