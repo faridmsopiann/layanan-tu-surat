@@ -66,6 +66,15 @@
                 </a>
             </div>
 
+            <!-- Tombol Login dengan Google -->
+            <div class="mt-4 text-center">
+                <a href="{{ route('auth.google') }}" class="btn-google-login">
+                    <img src="https://www.gstatic.com/marketing-cms/assets/images/d5/dc/cfe9ce8b4425b410b49b7f2dd3f3/g.webp=s96-fcrop64=1,00000000ffffffff-rw" 
+                        alt="Google Logo" class="google-icon">
+                    Login dengan Google
+                </a>
+            </div>
+
             <div class="mt-4 border-t pt-4 text-center">
                 @if (Route::has('register'))
                     <p class="text-sm text-gray-600">
@@ -81,6 +90,35 @@
 </x-guest-layout>
 
 <style>
+/* Tombol Google Login */
+.btn-google-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px;
+    background-color: white;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #3c4043;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    gap: 10px;
+}
+
+.btn-google-login:hover {
+    background-color: #f9fafb;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Ukuran Logo Google */
+.google-icon {
+    width: 24px;
+    height: 24px;
+}
     /* General Styles */
     body {
         background-color: #f0f4f8;
