@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container pb-4 mb-4" style="font-family: 'Roboto', sans-serif;">
-    <h2 class="mt-4" style="font-weight: 700; color: #2C3E50;">Arsip Surat</h2>
+    <h2 class="pt-4" style="font-weight: 700; color: #2C3E50;">Arsip Surat</h2>
 
     @if($arsipProposals->isEmpty())
         <form method="GET" action="{{ route('tu.arsip.index') }}" class="p-2 rounded shadow-sm bg-info">
