@@ -5,11 +5,11 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 
                 <li class="nav-item">
-                    <a href="{{ route('keuangan.dashboard') }}" class="brand-link logo-switch" style="display: flex; align-items: center;">
+                    <a href="{{ route('keuangan.dashboard') }}" class="brand-link logo-switch">
                         <!-- Logo kecil untuk sidebar collapsed -->
-                        <img src="{{ asset('images/uinxs.png') }}" alt="Logo UIN XS" class="logo-xs" id="small-logo" style="height: 50px; width: auto; left: 5px;">
+                        <img src="{{ asset('images/uinxs.png') }}" alt="Logo UIN XS" class="logo-xs" id="small-logo">
                         <!-- Logo besar untuk sidebar expanded -->
-                        <img src="{{ asset('images/uin.png') }}" alt="Logo UIN" id="main-logo" class="logo-xl mt-3 mb-4" style="max-width: 100%; height: auto; object-fit: contain; transform: scale(1.2); left: 5px;">
+                        <img src="{{ asset('images/uin.png') }}" alt="Logo UIN" id="main-logo" class="logo-xl mt-3 mb-4">
                     </a>
                 </li>
 
