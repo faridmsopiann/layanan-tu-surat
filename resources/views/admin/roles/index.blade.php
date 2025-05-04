@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="container mt-4" style="font-family: 'Roboto', sans-serif;">
+<div class="container pt-4" style="font-family: 'Roboto', sans-serif;">
     <h2 style="font-weight: 700; color: #2C3E50;">Manajemen Roles</h2>
 
     @if(session('success'))
