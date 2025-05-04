@@ -2,7 +2,7 @@
     <div class="auth-container">
         <!-- KIRI: Ilustrasi & Slogan -->
         <div class="auth-left">
-            <img src="{{ asset('images/layanan.gif') }}" alt="Mail Sent" class="auth-image">
+            <img src="{{ asset('images/layanan.png') }}" alt="Mail Sent" class="auth-image-small">
             <h2 class="auth-slogan">Satu Portal, Semua Layanan Surat Anda</h2>
         </div>
 
@@ -10,7 +10,7 @@
         <div class="auth-right">
             <div class="login-card">
                 <div class="login-logo">
-                    <img src="{{ asset('images/luin.png') }}" alt="Logo">
+                    <img src="{{ asset('images/fst.png') }}" alt="Logo">
                 </div>
 
                 <p class="login-title">Daftar untuk memulai</p>
@@ -100,6 +100,13 @@
         max-width: 80%;
         border-radius: 12px;
         margin-bottom: 1.5rem;
+    }
+
+    .auth-image-small {
+        width: 450px;
+        max-width: 100%;
+        height: auto;
+        margin-top: 10px;
     }
     
     .auth-slogan {
