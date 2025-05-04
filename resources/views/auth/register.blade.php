@@ -83,30 +83,32 @@
     .auth-container {
         display: flex;
         min-height: 100vh;
-        background-color: #f0f4f8;
+        background: linear-gradient(135deg, #d0e7f4, #ffffff); /* satu gradient menyatu */
     }
-    
-    .auth-left {
+    .auth-left,
+    .auth-right {
         flex: 1;
-        background: linear-gradient(135deg, #a8d0e6, #dbe9f4);
         display: flex;
         flex-direction: column;
-        align-items: center;
         justify-content: center;
-        padding: 2rem;
+        align-items: center; /* ini bikin konten di tengah secara horizontal */
+        /* padding: 2rem; */
+        background: transparent; /* hilangkan background masing-masing */
     }
-    
-    .auth-image {
-        max-width: 80%;
-        border-radius: 12px;
-        margin-bottom: 1.5rem;
+
+    .auth-left {
+       padding-left: 10rem; /* gradient untuk kiri */
+    }
+
+    .auth-right {
+       margin-right: 5rem; /* gradient untuk kiri */
     }
 
     .auth-image-small {
         width: 450px;
         max-width: 100%;
         height: auto;
-        margin-top: 10px;
+        padding-top: 0px;
     }
     
     .auth-slogan {
@@ -114,14 +116,6 @@
         color: #2c3e50;
         font-weight: 600;
         text-align: center;
-    }
-    
-    .auth-right {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
     }
     
     .login-card {
