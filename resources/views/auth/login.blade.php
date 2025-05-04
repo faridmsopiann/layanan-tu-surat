@@ -3,7 +3,7 @@
         <!-- KIRI: Ilustrasi & Slogan -->
         <div class="auth-left">
             {{-- <img src="{{ asset('images/fst.png') }}" alt="Mail Sent" class="fst-logo"> --}}
-            <img src="{{ asset('images/layanan.png') }}" alt="Mail Sent" class="auth-image-small">
+            <img src="{{ asset('images/layanan-tu.png') }}" alt="Mail Sent" class="auth-image-small">
             <h2 class="auth-slogan">Satu Portal, Semua Layanan Surat Anda</h2>
         </div>
 
