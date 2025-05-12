@@ -302,13 +302,14 @@
                                                     <!-- Perlu SK -->
                                                     <div class="mb-3">
                                                         <label class="form-label">Perlu Surat Keluar?</label>
-                                                        <select class="form-select" name="perlu_sk" x-model="perluSk">
+                                                        <select class="form-select perlu-sk-dropdown" name="perlu_sk" id="perlu_sk">
                                                             <option value="">Pilih</option>
-                                                            <option value="1">Ya</option>
-                                                            <option value="0">Tidak</option>
+                                                            <option value="1" {{ $proposal->perlu_sk == 1 ? 'selected' : '' }}>Ya</option>
+                                                            <option value="0" {{ $proposal->perlu_sk == 0 ? 'selected' : '' }}>Tidak</option>
                                                         </select>
                                                     </div>
-                                                    <div class="mb-3" x-show="perluSk == 1">
+
+                                                    <div class="mb-3 pihakPembuatSk" style="{{ $proposal->perlu_sk == 1 ? '' : 'display:none;' }}">
                                                         <label class="form-label">Pihak Pembuat Surat Keluar</label>
                                                         <select class="form-select" name="pihak_pembuat_sk">
                                                             <option value="">Pilih Pihak</option>
@@ -334,43 +335,33 @@
                                                         <input type="text" class="form-control" name="untuk" value="{{ $proposal->untuk }}" required>
                                                     </div>
 
-                                                    <div class="mb-3">
+                                                   <div class="mb-3">
                                                         <label class="form-label mb-2 fw-bold">Pihak yang terlibat Approval</label>
-                                                    
+
                                                         <div class="card border shadow-sm">
                                                             <div class="card-body px-4 py-3">
                                                                 <div class="row gx-4 gy-3">
-                                                                    @foreach (['Kabag TU','Dekan','Wadek Akademik','Wadek Kemahasiswaan','Wadek Administrasi Umum','Keuangan','Prodi Teknik Informatika', 'Prodi Agribisnis', 'Prodi Sistem Informasi', 'Prodi Matematika', 'Prodi Fisika', 'Prodi Kimia', 'Prodi Biologi', 'Prodi Teknik Pertambangan', 'PLT','Akademik','Umum','Perpus'] as $index => $pihak)
+                                                                   @foreach (['Kabag TU','Dekan','Wadek Akademik','Wadek Kemahasiswaan','Wadek Administrasi Umum','Keuangan','Prodi Teknik Informatika', 'Prodi Agribisnis', 'Prodi Sistem Informasi', 'Prodi Matematika', 'Prodi Fisika', 'Prodi Kimia', 'Prodi Biologi', 'Prodi Teknik Pertambangan', 'PLT','Akademik','Umum','Perpus'] as $index => $pihak)
                                                                         <div class="col-12 col-sm-6 col-lg-4">
-                                                                            <div class="form-check d-flex align-items-start" x-data="{ showFull: false }">
+                                                                            <div class="form-check d-flex flex-column align-items-start">
                                                                                 <input type="checkbox" 
                                                                                     class="form-check-input mt-1 me-2" 
                                                                                     id="pihak-{{ Str::slug($pihak) }}" 
-                                                                                    :checked="pihakTtd.includes('{{ $pihak }}')" 
-                                                                                    @change="if($event.target.checked){ pihakTtd.push('{{ $pihak }}') } else { pihakTtd = pihakTtd.filter(x => x !== '{{ $pihak }}') }">
-                                                    
-                                                                                <label 
-                                                                                    class="form-check-label text-truncate" 
-                                                                                    :class="{ 'text-wrap': showFull }"
-                                                                                    @click="showFull = !showFull" 
-                                                                                    for="pihak-{{ Str::slug($pihak) }}" 
-                                                                                    style="cursor: pointer; min-width: 0; max-width: 100%;" 
-                                                                                    title="{{ $pihak }}">
+                                                                                    name="pihak_ttd[]" 
+                                                                                    value="{{ $pihak }}" 
+                                                                                    {{ in_array($pihak, json_decode($proposal->pihak_ttd ?? '[]')) ? 'checked' : '' }}>
+                                                                                <div onclick="toggleText(this)" class="form-check-label text-toggle" title="{{ $pihak }}">
                                                                                     {{ $pihak }}
-                                                                                </label>
+                                                                                </div>
+                                                                                <div class="hidden-text">{{ $pihak }}</div>
                                                                             </div>
                                                                         </div>
                                                                     @endforeach
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    
-                                                        <template x-for="value in pihakTtd" :key="value">
-                                                            <input type="hidden" name="pihak_ttd[]" :value="value">
-                                                        </template>
-                                                    
-                                                        <small class="text-muted d-block mt-2">Centang pihak yang harus menandatangani. Klik teks untuk melihat seluruhnya.</small>
-                                                    </div>                                                                                         
+                                                        <small class="text-muted d-block mt-2">Centang pihak yang harus menandatangani.</small>
+                                                    </div>                                                                                      
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-primary">Simpan</button>
@@ -442,19 +433,58 @@
 
 @push('js')
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
+        // Alert
         var successAlert = document.getElementById("success-alert");
-
         if (successAlert) {
-            setTimeout(function() {
+            setTimeout(function () {
                 successAlert.classList.add("fade-out");
-                setTimeout(function() {
+                setTimeout(function () {
                     successAlert.remove();
-                }, 500); // Hapus elemen setelah animasi selesai
+                }, 500);
             }, 1000);
         }
+
+        // Toggle SK Field untuk semua modal
+        document.querySelectorAll('.perlu-sk-dropdown').forEach(function (dropdown) {
+            dropdown.addEventListener('change', function () {
+                toggleSKFields(dropdown);
+            });
+        });
+
+        // Inisialisasi toggle untuk setiap modal yang terbuka
+        document.querySelectorAll('.modal').forEach(function (modal) {
+            toggleSKFields(modal.querySelector('.perlu-sk-dropdown'));
+        });
     });
+
+    // Function untuk menutup modal tanpa memengaruhi modal lain
+    const closeModal = (modalId) => {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';  // Menyembunyikan modal
+            document.body.focus();  // Fokuskan kembali pada elemen yang semula aktif
+        }
+    };
+
+    // Function untuk toggle field berdasarkan pilihan Perlu SK
+    function toggleSKFields(element) {
+        const modal = element.closest('.modal');
+        const pihakDiv = modal.querySelector('.pihakPembuatSk');
+        
+        if (!pihakDiv) return;
+
+        const perluSkValue = element.value;  // Ambil nilai dari dropdown
+
+        // Jika perlu SK (1), tampilkan div pihakPembuatSk
+        if (perluSkValue === "1") {
+            pihakDiv.style.display = 'block';
+        } else {
+            pihakDiv.style.display = 'none';
+        }
+    }
 </script>
+
 
 <!-- Tambahkan CSS untuk transisi -->
 <style>
@@ -462,5 +492,28 @@
         opacity: 0;
         transition: opacity 0.5s ease;
     }
+
+     .text-toggle {
+        cursor: pointer;
+        max-width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: inline-block;
+    }
+    .hidden-text {
+        display: none;
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    .text-toggle.open + .hidden-text {
+        display: block;
+    }
 </style>
+
+<script>
+    function toggleText(el) {
+        el.classList.toggle('open');
+    }
+</script>
 @endpush
