@@ -23,25 +23,25 @@
                     <label for="name" class="form-label">Nama</label>
                     <div class="input-icon">
                         <input id="name" class="form-input" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-                        <i class="fas fa-user icon"></i>
+                        {{-- <i class="fas fa-user icon"></i> --}}
                     </div>
 
                     <label for="email" class="form-label">Email</label>
                     <div class="input-icon">
                         <input id="email" class="form-input" type="email" name="email" :value="old('email')" required autocomplete="username" />
-                        <i class="fas fa-envelope icon"></i>
+                        {{-- <i class="fas fa-envelope icon"></i> --}}
                     </div>
 
                     <label for="password" class="form-label">Password</label>
                     <div class="input-icon">
                         <input id="password" class="form-input" type="password" name="password" required autocomplete="new-password" />
-                        <i class="fas fa-lock icon"></i>
+                        {{-- <i class="fas fa-lock icon"></i> --}}
                     </div>
 
                     <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
                     <div class="input-icon">
                         <input id="password_confirmation" class="form-input" type="password" name="password_confirmation" required autocomplete="new-password" />
-                        <i class="fas fa-lock icon"></i>
+                        {{-- <i class="fas fa-lock icon"></i> --}}
                     </div>
 
                     @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())

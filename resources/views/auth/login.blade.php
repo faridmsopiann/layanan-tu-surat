@@ -31,13 +31,13 @@
                     <label for="email" class="form-label">Email</label>
                     <div class="input-icon">
                         <input id="email" class="form-input" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-                        <i class="fas fa-envelope icon"></i>
+                        {{-- <i class="fas fa-envelope icon"></i> --}}
                     </div>
 
                     <label for="password" class="form-label">Password</label>
                     <div class="input-icon">
                         <input id="password" class="form-input" type="password" name="password" required autocomplete="current-password" />
-                        <i class="fas fa-lock icon"></i>
+                        {{-- <i class="fas fa-lock icon"></i> --}}
                     </div>
 
                     <div class="form-extra">
