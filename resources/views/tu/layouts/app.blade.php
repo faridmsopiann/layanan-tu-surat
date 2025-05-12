@@ -12,7 +12,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     @livewireStyles
-    <link rel="stylesheet" href="{{ asset('build/assets/app-2d0e2823.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('build/assets/app-2d0e2823.css') }}"> --}}
 </head>
 
 <script src="https://unpkg.com/alpinejs" defer></script>
@@ -64,7 +64,7 @@
     <script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>
     @stack('js')
     @livewireScripts
-    <script type="module" src="{{ asset('build/assets/app-f703142f.js') }}"></script>
+    {{-- <script type="module" src="{{ asset('build/assets/app-f703142f.js') }}"></script> --}}
 
     <!-- Memuat Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
