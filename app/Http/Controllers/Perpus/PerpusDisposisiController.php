@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ModalDisposisi;
 use App\Models\Proposal;
 use Illuminate\Http\Request;
+use setasign\Fpdi\Fpdi;
 use ZipArchive;
 
 class PerpusDisposisiController extends Controller
@@ -14,9 +15,28 @@ class PerpusDisposisiController extends Controller
     public function index()
     {
         $proposals = Proposal::where('status_disposisi', 'Menunggu Approval Perpus')
-            ->orWhere('tujuan_disposisi', 'Prodi')
+            ->orWhere('tujuan_disposisi', 'Perpus')
             ->paginate(5);
         return view('perpus.disposisi.index', compact('proposals'));
+    }
+
+    public function uploadSK(Request $request, $id)
+    {
+        $request->validate([
+            'soft_file_sk' => 'required|file|mimes:pdf|max:10240',
+        ]);
+
+        $proposal = Proposal::findOrFail($id);
+
+        // Simpan file
+        $path = $request->file('soft_file_sk')->store('proposals', 'public');
+
+        // Update data proposal
+        $proposal->soft_file_sk = $path;
+        $proposal->sudah_sk = true;
+        $proposal->save();
+
+        return redirect()->back()->with('success', 'Surat Keluar berhasil diupload.');
     }
 
     public function downloadZip($id)
@@ -123,28 +143,6 @@ class PerpusDisposisiController extends Controller
             ]);
         }
 
-        // if ($request->disposisi == 'Keuangan') {
-        //     ModalDisposisi::create([
-        //         'proposal_id' => $proposal->id,
-        //         'tujuan' => $request->disposisi,
-        //         'status' => 'Diproses',
-        //         'tanggal_diterima' => now(),
-        //         'tanggal_proses' => null,
-        //         'diverifikasi_oleh' => null,
-        //         'keterangan' => null,
-        //     ]);
-        // } else {
-        //     ModalDisposisi::create([
-        //         'proposal_id' => $proposal->id,
-        //         'tujuan' => 'Staff TU',
-        //         'status' => 'Disetujui',
-        //         'tanggal_diterima' => now(),
-        //         'tanggal_proses' => now(),
-        //         'diverifikasi_oleh' => 'Bu Susi',
-        //         'keterangan' => 'Selesai',
-        //     ]);
-        // }
-
         return redirect()->route('perpus.disposisi.index')->with('success', 'Proposal berhasil didisposisi.');
     }
 
@@ -201,8 +199,8 @@ class PerpusDisposisiController extends Controller
             return 'Menunggu Approval Akademik';
         } elseif ($tujuan == 'Perpus') {
             return 'Menunggu Approval Perpus';
-        } elseif ($tujuan == 'Prodi') {
-            return 'Menunggu Approval Prodi';
+        } elseif ($tujuan == 'Prodi Teknik Informatika') {
+            return 'Menunggu Approval Prodi Teknik Informatika';
         } elseif ($tujuan == 'Dekan') {
             return 'Menunggu Approval Dekan';
         } elseif ($tujuan == 'Kabag TU') {

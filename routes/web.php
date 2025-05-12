@@ -3,30 +3,72 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Akademik\AkademikController;
 use App\Http\Controllers\Akademik\AkademikDisposisiController;
-use App\Http\Controllers\ArsipSuratController;
+use App\Http\Controllers\Akademik\ArsipSuratAkademikController;
+use App\Http\Controllers\Akademik\MonitoringAkademikController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Dekan\ArsipSuratDekanController;
 use App\Http\Controllers\Dekan\DekanController;
 use App\Http\Controllers\Dekan\DisposisiController as DekanDisposisiController;
 use App\Http\Controllers\Dekan\MonitoringController;
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\Keuangan\ArsipSuratKeuanganController;
 use App\Http\Controllers\Keuangan\KeuanganController;
 use App\Http\Controllers\Keuangan\KeuanganDisposisiController;
-use App\Http\Controllers\Keuangan\MonitoringController as KeuanganMonitoringController;
+use App\Http\Controllers\Keuangan\MonitoringKeuanganController;
 use App\Http\Controllers\Pemohon\PemohonController;
 use App\Http\Controllers\Pemohon\PengajuanSuratController;
+use App\Http\Controllers\Perpus\ArsipSuratPerpusController;
+use App\Http\Controllers\Perpus\MonitoringPerpusController;
 use App\Http\Controllers\Perpus\PerpusController;
 use App\Http\Controllers\Perpus\PerpusDisposisiController;
+use App\Http\Controllers\Plt\ArsipSuratPltController;
+use App\Http\Controllers\Plt\MonitoringPltController;
 use App\Http\Controllers\Plt\PltController;
 use App\Http\Controllers\Plt\PltDisposisiController;
-use App\Http\Controllers\Prodi\ProdiController;
-use App\Http\Controllers\Prodi\ProdiDisposisiController;
+use App\Http\Controllers\ProdiAgribisnis\ArsipSuratProdiAgribisnisController;
+use App\Http\Controllers\ProdiAgribisnis\MonitoringProdiAgribisnisController;
+use App\Http\Controllers\ProdiAgribisnis\ProdiAgribisnisController;
+use App\Http\Controllers\ProdiAgribisnis\ProdiAgribisnisDisposisiController;
+use App\Http\Controllers\ProdiBiologi\ArsipSuratProdiBiologiController;
+use App\Http\Controllers\ProdiBiologi\MonitoringProdiBiologiController;
+use App\Http\Controllers\ProdiBiologi\ProdiBiologiController;
+use App\Http\Controllers\ProdiBiologi\ProdiBiologiDisposisiController;
+use App\Http\Controllers\ProdiFisika\ArsipSuratProdiFisikaController;
+use App\Http\Controllers\ProdiFisika\MonitoringProdiFisikaController;
+use App\Http\Controllers\ProdiFisika\ProdiFisikaController;
+use App\Http\Controllers\ProdiFisika\ProdiFisikaDisposisiController;
+use App\Http\Controllers\ProdiKimia\ArsipSuratProdiKimiaController;
+use App\Http\Controllers\ProdiKimia\MonitoringProdiKimiaController;
+use App\Http\Controllers\ProdiKimia\ProdiKimiaController;
+use App\Http\Controllers\ProdiKimia\ProdiKimiaDisposisiController;
+use App\Http\Controllers\ProdiMatematika\ArsipSuratProdiMatematikaController;
+use App\Http\Controllers\ProdiMatematika\MonitoringProdiMatematikaController;
+use App\Http\Controllers\ProdiMatematika\ProdiMatematikaController;
+use App\Http\Controllers\ProdiMatematika\ProdiMatematikaDisposisiController;
+use App\Http\Controllers\ProdiSI\ArsipSuratProdiSIController;
+use App\Http\Controllers\ProdiSI\MonitoringProdiSIController;
+use App\Http\Controllers\ProdiSI\ProdiSIController;
+use App\Http\Controllers\ProdiSI\ProdiSIDisposisiController;
+use App\Http\Controllers\ProdiTI\ArsipSuratProdiTIController;
+use App\Http\Controllers\ProdiTI\MonitoringProdiTIController;
+use App\Http\Controllers\ProdiTI\ProdiTIController;
+use App\Http\Controllers\ProdiTI\ProdiTIDisposisiController;
+use App\Http\Controllers\ProdiTP\ArsipSuratProdiTPController;
+use App\Http\Controllers\ProdiTP\MonitoringProdiTPController;
+use App\Http\Controllers\ProdiTP\ProdiTPController;
+use App\Http\Controllers\ProdiTP\ProdiTPDisposisiController;
 use App\Http\Controllers\QRCodeController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\TrackingController;
+use App\Http\Controllers\TU\ArsipSuratController;
 use App\Http\Controllers\TU\DisposisiController;
+use App\Http\Controllers\TU\MonitoringTUController;
 use App\Http\Controllers\TU\PengajuanProposalController;
 use App\Http\Controllers\TU\ProposalMasukController;
 use App\Http\Controllers\TU\TUController;
+use App\Http\Controllers\Umum\ArsipSuratUmumController;
+use App\Http\Controllers\Umum\MonitoringUmumController;
 use App\Http\Controllers\Umum\UmumController;
 use App\Http\Controllers\Umum\UmumDisposisiController;
 use App\Http\Controllers\UserController;
@@ -55,7 +97,9 @@ Route::get('/login', function () {
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
-Route::get('/qr-login', [QRCodeController::class, 'generateLoginQR'])->name('qr.login');
+// Tampilkan halaman QR berisi gambar QR Code
+Route::get('login-qr', [QRCodeController::class, 'generateLoginQR'])->name('qr.login');
+Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking.surat')->middleware(['auth']);
 
 
 
@@ -63,23 +107,37 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         $user = Auth::user();
 
-        if ($user->hasRole('admin')) {
+        if ($user->hasRole('Admin')) {
             return redirect()->route('admin.dashboard');
-        } elseif ($user->hasRole('pemohon')) {
+        } elseif ($user->hasRole('Pemohon')) {
             return redirect()->route('pemohon.dashboard');
-        } elseif ($user->hasRole('tu')) {
+        } elseif ($user->hasRole('Tata Usaha')) {
             return redirect()->route('tu.dashboard');
-        } elseif ($user->hasRole('dekan')) {
-            return redirect()->route('dekan.dashboard');
-        } elseif ($user->hasRole('keuangan')) {
+        } elseif ($user->hasRole('Dekanat')) {
+            return redirect()->route('dekanat.dashboard');
+        } elseif ($user->hasRole('Keuangan')) {
             return redirect()->route('keuangan.dashboard');
-        } elseif ($user->hasRole('prodi')) {
-            return redirect()->route('prodi.dashboard');
-        } elseif ($user->hasRole('akademik')) {
+        } elseif ($user->hasRole('Prodi Teknik Informatika')) {
+            return redirect()->route('prodi-teknik-informatika.dashboard');
+        } elseif ($user->hasRole('Prodi Agribisnis')) {
+            return redirect()->route('prodi-agribisnis.dashboard');
+        } elseif ($user->hasRole('Prodi Sistem Informasi')) {
+            return redirect()->route('prodi-sistem-informasi.dashboard');
+        } elseif ($user->hasRole('Prodi Matematika')) {
+            return redirect()->route('prodi-matematika.dashboard');
+        } elseif ($user->hasRole('Prodi Fisika')) {
+            return redirect()->route('prodi-fisika.dashboard');
+        } elseif ($user->hasRole('Prodi Kimia')) {
+            return redirect()->route('prodi-kimia.dashboard');
+        } elseif ($user->hasRole('Prodi Biologi')) {
+            return redirect()->route('prodi-biologi.dashboard');
+        } elseif ($user->hasRole('Prodi Teknik Pertambangan')) {
+            return redirect()->route('prodi-teknik-pertambangan.dashboard');
+        } elseif ($user->hasRole('Akademik')) {
             return redirect()->route('akademik.dashboard');
-        } elseif ($user->hasRole('umum')) {
+        } elseif ($user->hasRole('Umum')) {
             return redirect()->route('umum.dashboard');
-        } elseif ($user->hasRole('perpus')) {
+        } elseif ($user->hasRole('Perpus')) {
             return redirect()->route('perpus.dashboard');
         } elseif ($user->hasRole('PLT')) {
             return redirect()->route('plt.dashboard');
@@ -88,7 +146,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         }
     })->name('dashboard');
 
-    Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::middleware(['auth', 'role:Admin'])->group(function () {
         Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
         // Routes untuk fitur manajemen user
@@ -111,7 +169,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('roles', RoleController::class);
     });
 
-    Route::middleware(['auth', 'role:pemohon'])->group(function () {
+    Route::middleware(['auth', 'role:Pemohon'])->group(function () {
         Route::get('/pemohon/dashboard', [PemohonController::class, 'dashboard'])->name('pemohon.dashboard');
 
         Route::get('/pemohon/proposals', [PengajuanSuratController::class, 'index'])->name('pemohon.proposals.index');
@@ -123,7 +181,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/pemohon/proposal/{id}/download-zip', [PengajuanSuratController::class, 'downloadZip'])->name('pemohon.proposals.downloadZip');
     });
 
-    Route::middleware(['auth', 'role:tu'])->group(function () {
+    Route::middleware(['auth', 'role:Tata Usaha'])->group(function () {
         Route::get('/tu/dashboard', [TUController::class, 'dashboard'])->name('tu.dashboard');
 
         Route::get('/tu/proposals', [ProposalMasukController::class, 'index'])->name('tu.proposals.index');
@@ -147,6 +205,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('tu/disposisi/reject/submit/{id}', [DisposisiController::class, 'rejectSubmit'])->name('tu.disposisi.reject.submit');
         Route::get('/tu/disposisi-proposal/{id}/selesaikan', [DisposisiController::class, 'selesaikan'])->name('tu.disposisi.selesaikan');
 
+        // Monitoring Route
+        Route::get('/tu/monitoring', [MonitoringTUController::class, 'index'])->name('tu.monitoring.index');
+
         // Route Arsip Surat
         Route::get('/tu/arsip-surat', [ArsipSuratController::class, 'index'])->name('tu.arsip.index');
         Route::delete('/tu/arsip-surat/{proposal}', [ArsipSuratController::class, 'destroy'])->name('tu.arsip.destroy');
@@ -154,19 +215,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Alasan Penolakan 
         // Route::get('proposals/{proposal}/reject', [PengajuanProposalController::class, 'rejectForm'])->name('tu.proposals.rejectForm');
         Route::put('proposals/{proposal}/reject', [PengajuanProposalController::class, 'reject'])->name('tu.proposals.reject');
+        Route::post('/tu/proposal/{id}/upload-sk', [DisposisiController::class, 'uploadSK'])->name('tu.proposal.upload-sk');
     });
 
-    Route::middleware(['auth', 'role:dekan'])->group(function () {
+    Route::middleware(['auth', 'role:Dekanat'])->group(function () {
         // Dekan routes
-        Route::get('/dekan/dashboard', [DekanController::class, 'dashboard'])->name('dekan.dashboard');
+        Route::get('/dekanat/dashboard', [DekanController::class, 'dashboard'])->name('dekanat.dashboard');
 
-        Route::get('/dekan/disposisi', [DekanDisposisiController::class, 'index'])->name('disposisi.index');
-        Route::get('/dekan/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
-        Route::get('/dekan/disposisi/{id}/edit', [DekanDisposisiController::class, 'edit'])->name('disposisi.edit');
-        Route::put('/dekan/disposisi/{proposal}', [DekanDisposisiController::class, 'updateDisposisi'])->name('disposisi.updateDisposisi');
-        Route::get('/dekan/disposisi/{id}/reject', [DekanDisposisiController::class, 'reject'])->name('disposisi.reject');
-        Route::put('/dekan/disposisi/{proposal}/reject', [DekanDisposisiController::class, 'updateReject'])->name('disposisi.updateReject');
-        Route::get('/dekan/proposal/{id}/download-zip', [DekanDisposisiController::class, 'downloadZip'])->name('dekan.proposals.downloadZip');
+        Route::get('/dekanat/disposisi', [DekanDisposisiController::class, 'index'])->name('dekanat.disposisi.index');
+        Route::get('/dekanat/monitoring', [MonitoringController::class, 'index'])->name('dekanat.monitoring.index');
+        Route::get('/dekanat/disposisi/{id}/edit', [DekanDisposisiController::class, 'edit'])->name('dekanat.disposisi.edit');
+        Route::put('/dekanat/disposisi/{proposal}', [DekanDisposisiController::class, 'updateDisposisi'])->name('dekanat.disposisi.updateDisposisi');
+        Route::get('/dekanat/disposisi/{id}/reject', [DekanDisposisiController::class, 'reject'])->name('dekanat.disposisi.reject');
+        Route::put('/dekanat/disposisi/{proposal}/reject', [DekanDisposisiController::class, 'updateReject'])->name('dekanat.disposisi.updateReject');
+        Route::get('/dekanat/proposal/{id}/download-zip', [DekanDisposisiController::class, 'downloadZip'])->name('dekanat.proposals.downloadZip');
+        Route::post('/dekanat/proposal/{id}/upload-sk', [DekanDisposisiController::class, 'uploadSK'])->name('dekanat.proposal.upload-sk');
+
+        // Route Arsip Surat
+        Route::get('/dekanat/arsip-surat', [ArsipSuratDekanController::class, 'index'])->name('dekanat.arsip.index');
+        Route::delete('/dekanat/arsip-surat/{proposal}', [ArsipSuratDekanController::class, 'destroy'])->name('dekanat.arsip.destroy');
     });
 
     Route::middleware(['auth', 'role:PLT'])->group(function () {
@@ -179,9 +246,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/plt/disposisi/{id}/reject', [PltDisposisiController::class, 'reject'])->name('plt.disposisi.reject');
         Route::put('/plt/disposisi/{proposal}/reject', [PltDisposisiController::class, 'updateReject'])->name('plt.disposisi.updateReject');
         Route::get('/plt/proposal/{id}/download-zip', [PltDisposisiController::class, 'downloadZip'])->name('plt.proposals.downloadZip');
+        Route::post('/plt/proposal/{id}/upload-sk', [PltDisposisiController::class, 'uploadSK'])->name('plt.proposal.upload-sk');
+
+        // Monitoring Route
+        Route::get('/plt/monitoring', [MonitoringPltController::class, 'index'])->name('plt.monitoring.index');
+
+        // Route Arsip Surat
+        Route::get('/plt/arsip-surat', [ArsipSuratPltController::class, 'index'])->name('plt.arsip.index');
+        Route::delete('/plt/arsip-surat/{proposal}', [ArsipSuratPltController::class, 'destroy'])->name('plt.arsip.destroy');
     });
 
-    Route::middleware(['auth', 'role:akademik'])->group(function () {
+    Route::middleware(['auth', 'role:Akademik'])->group(function () {
         // Plt routes
         Route::get('/akademik/dashboard', [AkademikController::class, 'dashboard'])->name('akademik.dashboard');
 
@@ -191,9 +266,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/akademik/disposisi/{id}/reject', [AkademikDisposisiController::class, 'reject'])->name('akademik.disposisi.reject');
         Route::put('/akademik/disposisi/{proposal}/reject', [AkademikDisposisiController::class, 'updateReject'])->name('akademik.disposisi.updateReject');
         Route::get('/akademik/proposal/{id}/download-zip', [AkademikDisposisiController::class, 'downloadZip'])->name('akademik.proposals.downloadZip');
+        Route::post('/akademik/proposal/{id}/upload-sk', [AkademikDisposisiController::class, 'uploadSK'])->name('akademik.proposal.upload-sk');
+
+        // Monitoring Route
+        Route::get('/akademik/monitoring', [MonitoringAkademikController::class, 'index'])->name('akademik.monitoring.index');
+
+        // Route Arsip Surat
+        Route::get('/akademik/arsip-surat', [ArsipSuratAkademikController::class, 'index'])->name('akademik.arsip.index');
+        Route::delete('/akademik/arsip-surat/{proposal}', [ArsipSuratAkademikController::class, 'destroy'])->name('akademik.arsip.destroy');
     });
 
-    Route::middleware(['auth', 'role:umum'])->group(function () {
+    Route::middleware(['auth', 'role:Umum'])->group(function () {
         // Plt routes
         Route::get('/umum/dashboard', [UmumController::class, 'dashboard'])->name('umum.dashboard');
 
@@ -203,9 +286,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/umum/disposisi/{id}/reject', [UmumDisposisiController::class, 'reject'])->name('umum.disposisi.reject');
         Route::put('/umum/disposisi/{proposal}/reject', [UmumDisposisiController::class, 'updateReject'])->name('umum.disposisi.updateReject');
         Route::get('/umum/proposal/{id}/download-zip', [UmumDisposisiController::class, 'downloadZip'])->name('umum.proposals.downloadZip');
+        Route::post('umum/proposal/{id}/upload-sk', [UmumDisposisiController::class, 'uploadSK'])->name('umum.proposal.upload-sk');
+
+        // Monitoring Route
+        Route::get('/umum/monitoring', [MonitoringUmumController::class, 'index'])->name('umum.monitoring.index');
+
+        // Route Arsip Surat
+        Route::get('/umum/arsip-surat', [ArsipSuratUmumController::class, 'index'])->name('umum.arsip.index');
+        Route::delete('/umum/arsip-surat/{proposal}', [ArsipSuratUmumController::class, 'destroy'])->name('umum.arsip.destroy');
     });
 
-    Route::middleware(['auth', 'role:perpus'])->group(function () {
+    Route::middleware(['auth', 'role:Perpus'])->group(function () {
         // Plt routes
         Route::get('/perpus/dashboard', [PerpusController::class, 'dashboard'])->name('perpus.dashboard');
 
@@ -215,31 +306,194 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/perpus/disposisi/{id}/reject', [PerpusDisposisiController::class, 'reject'])->name('perpus.disposisi.reject');
         Route::put('/perpus/disposisi/{proposal}/reject', [PerpusDisposisiController::class, 'updateReject'])->name('perpus.disposisi.updateReject');
         Route::get('/perpus/proposal/{id}/download-zip', [PerpusDisposisiController::class, 'downloadZip'])->name('perpus.proposals.downloadZip');
+        Route::post('perpus/proposal/{id}/upload-sk', [PerpusDisposisiController::class, 'uploadSK'])->name('perpus.proposal.upload-sk');
+
+        // Monitoring Route
+        Route::get('/perpus/monitoring', [MonitoringPerpusController::class, 'index'])->name('perpus.monitoring.index');
+
+        // Route Arsip Surat
+        Route::get('/perpus/arsip-surat', [ArsipSuratPerpusController::class, 'index'])->name('perpus.arsip.index');
+        Route::delete('/perpus/arsip-surat/{proposal}', [ArsipSuratPerpusController::class, 'destroy'])->name('perpus.arsip.destroy');
     });
 
-    Route::middleware(['auth', 'role:prodi'])->group(function () {
+    Route::middleware(['auth', 'role:Prodi Teknik Informatika'])->group(function () {
         // Dekan routes
-        Route::get('/prodi/dashboard', [ProdiController::class, 'dashboard'])->name('prodi.dashboard');
+        Route::get('/prodi-teknik-informatika/dashboard', [ProdiTIController::class, 'dashboard'])->name('prodi-teknik-informatika.dashboard');
 
-        Route::get('/prodi/disposisi', [ProdiDisposisiController::class, 'index'])->name('prodi.disposisi.index');
-        Route::get('/prodi/disposisi/{id}/edit', [ProdiDisposisiController::class, 'edit'])->name('prodi.disposisi.edit');
-        Route::put('/prodi/disposisi/{proposal}', [ProdiDisposisiController::class, 'updateDisposisi'])->name('prodi.disposisi.updateDisposisi');
-        Route::get('/prodi/disposisi/{id}/reject', [ProdiDisposisiController::class, 'reject'])->name('prodi.disposisi.reject');
-        Route::put('/prodi/disposisi/{proposal}/reject', [ProdiDisposisiController::class, 'updateReject'])->name('prodi.disposisi.updateReject');
-        Route::get('/prodi/proposal/{id}/download-zip', [ProdiDisposisiController::class, 'downloadZip'])->name('prodi.proposals.downloadZip');
+        Route::get('/prodi-teknik-informatika/disposisi', [ProdiTIDisposisiController::class, 'index'])->name('prodi-teknik-informatika.disposisi.index');
+        Route::get('/prodi-teknik-informatika/disposisi/{id}/edit', [ProdiTIDisposisiController::class, 'edit'])->name('prodi-teknik-informatika.disposisi.edit');
+        Route::put('/prodi-teknik-informatika/disposisi/{proposal}', [ProdiTIDisposisiController::class, 'updateDisposisi'])->name('prodi-teknik-informatika.disposisi.updateDisposisi');
+        Route::get('/prodi-teknik-informatika/disposisi/{id}/reject', [ProdiTIDisposisiController::class, 'reject'])->name('prodi-teknik-informatika.disposisi.reject');
+        Route::put('/prodi-teknik-informatika/disposisi/{proposal}/reject', [ProdiTIDisposisiController::class, 'updateReject'])->name('prodi-teknik-informatika.disposisi.updateReject');
+        Route::get('/prodi-teknik-informatika/proposal/{id}/download-zip', [ProdiTIDisposisiController::class, 'downloadZip'])->name('prodi-teknik-informatika.proposals.downloadZip');
+        Route::post('prodi-teknik-informatika/proposal/{id}/upload-sk', [ProdiTIDisposisiController::class, 'uploadSK'])->name('prodi-teknik-informatika.proposal.upload-sk');
+
+        // Monitoring Route
+        Route::get('/prodi-teknik-informatika/monitoring', [MonitoringProdiTIController::class, 'index'])->name('prodi-teknik-informatika.monitoring.index');
+
+        // Route Arsip Surat
+        Route::get('/prodi-teknik-informatika/arsip-surat', [ArsipSuratProdiTIController::class, 'index'])->name('prodi-teknik-informatika.arsip.index');
+        Route::delete('/prodi-teknik-informatika/arsip-surat/{proposal}', [ArsipSuratProdiTIController::class, 'destroy'])->name('prodi-teknik-informatika.arsip.destroy');
     });
 
-    Route::middleware(['auth', 'role:keuangan'])->group(function () {
+    Route::middleware(['auth', 'role:Prodi Agribisnis'])->group(function () {
+        // Dekan routes
+        Route::get('/prodi-agribisnis/dashboard', [ProdiAgribisnisController::class, 'dashboard'])->name('prodi-agribisnis.dashboard');
+
+        Route::get('/prodi-agribisnis/disposisi', [ProdiAgribisnisDisposisiController::class, 'index'])->name('prodi-agribisnis.disposisi.index');
+        Route::get('/prodi-agribisnis/disposisi/{id}/edit', [ProdiAgribisnisDisposisiController::class, 'edit'])->name('prodi-agribisnis.disposisi.edit');
+        Route::put('/prodi-agribisnis/disposisi/{proposal}', [ProdiAgribisnisDisposisiController::class, 'updateDisposisi'])->name('prodi-agribisnis.disposisi.updateDisposisi');
+        Route::get('/prodi-agribisnis/disposisi/{id}/reject', [ProdiAgribisnisDisposisiController::class, 'reject'])->name('prodi-agribisnis.disposisi.reject');
+        Route::put('/prodi-agribisnis/disposisi/{proposal}/reject', [ProdiAgribisnisDisposisiController::class, 'updateReject'])->name('prodi-agribisnis.disposisi.updateReject');
+        Route::get('/prodi-agribisnis/proposal/{id}/download-zip', [ProdiAgribisnisDisposisiController::class, 'downloadZip'])->name('prodi-agribisnis.proposals.downloadZip');
+        Route::post('prodi-agribisnis/proposal/{id}/upload-sk', [ProdiAgribisnisDisposisiController::class, 'uploadSK'])->name('prodi-agribisnis.proposal.upload-sk');
+
+        // Monitoring Route
+        Route::get('/prodi-agribisnis/monitoring', [MonitoringProdiAgribisnisController::class, 'index'])->name('prodi-agribisnis.monitoring.index');
+
+        // Route Arsip Surat
+        Route::get('/prodi-agribisnis/arsip-surat', [ArsipSuratProdiAgribisnisController::class, 'index'])->name('prodi-agribisnis.arsip.index');
+        Route::delete('/prodi-agribisnis/arsip-surat/{proposal}', [ArsipSuratProdiAgribisnisController::class, 'destroy'])->name('prodi-agribisnis.arsip.destroy');
+    });
+
+    Route::middleware(['auth', 'role:Prodi Sistem Informasi'])->group(function () {
+        // Dekan routes
+        Route::get('/prodi-sistem-informasi/dashboard', [ProdiSIController::class, 'dashboard'])->name('prodi-sistem-informasi.dashboard');
+
+        Route::get('/prodi-sistem-informasi/disposisi', [ProdiSIDisposisiController::class, 'index'])->name('prodi-sistem-informasi.disposisi.index');
+        Route::get('/prodi-sistem-informasi/disposisi/{id}/edit', [ProdiSIDisposisiController::class, 'edit'])->name('prodi-sistem-informasi.disposisi.edit');
+        Route::put('/prodi-sistem-informasi/disposisi/{proposal}', [ProdiSIDisposisiController::class, 'updateDisposisi'])->name('prodi-sistem-informasi.disposisi.updateDisposisi');
+        Route::get('/prodi-sistem-informasi/disposisi/{id}/reject', [ProdiSIDisposisiController::class, 'reject'])->name('prodi-sistem-informasi.disposisi.reject');
+        Route::put('/prodi-sistem-informasi/disposisi/{proposal}/reject', [ProdiSIDisposisiController::class, 'updateReject'])->name('prodi-sistem-informasi.disposisi.updateReject');
+        Route::get('/prodi-sistem-informasi/proposal/{id}/download-zip', [ProdiSIDisposisiController::class, 'downloadZip'])->name('prodi-sistem-informasi.proposals.downloadZip');
+        Route::post('prodi-sistem-informasi/proposal/{id}/upload-sk', [ProdiSIDisposisiController::class, 'uploadSK'])->name('prodi-sistem-informasi.proposal.upload-sk');
+
+        // Monitoring Route
+        Route::get('/prodi-sistem-informasi/monitoring', [MonitoringProdiSIController::class, 'index'])->name('prodi-sistem-informasi.monitoring.index');
+
+        // Route Arsip Surat
+        Route::get('/prodi-sistem-informasi/arsip-surat', [ArsipSuratProdiSIController::class, 'index'])->name('prodi-sistem-informasi.arsip.index');
+        Route::delete('/prodi-sistem-informasi/arsip-surat/{proposal}', [ArsipSuratProdiSIController::class, 'destroy'])->name('prodi-sistem-informasi.arsip.destroy');
+    });
+
+    Route::middleware(['auth', 'role:Prodi Matematika'])->group(function () {
+        // Dekan routes
+        Route::get('/prodi-matematika/dashboard', [ProdiMatematikaController::class, 'dashboard'])->name('prodi-matematika.dashboard');
+
+        Route::get('/prodi-matematika/disposisi', [ProdiMatematikaDisposisiController::class, 'index'])->name('prodi-matematika.disposisi.index');
+        Route::get('/prodi-matematika/disposisi/{id}/edit', [ProdiMatematikaDisposisiController::class, 'edit'])->name('prodi-matematika.disposisi.edit');
+        Route::put('/prodi-matematika/disposisi/{proposal}', [ProdiMatematikaDisposisiController::class, 'updateDisposisi'])->name('prodi-matematika.disposisi.updateDisposisi');
+        Route::get('/prodi-matematika/disposisi/{id}/reject', [ProdiMatematikaDisposisiController::class, 'reject'])->name('prodi-matematika.disposisi.reject');
+        Route::put('/prodi-matematika/disposisi/{proposal}/reject', [ProdiMatematikaDisposisiController::class, 'updateReject'])->name('prodi-matematika.disposisi.updateReject');
+        Route::get('/prodi-matematika/proposal/{id}/download-zip', [ProdiMatematikaDisposisiController::class, 'downloadZip'])->name('prodi-matematika.proposals.downloadZip');
+        Route::post('prodi-matematika/proposal/{id}/upload-sk', [ProdiMatematikaDisposisiController::class, 'uploadSK'])->name('prodi-matematika.proposal.upload-sk');
+
+        // Monitoring Route
+        Route::get('/prodi-matematika/monitoring', [MonitoringProdiMatematikaController::class, 'index'])->name('prodi-matematika.monitoring.index');
+
+        // Route Arsip Surat
+        Route::get('/prodi-matematika/arsip-surat', [ArsipSuratProdiMatematikaController::class, 'index'])->name('prodi-matematika.arsip.index');
+        Route::delete('/prodi-matematika/arsip-surat/{proposal}', [ArsipSuratProdiMatematikaController::class, 'destroy'])->name('prodi-matematika.arsip.destroy');
+    });
+
+    Route::middleware(['auth', 'role:Prodi Fisika'])->group(function () {
+        // Dekan routes
+        Route::get('/prodi-fisika/dashboard', [ProdiFisikaController::class, 'dashboard'])->name('prodi-fisika.dashboard');
+
+        Route::get('/prodi-fisika/disposisi', [ProdiFisikaDisposisiController::class, 'index'])->name('prodi-fisika.disposisi.index');
+        Route::get('/prodi-fisika/disposisi/{id}/edit', [ProdiFisikaDisposisiController::class, 'edit'])->name('prodi-fisika.disposisi.edit');
+        Route::put('/prodi-fisika/disposisi/{proposal}', [ProdiFisikaDisposisiController::class, 'updateDisposisi'])->name('prodi-fisika.disposisi.updateDisposisi');
+        Route::get('/prodi-fisika/disposisi/{id}/reject', [ProdiFisikaDisposisiController::class, 'reject'])->name('prodi-fisika.disposisi.reject');
+        Route::put('/prodi-fisika/disposisi/{proposal}/reject', [ProdiFisikaDisposisiController::class, 'updateReject'])->name('prodi-fisika.disposisi.updateReject');
+        Route::get('/prodi-fisika/proposal/{id}/download-zip', [ProdiFisikaDisposisiController::class, 'downloadZip'])->name('prodi-fisika.proposals.downloadZip');
+        Route::post('prodi-fisika/proposal/{id}/upload-sk', [ProdiFisikaDisposisiController::class, 'uploadSK'])->name('prodi-fisika.proposal.upload-sk');
+
+        // Monitoring Route
+        Route::get('/prodi-fisika/monitoring', [MonitoringProdiFisikaController::class, 'index'])->name('prodi-fisika.monitoring.index');
+
+        // Route Arsip Surat
+        Route::get('/prodi-fisika/arsip-surat', [ArsipSuratProdiFisikaController::class, 'index'])->name('prodi-fisika.arsip.index');
+        Route::delete('/prodi-fisika/arsip-surat/{proposal}', [ArsipSuratProdiFisikaController::class, 'destroy'])->name('prodi-fisika.arsip.destroy');
+    });
+
+    Route::middleware(['auth', 'role:Prodi Kimia'])->group(function () {
+        // Dekan routes
+        Route::get('/prodi-kimia/dashboard', [ProdiKimiaController::class, 'dashboard'])->name('prodi-kimia.dashboard');
+
+        Route::get('/prodi-kimia/disposisi', [ProdiKimiaDisposisiController::class, 'index'])->name('prodi-kimia.disposisi.index');
+        Route::get('/prodi-kimia/disposisi/{id}/edit', [ProdiKimiaDisposisiController::class, 'edit'])->name('prodi-kimia.disposisi.edit');
+        Route::put('/prodi-kimia/disposisi/{proposal}', [ProdiKimiaDisposisiController::class, 'updateDisposisi'])->name('prodi-kimia.disposisi.updateDisposisi');
+        Route::get('/prodi-kimia/disposisi/{id}/reject', [ProdiKimiaDisposisiController::class, 'reject'])->name('prodi-kimia.disposisi.reject');
+        Route::put('/prodi-kimia/disposisi/{proposal}/reject', [ProdiKimiaDisposisiController::class, 'updateReject'])->name('prodi-kimia.disposisi.updateReject');
+        Route::get('/prodi-kimia/proposal/{id}/download-zip', [ProdiKimiaDisposisiController::class, 'downloadZip'])->name('prodi-kimia.proposals.downloadZip');
+        Route::post('prodi-kimia/proposal/{id}/upload-sk', [ProdiKimiaDisposisiController::class, 'uploadSK'])->name('prodi-kimia.proposal.upload-sk');
+
+        // Monitoring Route
+        Route::get('/prodi-kimia/monitoring', [MonitoringProdiKimiaController::class, 'index'])->name('prodi-kimia.monitoring.index');
+
+        // Route Arsip Surat
+        Route::get('/prodi-kimia/arsip-surat', [ArsipSuratProdiKimiaController::class, 'index'])->name('prodi-kimia.arsip.index');
+        Route::delete('/prodi-kimia/arsip-surat/{proposal}', [ArsipSuratProdiKimiaController::class, 'destroy'])->name('prodi-kimia.arsip.destroy');
+    });
+
+    Route::middleware(['auth', 'role:Prodi Biologi'])->group(function () {
+        // Dekan routes
+        Route::get('/prodi-biologi/dashboard', [ProdiBiologiController::class, 'dashboard'])->name('prodi-biologi.dashboard');
+
+        Route::get('/prodi-biologi/disposisi', [ProdiBiologiDisposisiController::class, 'index'])->name('prodi-biologi.disposisi.index');
+        Route::get('/prodi-biologi/disposisi/{id}/edit', [ProdiBiologiDisposisiController::class, 'edit'])->name('prodi-biologi.disposisi.edit');
+        Route::put('/prodi-biologi/disposisi/{proposal}', [ProdiBiologiDisposisiController::class, 'updateDisposisi'])->name('prodi-biologi.disposisi.updateDisposisi');
+        Route::get('/prodi-biologi/disposisi/{id}/reject', [ProdiBiologiDisposisiController::class, 'reject'])->name('prodi-biologi.disposisi.reject');
+        Route::put('/prodi-biologi/disposisi/{proposal}/reject', [ProdiBiologiDisposisiController::class, 'updateReject'])->name('prodi-biologi.disposisi.updateReject');
+        Route::get('/prodi-biologi/proposal/{id}/download-zip', [ProdiBiologiDisposisiController::class, 'downloadZip'])->name('prodi-biologi.proposals.downloadZip');
+        Route::post('prodi-biologi/proposal/{id}/upload-sk', [ProdiBiologiDisposisiController::class, 'uploadSK'])->name('prodi-biologi.proposal.upload-sk');
+
+        // Monitoring Route
+        Route::get('/prodi-biologi/monitoring', [MonitoringProdiBiologiController::class, 'index'])->name('prodi-biologi.monitoring.index');
+
+        // Route Arsip Surat
+        Route::get('/prodi-biologi/arsip-surat', [ArsipSuratProdiBiologiController::class, 'index'])->name('prodi-biologi.arsip.index');
+        Route::delete('/prodi-biologi/arsip-surat/{proposal}', [ArsipSuratProdiBiologiController::class, 'destroy'])->name('prodi-biologi.arsip.destroy');
+    });
+
+    Route::middleware(['auth', 'role:Prodi Teknik Pertambangan'])->group(function () {
+        // Dekan routes
+        Route::get('/prodi-teknik-pertambangan/dashboard', [ProdiTPController::class, 'dashboard'])->name('prodi-teknik-pertambangan.dashboard');
+
+        Route::get('/prodi-teknik-pertambangan/disposisi', [ProdiTPDisposisiController::class, 'index'])->name('prodi-teknik-pertambangan.disposisi.index');
+        Route::get('/prodi-teknik-pertambangan/disposisi/{id}/edit', [ProdiTPDisposisiController::class, 'edit'])->name('prodi-teknik-pertambangan.disposisi.edit');
+        Route::put('/prodi-teknik-pertambangan/disposisi/{proposal}', [ProdiTPDisposisiController::class, 'updateDisposisi'])->name('prodi-teknik-pertambangan.disposisi.updateDisposisi');
+        Route::get('/prodi-teknik-pertambangan/disposisi/{id}/reject', [ProdiTPDisposisiController::class, 'reject'])->name('prodi-teknik-pertambangan.disposisi.reject');
+        Route::put('/prodi-teknik-pertambangan/disposisi/{proposal}/reject', [ProdiTPDisposisiController::class, 'updateReject'])->name('prodi-teknik-pertambangan.disposisi.updateReject');
+        Route::get('/prodi-teknik-pertambangan/proposal/{id}/download-zip', [ProdiTPDisposisiController::class, 'downloadZip'])->name('prodi-teknik-pertambangan.proposals.downloadZip');
+        Route::post('prodi-teknik-pertambangan/proposal/{id}/upload-sk', [ProdiTPDisposisiController::class, 'uploadSK'])->name('prodi-teknik-pertambangan.proposal.upload-sk');
+
+        // Monitoring Route
+        Route::get('/prodi-teknik-pertambangan/monitoring', [MonitoringProdiTPController::class, 'index'])->name('prodi-teknik-pertambangan.monitoring.index');
+
+        // Route Arsip Surat
+        Route::get('/prodi-teknik-pertambangan/arsip-surat', [ArsipSuratProdiTPController::class, 'index'])->name('prodi-teknik-pertambangan.arsip.index');
+        Route::delete('/prodi-teknik-pertambangan/arsip-surat/{proposal}', [ArsipSuratProdiTPController::class, 'destroy'])->name('prodi-teknik-pertambangan.arsip.destroy');
+    });
+
+    Route::middleware(['auth', 'role:Keuangan'])->group(function () {
         // Keuangan routes
         Route::get('/keuangan/dashboard', [KeuanganController::class, 'dashboard'])->name('keuangan.dashboard');
 
         Route::get('/keuangan/disposisi', [KeuanganDisposisiController::class, 'index'])->name('keuangan.disposisi.index');
-        Route::get('/keuangan/monitoring', [KeuanganMonitoringController::class, 'index'])->name('keuangan.monitoring.index');
         Route::get('/keuangan/disposisi/{id}/edit', [KeuanganDisposisiController::class, 'edit'])->name('keuangan.disposisi.edit');
         Route::put('/keuangan/disposisi/{proposal}', [KeuanganDisposisiController::class, 'updateDisposisi'])->name('keuangan.disposisi.updateDisposisi');
         Route::get('/keuangan/disposisi/{id}/reject', [KeuanganDisposisiController::class, 'reject'])->name('keuangan.disposisi.reject');
         Route::put('/keuangan/disposisi/{proposal}/reject', [KeuanganDisposisiController::class, 'updateReject'])->name('keuangan.disposisi.updateReject');
         Route::get('/keuangan/proposal/{id}/download-zip', [KeuanganDisposisiController::class, 'downloadZip'])->name('keuangan.proposals.downloadZip');
+        Route::post('keuangan/proposal/{id}/upload-sk', [KeuanganDisposisiController::class, 'uploadSK'])->name('keuangan.proposal.upload-sk');
+
+        // Monitoring Route
+        Route::get('/keuangan/monitoring', [MonitoringKeuanganController::class, 'index'])->name('keuangan.monitoring.index');
+
+        // Route Arsip Surat
+        Route::get('/keuangan/arsip-surat', [ArsipSuratKeuanganController::class, 'index'])->name('keuangan.arsip.index');
+        Route::delete('/keuangan/arsip-surat/{proposal}', [ArsipSuratKeuanganController::class, 'destroy'])->name('keuangan.arsip.destroy');
     });
 });
 

@@ -10,13 +10,14 @@ class MonitoringController extends Controller
 {
     public function index()
     {
-        // Ambil data proposal untuk ditampilkan di halaman monitoring
-        $proposals = Proposal::whereIn('dari', [
-            'Dekan',
-            'Wadek Akademik',
-            'Wadek Kemahasiswaan',
-            'Wadek Administrasi Umum'
-        ])->paginate(5);
+        $proposals = Proposal::whereHas('modalDisposisi', function ($query) {
+            $query->whereIn('tujuan', [
+                'Dekan',
+                'Wadek Akademik',
+                'Wadek Kemahasiswaan',
+                'Wadek Administrasi Umum'
+            ]);
+        })->paginate(4);
 
         return view('dekan.monitoring.index', compact('proposals'));
     }

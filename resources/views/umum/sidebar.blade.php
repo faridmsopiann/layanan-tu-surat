@@ -5,7 +5,7 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 
                 <li class="nav-item">
-                    <a href="{{ route('prodi.dashboard') }}" class="brand-link logo-switch">
+                    <a href="{{ route('prodi-ti.dashboard') }}" class="brand-link logo-switch">
                         <!-- Logo kecil untuk sidebar collapsed -->
                         <img src="{{ asset('images/uinxs.png') }}" alt="Logo UIN XS" class="logo-xs" id="small-logo">
                         <!-- Logo besar untuk sidebar expanded -->
@@ -28,13 +28,21 @@
                     </a>
                 </li>
 
-                {{-- <!-- Monitoring Menu Item -->
-                <li class="nav-item">
-                    <a href="{{ route('keuangan.monitoring.index') }}" class="nav-link">
+                <!-- Monitoring Menu Item -->
+                 <li class="nav-item">
+                    <a href="{{ route('umum.monitoring.index') }}" class="nav-link {{ Request::routeIs('umum.monitoring.index') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-eye"></i>
                         <p>Monitoring</p>
                     </a>
-                </li> --}}
+                </li>
+
+                 <!-- Arsip Surat -->
+                <li class="nav-item">
+                    <a href="{{ route('umum.arsip.index') }}" class="nav-link {{ Request::routeIs('umum.arsip.index') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-archive"></i>
+                        <p>Arsip Surat</p>
+                    </a>
+                </li>
 
                  <!-- Logout Button -->
                  <li class="nav-item">

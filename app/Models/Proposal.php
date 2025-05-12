@@ -29,6 +29,10 @@ class Proposal extends Model
         'pemohon_id',
         'soft_file',
         'soft_file_link',
+        'perlu_sk',
+        'pihak_pembuat_sk',
+        'perlu_ttd',
+        'pihak_ttd',
     ];
 
     // Di dalam model Proposal (app/Models/Proposal.php)

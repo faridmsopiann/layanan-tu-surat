@@ -20,7 +20,7 @@ class PengajuanSuratController extends Controller
         $proposals = Proposal::with(['pemohon', 'modalDisposisi'])
             ->where('pemohon_id', auth()->id())
             ->whereNull('deleted_at')
-            ->paginate(5);
+            ->paginate(4);
 
         return view('pemohon.proposals.index', compact('proposals'));
     }
@@ -65,16 +65,16 @@ class PengajuanSuratController extends Controller
             'tanggal_surat' => 'required|date',
             'asal_surat' => 'required|string',
             'hal' => 'required|string',
-            'soft_file.*' => 'nullable|file|max:10240', // Bisa lebih dari satu file (10 MB per file)
-            'file_link' => 'nullable|url', // Validasi link jika diisi
+            'soft_file.*' => 'nullable|file|max:10240',
+            'file_link' => 'nullable|url',
         ]);
 
         $softFilePaths = [];
-        $softFileLink = $request->input('file_link'); // Simpan link jika ada
+        $softFileLink = $request->input('file_link');
 
         if ($request->hasFile('soft_file')) {
             foreach ($request->file('soft_file') as $file) {
-                $path = $file->store('proposals', 'public'); // Simpan file ke storage
+                $path = $file->store('proposals', 'public');
                 $softFilePaths[] = $path;
             }
         }

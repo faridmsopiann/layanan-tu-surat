@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ModalDisposisi;
 use App\Models\Proposal;
 use Illuminate\Http\Request;
+use setasign\Fpdi\Fpdi;
 use ZipArchive;
 
 class KeuanganDisposisiController extends Controller
@@ -17,6 +18,25 @@ class KeuanganDisposisiController extends Controller
             ->orWhere('tujuan_disposisi', 'Keuangan')
             ->paginate(5);
         return view('keuangan.disposisi.index', compact('proposals'));
+    }
+
+    public function uploadSK(Request $request, $id)
+    {
+        $request->validate([
+            'soft_file_sk' => 'required|file|mimes:pdf|max:10240',
+        ]);
+
+        $proposal = Proposal::findOrFail($id);
+
+        // Simpan file
+        $path = $request->file('soft_file_sk')->store('proposals', 'public');
+
+        // Update data proposal
+        $proposal->soft_file_sk = $path;
+        $proposal->sudah_sk = true;
+        $proposal->save();
+
+        return redirect()->back()->with('success', 'Surat Keluar berhasil diupload.');
     }
 
     public function downloadZip($id)
@@ -90,7 +110,7 @@ class KeuanganDisposisiController extends Controller
             'status' => 'Disetujui',
             'tanggal_diterima' => $modal->tanggal_diterima,  // Tetap gunakan tanggal_diterima yang sudah ada
             'tanggal_proses' => now(),  // Update dengan tanggal saat ini
-            'diverifikasi_oleh' => 'Nia Sumianingsih, SE',  // Nama user yang sedang login
+            'diverifikasi_oleh' => auth()->user()->name,  // Nama user yang sedang login
             'keterangan' => $request->pesan_disposisi,  // Pesan dari request
         ]);
 
@@ -151,7 +171,7 @@ class KeuanganDisposisiController extends Controller
             'status' => 'Ditolak',
             'tanggal_diterima' => $modal->tanggal_diterima,  // Tetap gunakan tanggal_diterima yang sudah ada
             'tanggal_proses' => now(),  // Update dengan tanggal saat ini
-            'diverifikasi_oleh' => 'Nia Sumianingsih, SE',  // Nama user yang sedang login
+            'diverifikasi_oleh' => auth()->user()->name,  // Nama user yang sedang login
             'keterangan' => $request->pesan_disposisi,  // Pesan dari request
         ]);
 
@@ -179,8 +199,8 @@ class KeuanganDisposisiController extends Controller
             return 'Menunggu Approval Akademik';
         } elseif ($tujuan == 'Perpus') {
             return 'Menunggu Approval Perpus';
-        } elseif ($tujuan == 'Prodi') {
-            return 'Menunggu Approval Prodi';
+        } elseif ($tujuan == 'Prodi Teknik Informatika') {
+            return 'Menunggu Approval Prodi Teknik Informatika';
         } elseif ($tujuan == 'Dekan') {
             return 'Menunggu Approval Dekan';
         } elseif ($tujuan == 'Wadek Akademik') {

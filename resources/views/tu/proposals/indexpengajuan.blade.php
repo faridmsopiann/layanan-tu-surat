@@ -22,7 +22,8 @@
                 <tr>
                     <th class="text-sm">No</th>
                     <th class="text-sm">Nama Pemohon</th>
-                    <th class="text-sm">File</th>
+                    <th class="text-sm">File Surat Masuk</th>
+                    <th class="text-sm">File Surat Keluar</th>
                     <th class="text-sm">Nomor Agenda</th>
                     <th class="text-sm">Jenis</th>
                     <th class="text-sm">Tanggal Surat</th>
@@ -75,6 +76,15 @@
                             <p class="text-muted">Tidak ada file atau link yang diunggah.</p>
                         @endif
                     </td>
+                    <td class="text-sm">
+                                @if ($proposal->soft_file_sk)
+                                    <a href="{{ asset('storage/' . $proposal->soft_file_sk) }}" class="btn-sm btn-success" style="white-space: nowrap;" download>
+                                        <i class="fas fa-download"></i> Download SK
+                                    </a>
+                                @else
+                                    <span class="text-muted">Belum diunggah</span>
+                                @endif
+                    </td> 
                     <td class="text-sm">{{ $proposal->nomor_agenda }}</td>
                     <td class="text-sm">{{ $proposal->jenis_proposal }}</td>
                     <td class="text-sm">{{ $proposal->tanggal_surat }}</td>
@@ -90,7 +100,21 @@
                             <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
                         @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag')
                             <span class="badge badge-pill badge-success">{{ $proposal->status_disposisi }}</span>
-                        @elseif($proposal->status_disposisi == 'Menunggu Approval Prodi')
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval Prodi Teknik Informatika')
+                            <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval Prodi Agribisnis')
+                            <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval Prodi Sistem Informasi')
+                            <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval Prodi Matematika')
+                            <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval Prodi Fisika')
+                            <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval Prodi Kimia')
+                            <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval Prodi Biologi')
+                            <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
+                        @elseif($proposal->status_disposisi == 'Menunggu Approval Prodi Teknik Pertambangan')
                             <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
                         @elseif($proposal->status_disposisi == 'Menunggu Approval Keuangan')
                             <span class="badge badge-pill badge-info">{{ $proposal->status_disposisi }}</span>
@@ -110,7 +134,7 @@
                     </td>
                     <td class="d-flex">
                         <a href="#" data-toggle="modal" data-target="#detailModal{{ $proposal->id }}" class="btn btn-outline-info btn-sm mr-1">
-                            <i class="fas fa-eye"></i>
+                            <i class="fas fa-eye"></i> Detail
                         </a>
     
                         <!-- Modal untuk Detail -->
@@ -234,7 +258,11 @@
                         <!-- Modal Edit Proposal -->
                         <div class="modal fade" id="editProposalModal-{{ $proposal->id }}" tabindex="-1" aria-labelledby="editProposalModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
+                                <div class="modal-content" x-data="{
+                                    perluSk: '{{ $proposal->perlu_sk ?? 0 }}',
+                                    perluTtd: '{{ $proposal->perlu_ttd ?? 0 }}',
+                                    pihakTtd: {{ json_encode(json_decode($proposal->pihak_ttd ?? '[]')) }}
+                                }">
                                     <div class="modal-header" style="background-color: #FFC107; color: white;">
                                         <h5 class="modal-title" id="editProposalModalLabel">Edit Proposal</h5>
                                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
@@ -247,62 +275,102 @@
                                             @method('PUT')
                                             <div class="row">
                                                 <div class="col-md-6">
+                                                    <!-- Fields umum -->
                                                     <div class="mb-3">
-                                                        <label for="edit_nomor_agenda" class="form-label">Nomor Agenda</label>
-                                                        <input type="text" class="form-control" id="edit_nomor_agenda" name="nomor_agenda" value="{{ $proposal->nomor_agenda }}" readonly required>
+                                                        <label class="form-label">Nomor Agenda</label>
+                                                        <input type="text" class="form-control" name="nomor_agenda" value="{{ $proposal->nomor_agenda }}" readonly required>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="edit_tanggal_surat" class="form-label">Tanggal Surat</label>
-                                                        <input type="date" class="form-control" id="edit_tanggal_surat" name="tanggal_surat" value="{{ $proposal->tanggal_surat }}" required>
+                                                        <label class="form-label">Tanggal Surat</label>
+                                                        <input type="date" class="form-control" name="tanggal_surat" value="{{ $proposal->tanggal_surat }}" required>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="edit_nomor_surat" class="form-label">Nomor Surat</label>
-                                                        <input type="text" class="form-control" id="edit_nomor_surat" name="nomor_surat" value="{{ $proposal->nomor_surat }}" required>
+                                                        <label class="form-label">Nomor Surat</label>
+                                                        <input type="text" class="form-control" name="nomor_surat" value="{{ $proposal->nomor_surat }}" required>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="edit_asal_surat" class="form-label">Asal Surat</label>
-                                                        <input type="text" class="form-control" id="edit_asal_surat" name="asal_surat" value="{{ $proposal->asal_surat }}" required>
+                                                        <label class="form-label">Asal Surat</label>
+                                                        <input type="text" class="form-control" name="asal_surat" value="{{ $proposal->asal_surat }}" required>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="jenis_surat"><strong>Jenis Surat</strong></label>
-                                                        <div class="dropdown-wrapper" style="position: relative;">
-                                                            <select name="jenis_surat" id="jenis_surat" class="form-control" required style="appearance: none; padding-right: 30px;">
-                                                                <option value="Surat Pembayaran">Surat Pembayaran</option>
-                                                                <option value="Surat Masuk">Surat Masuk</option>
-                                                            </select>
-                                                            <!-- Icon panah bawah -->
-                                                            <span class="dropdown-icon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none;">
-                                                                <i class="fas fa-chevron-down" style="color: #999;"></i>
-                                                            </span>
-                                                        </div>
-                                                    </div>                        
-                                                </div>
-    
-                                                <div class="col-md-6">
-                                                    <div class="mb-3">
-                                                        <label for="edit_hal" class="form-label">Hal</label>
-                                                        <input type="text" class="form-control" id="edit_hal" name="hal" value="{{ $proposal->hal }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="edit_diterima_tanggal" class="form-label">Diterima Tanggal</label>
-                                                        <input type="datetime-local" class="form-control" id="edit_diterima_tanggal" name="diterima_tanggal" value="{{ \Carbon\Carbon::parse($proposal->diterima_tanggal)->format('Y-m-d\TH:i') }}" required>
-                                                    </div>                                                    
-                                                    <div class="mb-3">
-                                                        <label for="edit_untuk" class="form-label">Untuk</label>
-                                                        <input type="text" class="form-control" id="edit_untuk" name="untuk" value="{{ $proposal->untuk }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="edit_status_disposisi" class="form-label">Status Disposisi</label>
-                                                        <select class="form-select" id="edit_status_disposisi" name="status_disposisi" required>
-                                                            <option value="Memproses" {{ $proposal->status_disposisi == 'Memproses' ? 'selected' : '' }}>Memproses</option>
-                                                            <option value="Menunggu Approval Dekan" {{ $proposal->status_disposisi == 'Menunggu Approval Dekan' ? 'selected' : '' }}>Menunggu Approval Dekan</option>
-                                                            <option value="Menunggu Approval Wadek Akademik" {{ $proposal->status_disposisi == 'Menunggu Approval Wadek Akademik' ? 'selected' : '' }}>Menunggu Approval Wadek Akademik</option>
-                                                            <option value="Menunggu Approval Kabag" {{ $proposal->status_disposisi == 'Menunggu Approval Kabag' ? 'selected' : '' }}>Menunggu Approval Kabag</option>
-                                                            <option value="Menunggu Approval Keuangan" {{ $proposal->status_disposisi == 'Menunggu Approval Keuangan' ? 'selected' : '' }}>Menunggu Approval Keuangan</option>
-                                                            <option value="Selesai" {{ $proposal->status_disposisi == 'Selesai' ? 'selected' : '' }}>Selesai</option>
-                                                            <option value="Ditolak" {{ $proposal->status_disposisi == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
+                                                        <label><strong>Jenis Surat</strong></label>
+                                                        <select name="jenis_surat" class="form-select" required>
+                                                            <option value="Surat Pembayaran" {{ $proposal->jenis_surat == 'Surat Pembayaran' ? 'selected' : '' }}>Surat Pembayaran</option>
+                                                            <option value="Surat Masuk" {{ $proposal->jenis_surat == 'Surat Masuk' ? 'selected' : '' }}>Surat Masuk</option>
                                                         </select>
                                                     </div>
+                                                    <!-- Perlu SK -->
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Perlu Surat Keluar?</label>
+                                                        <select class="form-select" name="perlu_sk" x-model="perluSk">
+                                                            <option value="">Pilih</option>
+                                                            <option value="1">Ya</option>
+                                                            <option value="0">Tidak</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3" x-show="perluSk == 1">
+                                                        <label class="form-label">Pihak Pembuat Surat Keluar</label>
+                                                        <select class="form-select" name="pihak_pembuat_sk">
+                                                            <option value="">Pilih Pihak</option>
+                                                            @foreach (['Kabag TU','Dekan','Wadek Akademik','Wadek Kemahasiswaan','Wadek Administrasi Umum','Keuangan','Prodi Teknik Informatika', 'Prodi Agribisnis', 'Prodi Sistem Informasi', 'Prodi Matematika', 'Prodi Fisika', 'Prodi Kimia', 'Prodi Biologi', 'Prodi Teknik Pertambangan', 'PLT','Akademik','Umum','Perpus'] as $pihak)
+                                                                <option value="{{ $pihak }}" {{ $proposal->pihak_pembuat_sk == $pihak ? 'selected' : '' }}>{{ $pihak }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <!-- Lanjutan kolom kanan -->
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Hal</label>
+                                                        <input type="text" class="form-control" name="hal" value="{{ $proposal->hal }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Diterima Tanggal</label>
+                                                        <input type="datetime-local" class="form-control" name="diterima_tanggal" value="{{ \Carbon\Carbon::parse($proposal->diterima_tanggal)->format('Y-m-d\TH:i') }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Untuk</label>
+                                                        <input type="text" class="form-control" name="untuk" value="{{ $proposal->untuk }}" required>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label mb-2 fw-bold">Pihak yang terlibat Approval</label>
+                                                    
+                                                        <div class="card border shadow-sm">
+                                                            <div class="card-body px-4 py-3">
+                                                                <div class="row gx-4 gy-3">
+                                                                    @foreach (['Kabag TU','Dekan','Wadek Akademik','Wadek Kemahasiswaan','Wadek Administrasi Umum','Keuangan','Prodi Teknik Informatika', 'Prodi Agribisnis', 'Prodi Sistem Informasi', 'Prodi Matematika', 'Prodi Fisika', 'Prodi Kimia', 'Prodi Biologi', 'Prodi Teknik Pertambangan', 'PLT','Akademik','Umum','Perpus'] as $index => $pihak)
+                                                                        <div class="col-12 col-sm-6 col-lg-4">
+                                                                            <div class="form-check d-flex align-items-start" x-data="{ showFull: false }">
+                                                                                <input type="checkbox" 
+                                                                                    class="form-check-input mt-1 me-2" 
+                                                                                    id="pihak-{{ Str::slug($pihak) }}" 
+                                                                                    :checked="pihakTtd.includes('{{ $pihak }}')" 
+                                                                                    @change="if($event.target.checked){ pihakTtd.push('{{ $pihak }}') } else { pihakTtd = pihakTtd.filter(x => x !== '{{ $pihak }}') }">
+                                                    
+                                                                                <label 
+                                                                                    class="form-check-label text-truncate" 
+                                                                                    :class="{ 'text-wrap': showFull }"
+                                                                                    @click="showFull = !showFull" 
+                                                                                    for="pihak-{{ Str::slug($pihak) }}" 
+                                                                                    style="cursor: pointer; min-width: 0; max-width: 100%;" 
+                                                                                    title="{{ $pihak }}">
+                                                                                    {{ $pihak }}
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    
+                                                        <template x-for="value in pihakTtd" :key="value">
+                                                            <input type="hidden" name="pihak_ttd[]" :value="value">
+                                                        </template>
+                                                    
+                                                        <small class="text-muted d-block mt-2">Centang pihak yang harus menandatangani. Klik teks untuk melihat seluruhnya.</small>
+                                                    </div>                                                                                         
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-primary">Simpan</button>
@@ -316,11 +384,11 @@
                         <!-- Icon action Edit -->
                         @if($proposal->status_disposisi == 'Ditolak' || $proposal->status_disposisi == 'Selesai')
                         <button class="btn btn-outline-success btn-sm mr-1" data-toggle="modal" data-target="#feedbackProposalModal-{{ $proposal->id }}">
-                            <i class="fas fa-pencil-alt"></i>
+                            <i class="fas fa-pencil-alt"></i> Beri Feedback
                         </button>
                         @endif
 
-                        <!-- Modal untuk penolakan -->
+                        <!-- Modal untuk feedback -->
                         <div class="modal fade" id="feedbackProposalModal-{{ $proposal->id }}" tabindex="-1" aria-labelledby="rejectProposalModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
@@ -353,13 +421,13 @@
                                 </div>
                             </div>
                         </div>
-    
+
                         <!-- Tombol Hapus -->
                         <form action="{{ route('tu.proposals.destroy', $proposal->id) }}" method="POST" style="display:inline-block;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus proposal ini?')">
-                                <i class="fas fa-trash-alt"></i>
+                                <i class="fas fa-trash-alt"></i> Hapus
                             </button>
                         </form>
                     </td>

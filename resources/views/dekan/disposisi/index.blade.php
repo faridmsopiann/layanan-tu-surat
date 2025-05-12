@@ -20,7 +20,8 @@
                 <tr>
                     <th class="text-sm">No</th>
                     <th class="text-sm">Nomor Agenda</th>
-                    <th class="text-sm">File</th>
+                    <th class="text-sm">File Surat Masuk</th>
+                    <th class="text-sm">File Surat Keluar</th>
                     <th class="text-sm">Jenis</th>
                     <th class="text-sm">Tanggal Surat</th>
                     <th class="text-sm">Nomor Surat</th>
@@ -47,13 +48,13 @@
 
                             @if (count($files) == 1)
                                 <div class="mt-0">
-                                    <a href="{{ asset('storage/' . $files[0]) }}" class="btn-sm btn-info" download>
+                                    <a href="{{ asset('storage/' . $files[0]) }}" class="btn-sm btn-info" style="white-space: nowrap;" download>
                                         <i class="fas fa-download"></i> Download File
                                     </a>
                                 </div>
                             @elseif (count($files) > 1)
                                 <div class="mt-0">
-                                    <a href="{{ route('dekan.proposals.downloadZip', $proposal->id) }}" class="btn-sm btn-info">
+                                    <a href="{{ route('dekanat.proposals.downloadZip', $proposal->id) }}" class="btn-sm btn-info" style="white-space: nowrap;">
                                         <i class="fas fa-file-archive"></i> Download ZIP
                                     </a>
                                 </div>
@@ -74,6 +75,15 @@
                             <p class="text-muted">Tidak ada file atau link yang diunggah.</p>
                         @endif
                     </td>
+                    <td class="text-sm">
+                        @if ($proposal->soft_file_sk)
+                            <a href="{{ asset('storage/' . $proposal->soft_file_sk) }}" class="btn-sm btn-success" style="white-space: nowrap;" download>
+                                <i class="fas fa-download"></i> Download SK
+                            </a>
+                        @else
+                            <span class="text-muted">Belum diunggah</span>
+                        @endif
+                    </td>                    
                     <td class="text-sm">{{ $proposal->jenis_proposal }}</td>
                     <td class="text-sm">{{ $proposal->tanggal_surat }}</td>
                     <td class="text-sm">{{ $proposal->nomor_surat }}</td>
@@ -100,7 +110,7 @@
                     <td class="text-sm">{{ $proposal->pesan_disposisi }}</td>
                     <td class="d-flex">
                         <a href="#" data-toggle="modal" data-target="#detailModal{{ $proposal->id }}" class="btn btn-outline-info btn-sm mr-1">
-                            <i class="fas fa-eye"></i>
+                            <i class="fas fa-eye"></i> Detail
                         </a>
 
                         <div class="modal fade" id="detailModal{{ $proposal->id }}" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel{{ $proposal->id }}" aria-hidden="true">
@@ -203,13 +213,27 @@
                             </div>
                         </div>
 
+                         <!-- Cek Perlu Surat Keluar -->
+                         @if($proposal->perlu_sk && $proposal->pihak_pembuat_sk == $proposal->tujuan_disposisi)
+                            <!-- Tombol Upload -->
+                            <button class="btn btn-warning btn-sm mr-1" onclick="event.preventDefault(); document.getElementById('upload-sk-input-{{ $proposal->id }}').click();">
+                                <i class="fas fa-upload"></i> SK
+                            </button>
+                        
+                            <!-- Input file tersembunyi -->
+                            <form id="upload-sk-form-{{ $proposal->id }}" action="{{ route('dekanat.proposal.upload-sk', $proposal->id) }}" method="POST" enctype="multipart/form-data" style="display: none;">
+                                @csrf
+                                <input type="file" name="soft_file_sk" id="upload-sk-input-{{ $proposal->id }}" accept="application/pdf" onchange="document.getElementById('upload-sk-form-{{ $proposal->id }}').submit();">
+                            </form>
+                        @endif
+
                         <!-- Tombol Disposisi -->
                         <button class="btn btn-info btn-sm mr-1 w-100" data-toggle="modal" data-target="#disposisiModal-{{ $proposal->id }}">
-                            <i class="fas fa-share"></i> 
+                            <i class="fas fa-share"></i> Dispose
                         </button>
                         <!-- Tombol Reject -->
                         <button class="btn btn-danger btn-sm w-100" data-toggle="modal" data-target="#rejectModal-{{ $proposal->id }}">
-                            <i class="fas fa-times"></i> 
+                            <i class="fas fa-times"></i> Reject
                         </button>
                     </td>
                 </tr>
@@ -225,7 +249,7 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form method="POST" action="{{ route('disposisi.updateDisposisi', $proposal->id) }}">
+                                <form method="POST" action="{{ route('dekanat.disposisi.updateDisposisi', $proposal->id) }}">
                                     @csrf
                                     @method('PUT')
 
@@ -244,27 +268,17 @@
                                         <label for="disposisi">Tujuan Disposisi</label>
                                         <select id="disposisi" class="form-control" name="disposisi">
                                             @if ($proposal->tujuan_disposisi == 'Dekan')
-                                                <option value="Kabag TU">Kabag TU</option>
-                                                <option value="Wadek Akademik">Wadek Akademik</option>
-                                                <option value="Wadek Kemahasiswaan">Wadek Kemahasiswaan</option>
-                                                <option value="Wadek Administrasi Umum">Wadek Administrasi Umum</option>
-                                                <option value="Prodi">Prodi</option>
-                                                <option value="Keuangan">Keuangan</option>
-                                                <option value="PLT">PLT</option>
-                                                <option value="Akademik">Akademik</option>
-                                                <option value="Umum">Umum</option>
-                                                <option value="Perpus">Perpus</option>
-                                                <option value="Staff TU">Staff TU (Selesai)</option>
+                                                    @foreach(json_decode($proposal->pihak_ttd, true) as $item)
+                                                        <option value="{{ $item === 'Dekan' ? 'Staff TU' : $item }}">
+                                                            {{ $item === 'Dekan' ? '🟢 Kembalikan ke Staff TU (Selesai)' : $item }}
+                                                        </option>
+                                                    @endforeach
                                             @elseif(in_array($proposal->tujuan_disposisi, ['Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum']))
-                                                <option value="Dekan">Dekan</option>
-                                                <option value="Kabag TU">Kabag TU</option>
-                                                <option value="Prodi">Prodi</option>
-                                                <option value="Keuangan">Keuangan</option>
-                                                <option value="PLT">PLT</option>
-                                                <option value="Akademik">Akademik</option>
-                                                <option value="Umum">Umum</option>
-                                                <option value="Perpus">Perpus</option>
-                                                <option value="Staff TU">Staff TU (Selesai)</option>
+                                                @foreach(json_decode($proposal->pihak_ttd, true) as $item)
+                                                        <option value="{{ $item === $proposal->tujuan_disposisi ? 'Staff TU' : $item }}">
+                                                            {{ $item === $proposal->tujuan_disposisi ? '🟢 Kembalikan ke Staff TU (Selesai)' : $item }}
+                                                        </option>
+                                                @endforeach
                                             @endif
                                         </select>
                                     </div>
@@ -292,7 +306,7 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form method="POST" action="{{ route('disposisi.updateReject', $proposal->id) }}">
+                                <form method="POST" action="{{ route('dekanat.disposisi.updateReject', $proposal->id) }}">
                                     @csrf
                                     @method('PUT')
 
@@ -325,6 +339,7 @@
                         </div>
                     </div>
                 </div>
+
                 @endforeach
             </tbody>
         </table>

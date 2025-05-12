@@ -43,26 +43,20 @@
                     </a>
                 </li>
 
+                <!-- Monitoring Menu Item -->
+                 <li class="nav-item">
+                    <a href="{{ route('tu.monitoring.index') }}" class="nav-link {{ Request::routeIs('tu.monitoring.index') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-eye"></i>
+                        <p>Monitoring</p>
+                    </a>
+                </li>
+
                  <!-- Arsip Surat -->
                 <li class="nav-item">
                     <a href="{{ route('tu.arsip.index') }}" class="nav-link {{ Request::routeIs('tu.arsip.index') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-archive"></i>
                         <p>Arsip Surat</p>
                     </a>
-                </li>
-
-                <li class="nav-item">
-                    {{-- <a href="{{ route('admin.manage-users') }}" class="nav-link">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>Manage Users</p>
-                    </a> --}}
-                </li>
-
-                <li class="nav-item">
-                    {{-- <a href="{{ route('admin.proposals') }}" class="nav-link">
-                        <i class="nav-icon fas fa-file-alt"></i>
-                        <p>Manage Proposals</p>
-                    </a> --}}
                 </li>
 
                  <!-- Logout Button -->

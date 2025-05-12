@@ -15,7 +15,7 @@
 
                 <p class="login-title">Daftar untuk memulai</p>
 
-                <x-validation-errors class="mb-4" />
+                <x-validation-errors class="error_message" />
 
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
@@ -72,6 +72,25 @@
         </div>
     </div>
 </x-guest-layout>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const errorBox = document.querySelector('.error_message');
+
+        if (errorBox) {
+            setTimeout(() => {
+                errorBox.style.transition = 'opacity 0.5s ease';
+                errorBox.style.opacity = '0';
+                setTimeout(() => {
+                    errorBox.style.display = 'none';
+                }, 500);
+            }, 3000);
+        }
+    });
+</script>
+
+<!-- Tambahkan ini di dalam <head> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');

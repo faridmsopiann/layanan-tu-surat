@@ -13,42 +13,45 @@ use Illuminate\Support\Str;
 
 class GoogleController extends Controller
 {
-    public function redirectToGoogle()
+    public function redirectToGoogle(Request $request)
     {
+        if ($request->get('from') === 'qr') {
+            session(['login_source' => 'qr']);
+        }
+
         return Socialite::driver('google')->redirect();
     }
 
-    public function handleGoogleCallback()
+
+    public function handleGoogleCallback(Request $request)
     {
         try {
             $googleUser = Socialite::driver('google')->user();
             Log::info('Google User Data:', ['user' => $googleUser]);
 
-            // Cek apakah user sudah ada
-            $user = User::where('email', $googleUser->getEmail())->first();
-
-            if (!$user) {
-                $user = User::create([
+            $user = User::firstOrCreate(
+                ['email' => $googleUser->getEmail()],
+                [
                     'name' => $googleUser->getName(),
-                    'email' => $googleUser->getEmail(),
                     'password' => Hash::make(Str::random(24)),
-                ]);
+                ]
+            );
 
-                // Tambahkan role ke pivot table
-                $pemohonRole = Role::where('name', 'pemohon')->first();
-                if ($pemohonRole) {
-                    $user->roles()->attach($pemohonRole);
-                }
-                Log::info('User baru dibuat dan diberikan role pemohon', ['user' => $user]);
-            }
+            $user->roles()->syncWithoutDetaching(
+                [Role::where('name', 'pemohon')->first()?->id]
+            );
 
-            // Login user
             Auth::login($user, true);
-            $user->load('roles'); // Refresh relasi roles
+            $user->load('roles');
+
             Log::info('User login berhasil dengan role:', ['roles' => $user->roles->pluck('name')]);
 
-            // Redirect ke dashboard
-            return redirect()->route('dashboard');
+            // Ambil source dari session
+            $source = session()->pull('login_source');
+
+            return $source === 'qr'
+                ? redirect()->route('tracking.surat')
+                : redirect()->route('dashboard');
         } catch (\Exception $e) {
             Log::error('Google login error:', ['error' => $e->getMessage()]);
             return redirect()->route('login')->with('error', 'Something went wrong!');

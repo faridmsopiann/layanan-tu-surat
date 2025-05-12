@@ -20,7 +20,8 @@
                 <tr>
                     <th class="text-sm">No</th>
                     <th class="text-sm">Nomor Agenda</th>
-                    <th class="text-sm">File</th>
+                    <th class="text-sm">File Surat Masuk</th>
+                    <th class="text-sm">File Surat Keluar</th>
                     <th class="text-sm">Tanggal Surat</th>
                     <th class="text-sm">Nomor Surat</th>
                     <th class="text-sm">Asal Surat</th>
@@ -46,13 +47,13 @@
 
                             @if (count($files) == 1)
                                 <div class="mt-0">
-                                    <a href="{{ asset('storage/' . $files[0]) }}" class="btn-sm btn-info" download>
+                                    <a href="{{ asset('storage/' . $files[0]) }}" class="btn-sm btn-info" style="white-space: nowrap;" download>
                                         <i class="fas fa-download"></i> Download File
                                     </a>
                                 </div>
                             @elseif (count($files) > 1)
                                 <div class="mt-0">
-                                    <a href="{{ route('keuangan.proposals.downloadZip', $proposal->id) }}" class="btn-sm btn-info">
+                                    <a href="{{ route('keuangan.proposals.downloadZip', $proposal->id) }}" class="btn-sm btn-info" style="white-space: nowrap;">
                                         <i class="fas fa-file-archive"></i> Download ZIP
                                     </a>
                                 </div>
@@ -73,6 +74,15 @@
                             <p class="text-muted">Tidak ada file atau link yang diunggah.</p>
                         @endif
                     </td>
+                    <td class="text-sm">
+                        @if ($proposal->soft_file_sk)
+                            <a href="{{ asset('storage/' . $proposal->soft_file_sk) }}" class="btn-sm btn-success" style="white-space: nowrap;" download>
+                                <i class="fas fa-download"></i> Download SK
+                            </a>
+                        @else
+                            <span class="text-muted">Belum diunggah</span>
+                        @endif
+                    </td>   
                     <td class="text-sm">{{ $proposal->tanggal_surat }}</td>
                     <td class="text-sm">{{ $proposal->nomor_surat }}</td>
                     <td class="text-sm">{{ $proposal->asal_surat }}</td>
@@ -201,13 +211,27 @@
                             </div>
                         </div>
 
+                         <!-- Cek Perlu Surat Keluar -->
+                         @if($proposal->perlu_sk && $proposal->tujuan_disposisi == $proposal->pihak_pembuat_sk)
+                            <!-- Tombol Upload -->
+                            <button class="btn btn-warning btn-sm mr-1" onclick="event.preventDefault(); document.getElementById('upload-sk-input-{{ $proposal->id }}').click();">
+                                <i class="fas fa-upload"></i> SK
+                            </button>
+                        
+                            <!-- Input file tersembunyi -->
+                            <form id="upload-sk-form-{{ $proposal->id }}" action="{{ route('plt.proposal.upload-sk', $proposal->id) }}" method="POST" enctype="multipart/form-data" style="display: none;">
+                                @csrf
+                                <input type="file" name="soft_file_sk" id="upload-sk-input-{{ $proposal->id }}" accept="application/pdf" onchange="document.getElementById('upload-sk-form-{{ $proposal->id }}').submit();">
+                            </form>
+                        @endif
+
                         <!-- Tombol Disposisi -->
                         <button type="button" class="btn btn-info btn-sm d-inline-block mr-1 w-100" data-toggle="modal" data-target="#disposisiModal{{ $proposal->id }}">
-                            <i class="fas fa-share"></i> 
+                            <i class="fas fa-share"></i> Dispose
                         </button>
                         <!-- Tombol Reject -->
                         <button type="button" class="btn btn-danger btn-sm d-inline-block w-100" data-toggle="modal" data-target="#rejectModal{{ $proposal->id }}">
-                            <i class="fas fa-times"></i>
+                            <i class="fas fa-times"></i> Reject
                         </button>
                     </td>
                 </tr>
@@ -237,17 +261,11 @@
                                     <div class="form-group">
                                         <label for="disposisi">Tujuan Disposisi</label>
                                         <select id="disposisi" class="form-control" name="disposisi">
-                                            <option value="Dekan">Dekan</option>
-                                            <option value="Kabag TU">Kabag TU</option>
-                                            <option value="Wadek Akademik">Wadek Akademik</option>
-                                            <option value="Wadek Kemahasiswaan">Wadek Kemahasiswaan</option>
-                                            <option value="Wadek Administrasi Umum">Wadek Administrasi Umum</option>
-                                            <option value="Prodi">Prodi</option>
-                                            <option value="PLT">PLT</option>
-                                            <option value="Akademik">Akademik</option>
-                                            <option value="Umum">Umum</option>
-                                            <option value="Perpus">Perpus</option>
-                                            <option value="Staff TU">Staff TU (Selesai)</option>
+                                            @foreach(json_decode($proposal->pihak_ttd, true) as $item)
+                                                        <option value="{{ $item === 'Keuangan' ? 'Staff TU' : $item }}">
+                                                            {{ $item === 'Keuangan' ? '🟢 Kembalikan ke Staff TU (Selesai)' : $item }}
+                                                        </option>
+                                            @endforeach
                                         </select>
                                     </div>
     

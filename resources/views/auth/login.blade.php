@@ -17,7 +17,7 @@
                 <p class="login-title">Selamat Datang di Portal Surat FST</p>
                 <p class="login-subtitle">Masuk untuk memulai sesi Anda</p>
 
-                <x-validation-errors class="mb-4" />
+                <x-validation-errors class="error_message" />
 
                 @if (session('status'))
                     <div class="alert-success">
@@ -54,8 +54,8 @@
                         <i class="fas fa-sign-in-alt"></i> Masuk
                     </button>
 
-                    <a href="{{ route('qr.login') }}" class="btn-qr">
-                        <i class="fas fa-qrcode"></i> QR Login
+                    <a href="{{ route('auth.google', ['from' => 'qr']) }}" class="btn-qr">
+                        <i class="fas fa-qrcode"></i> QR Tracking
                     </a>
 
                     <a href="{{ route('auth.google') }}" class="btn-google">
@@ -74,6 +74,23 @@
     </div>
 </x-guest-layout>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const errorBox = document.querySelector('.error_message');
+
+        if (errorBox) {
+            setTimeout(() => {
+                errorBox.style.transition = 'opacity 0.5s ease';
+                errorBox.style.opacity = '0';
+                setTimeout(() => {
+                    errorBox.style.display = 'none';
+                }, 500);
+            }, 3000);
+        }
+    });
+</script>
+<!-- Tambahkan ini di dalam <head> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');

@@ -19,7 +19,8 @@
                 <tr>
                     <th>No</th>
                     <th class="text-sm">Nomor Agenda</th>
-                    <th class="text-sm">File</th>
+                    <th class="text-sm">File Surat Masuk</th>
+                    <th class="text-sm">File Surat Keluar</th>
                     <th class="text-sm">Jenis</th>
                     <th class="text-sm">Tanggal Surat</th>
                     <th class="text-sm">Nomor Surat</th>
@@ -46,13 +47,13 @@
 
                             @if (count($files) == 1)
                                 <div class="mt-0">
-                                    <a href="{{ asset('storage/' . $files[0]) }}" class="btn-sm btn-info" download>
+                                    <a href="{{ asset('storage/' . $files[0]) }}" class="btn-sm btn-info" style="white-space: nowrap;" download>
                                         <i class="fas fa-download"></i> Download File
                                     </a>
                                 </div>
                             @elseif (count($files) > 1)
                                 <div class="mt-0">
-                                    <a href="{{ route('tu.proposals.downloadZip', $proposal->id) }}" class="btn-sm btn-info">
+                                    <a href="{{ route('tu.proposals.downloadZip', $proposal->id) }}" class="btn-sm btn-info" style="white-space: nowrap;">
                                         <i class="fas fa-file-archive"></i> Download ZIP
                                     </a>
                                 </div>
@@ -73,6 +74,15 @@
                             <p class="text-muted">Tidak ada file atau link yang diunggah.</p>
                         @endif
                     </td>
+                    <td class="text-sm">
+                        @if ($proposal->soft_file_sk)
+                            <a href="{{ asset('storage/' . $proposal->soft_file_sk) }}" class="btn-sm btn-success" style="white-space: nowrap;" download>
+                                <i class="fas fa-download"></i> Download SK
+                            </a>
+                        @else
+                            <span class="text-muted">Belum diunggah</span>
+                        @endif
+                    </td>      
                     <td class="text-sm">{{ $proposal->jenis_proposal}}</td>
                     <td class="text-sm">{{ $proposal->tanggal_surat }}</td>
                     <td class="text-sm">{{ $proposal->nomor_surat }}</td>
@@ -204,6 +214,20 @@
                                 </div>
                             </div>
 
+                            <!-- Cek Perlu Surat Keluar -->
+                            @if($proposal->perlu_sk && $proposal->pihak_pembuat_sk == $proposal->tujuan_disposisi)
+                                <!-- Tombol Upload -->
+                                <button class="btn btn-warning btn-sm mr-1" onclick="event.preventDefault(); document.getElementById('upload-sk-input-{{ $proposal->id }}').click();">
+                                    <i class="fas fa-upload"></i>
+                                </button>
+                            
+                                <!-- Input file tersembunyi -->
+                                <form id="upload-sk-form-{{ $proposal->id }}" action="{{ route('tu.proposal.upload-sk', $proposal->id) }}" method="POST" enctype="multipart/form-data" style="display: none;">
+                                    @csrf
+                                    <input type="file" name="soft_file_sk" id="upload-sk-input-{{ $proposal->id }}" accept="application/pdf" onchange="document.getElementById('upload-sk-form-{{ $proposal->id }}').submit();">
+                                </form>
+                            @endif
+
                             <button type="button" class="btn btn-info btn-sm w-100" data-toggle="modal" data-target="#disposisiModal-{{ $proposal->id }}">
                                 <i class="fas fa-share"></i> 
                             </button>
@@ -312,6 +336,20 @@
                                 </div>
                             </div>
 
+                             <!-- Cek Perlu Surat Keluar -->
+                            @if($proposal->perlu_sk && $proposal->pihak_pembuat_sk == 'Kabag TU')
+                                <!-- Tombol Upload -->
+                                <button class="btn btn-warning btn-sm mr-1" onclick="event.preventDefault(); document.getElementById('upload-sk-input-{{ $proposal->id }}').click();">
+                                    <i class="fas fa-upload"></i>
+                                </button>
+                            
+                                <!-- Input file tersembunyi -->
+                                <form id="upload-sk-form-{{ $proposal->id }}" action="{{ route('tu.proposal.upload-sk', $proposal->id) }}" method="POST" enctype="multipart/form-data" style="display: none;">
+                                    @csrf
+                                    <input type="file" name="soft_file_sk" id="upload-sk-input-{{ $proposal->id }}" accept="application/pdf" onchange="document.getElementById('upload-sk-form-{{ $proposal->id }}').submit();">
+                                </form>
+                            @endif
+
                             <button class="btn btn-info btn-sm mr-1 w-100" data-toggle="modal" data-target="#disposisiModal-{{ $proposal->id }}">
                                 <i class="fas fa-share"></i> 
                             </button>
@@ -362,23 +400,15 @@
                                         <div class="dropdown-wrapper" style="position: relative;">
                                             <select id="disposisi" class="form-control" name="disposisi" required>
                                                 @if($proposal->status_disposisi == 'Memproses')
-                                                    <option value="Dekan">Dekan</option>
-                                                    <option value="Kabag TU">Kabag TU</option>
-                                                    <option value="Wadek Akademik">Wadek Akademik</option>
-                                                    <option value="Wadek Kemahasiswaan">Wadek Kemahasiswaan</option>
-                                                    <option value="Wadek Administrasi Umum">Wadek Administrasi Umum</option>
+                                                    @foreach(json_decode($proposal->pihak_ttd, true) as $item)
+                                                            <option value="{{ $item }}">{{ $item }}</option>
+                                                    @endforeach
                                                 @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag')
-                                                    <option value="Dekan">Dekan</option>
-                                                    <option value="Wadek Akademik">Wadek Akademik</option>
-                                                    <option value="Wadek Kemahasiswaan">Wadek Kemahasiswaan</option>
-                                                    <option value="Wadek Administrasi Umum">Wadek Administrasi Umum</option>
-                                                    <option value="Keuangan">Keuangan</option>
-                                                    <option value="Akademik">Akademik</option>
-                                                    <option value="Umum">Umum</option>
-                                                    <option value="Perpus">Perpus</option>
-                                                    <option value="Prodi">Prodi</option>
-                                                    <option value="PLT">PLT</option>
-                                                    <option value="Staff TU">Staff TU (Selesai)</option>
+                                                   @foreach(json_decode($proposal->pihak_ttd, true) as $item)
+                                                        <option value="{{ $item === 'Kabag TU' ? 'Staff TU' : $item }}">
+                                                            {{ $item === 'Kabag TU' ? '🟢 Kembalikan ke Staff TU (Selesai)' : $item }}
+                                                        </option>
+                                                    @endforeach
                                                 @endif
                                             </select>
                                             <!-- Icon panah bawah -->
@@ -459,6 +489,78 @@
 @endsection
 
 @push('js')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    @foreach ($proposals as $proposal)
+        const containerId = "pdf-canvas-{{ $proposal->id }}";
+        const url = "{{ asset('storage/' . $proposal->soft_file_sk) }}";
+
+        pdfjsLib.getDocument(url).promise.then(function (pdf) {
+            let container = document.getElementById(containerId);
+            container.innerHTML = "";
+            container.style.overflowX = "auto";
+
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                pdf.getPage(pageNum).then(function (page) {
+                    let viewport = page.getViewport({ scale: 1.5 });
+                    let canvas = document.createElement('canvas');
+                    let context = canvas.getContext('2d');
+
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    canvas.style.border = "1px solid #ccc";
+                    canvas.style.display = "block";
+                    canvas.style.margin = "0 auto 10px"; // tengah + bawah
+
+                    canvas.dataset.page = page.pageNumber;
+                    container.appendChild(canvas);
+
+                    page.render({ canvasContext: context, viewport: viewport });
+
+                    let isDrawing = false, lastX = 0, lastY = 0;
+
+                    canvas.addEventListener('mousedown', (e) => {
+                        isDrawing = true;
+                        lastX = e.offsetX;
+                        lastY = e.offsetY;
+                    });
+
+                    canvas.addEventListener('mousemove', (e) => {
+                        if (!isDrawing) return;
+                        context.beginPath();
+                        context.moveTo(lastX, lastY);
+                        context.lineTo(e.offsetX, e.offsetY);
+                        context.strokeStyle = '#000';
+                        context.lineWidth = 2;
+                        context.lineJoin = 'round';
+                        context.stroke();
+                        lastX = e.offsetX;
+                        lastY = e.offsetY;
+                    });
+
+                    canvas.addEventListener('mouseup', () => isDrawing = false);
+                    canvas.addEventListener('mouseleave', () => isDrawing = false);
+
+                    // Simpan tanda tangan
+                    canvas.addEventListener("click", function (e) {
+                        let rect = canvas.getBoundingClientRect();
+                        let x = (e.clientX - rect.left) * (canvas.width / rect.width);
+                        let y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+                        const form = document.getElementById("sign-form-{{ $proposal->id }}");
+                        form.querySelector("input[name='x']").value = x;
+                        form.querySelector("input[name='y']").value = y;
+                        form.querySelector("input[name='page']").value = canvas.dataset.page;
+                        form.querySelector("input[name='signature']").value = canvas.toDataURL("image/png");
+                    });
+                });
+            }
+        });
+    @endforeach
+});
+</script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var successAlert = document.getElementById("success-alert");

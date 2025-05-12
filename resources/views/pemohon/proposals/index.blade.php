@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container pb-4" style="font-family: 'Roboto', sans-serif;">
-    <h1 class="mt-4" style="font-weight: 700; color: #2C3E50;">Pengajuan Surat</h1>
+    <h1 class="pt-4" style="font-weight: 700; color: #2C3E50;">Pengajuan Surat</h1>
 
     @if(session('success'))
         <div id="success-alert" class="alert alert-success mb-3 shadow-sm" style="border-left: 5px solid #28a745;">
@@ -79,7 +79,8 @@
                     {{-- <th>Jenis</th> --}}
                     <th>Hal</th>
                     <th>Status</th>
-                    <th>Soft File</th>
+                    <th>Pengajuan</th>
+                    <th>Surat Keluar</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -113,13 +114,13 @@
 
                             @if (count($files) == 1)
                                 <div class="mt-0">
-                                    <a href="{{ asset('storage/' . $files[0]) }}" class="btn-sm btn-info" download>
+                                    <a href="{{ asset('storage/' . $files[0]) }}" class="btn-sm btn-info" style="white-space: nowrap;" download>
                                         <i class="fas fa-download"></i> Download File
                                     </a>
                                 </div>
                             @elseif (count($files) > 1)
                                 <div class="mt-0">
-                                    <a href="{{ route('pemohon.proposals.downloadZip', $p->id) }}" class="btn-sm btn-info">
+                                    <a href="{{ route('pemohon.proposals.downloadZip', $p->id) }}" class="btn-sm btn-info" style="white-space: nowrap;">
                                         <i class="fas fa-file-archive"></i> Download ZIP
                                     </a>
                                 </div>
@@ -140,6 +141,15 @@
                             <p class="text-muted">Tidak ada file atau link yang diunggah.</p>
                         @endif
                     </td>
+                    <td class="text-sm">
+                        @if ($p->soft_file_sk)
+                            <a href="{{ asset('storage/' . $p->soft_file_sk) }}" class="btn-sm btn-success" style="white-space: nowrap;" download>
+                                <i class="fas fa-download"></i> 
+                            </a>
+                        @else
+                            <span class="text-muted">Tidak Ada/Belum diunggah</span>
+                        @endif
+                    </td>   
                     <td class="d-flex">
                         <!-- Button Detail -->
                         <a href="#" data-toggle="modal" data-target="#detailModal{{ $p->id }}" class="btn btn-outline-info btn-sm mr-1">

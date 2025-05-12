@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ModalDisposisi;
 use App\Models\Proposal;
 use Illuminate\Http\Request;
+use setasign\Fpdi\Fpdi;
 use ZipArchive;
 
 class PltDisposisiController extends Controller
@@ -17,6 +18,25 @@ class PltDisposisiController extends Controller
             ->orWhere('tujuan_disposisi', 'PLT')
             ->paginate(5);
         return view('plt.disposisi.index', compact('proposals'));
+    }
+
+    public function uploadSK(Request $request, $id)
+    {
+        $request->validate([
+            'soft_file_sk' => 'required|file|mimes:pdf|max:10240',
+        ]);
+
+        $proposal = Proposal::findOrFail($id);
+
+        // Simpan file
+        $path = $request->file('soft_file_sk')->store('proposals', 'public');
+
+        // Update data proposal
+        $proposal->soft_file_sk = $path;
+        $proposal->sudah_sk = true;
+        $proposal->save();
+
+        return redirect()->back()->with('success', 'Surat Keluar berhasil diupload.');
     }
 
     public function downloadZip($id)
@@ -179,8 +199,8 @@ class PltDisposisiController extends Controller
             return 'Menunggu Approval Akademik';
         } elseif ($tujuan == 'Perpus') {
             return 'Menunggu Approval Perpus';
-        } elseif ($tujuan == 'Prodi') {
-            return 'Menunggu Approval Prodi';
+        } elseif ($tujuan == 'Prodi Teknik Informatika') {
+            return 'Menunggu Approval Prodi Teknik Informatika';
         } elseif ($tujuan == 'Dekan') {
             return 'Menunggu Approval Dekan';
         } elseif ($tujuan == 'Kabag TU') {

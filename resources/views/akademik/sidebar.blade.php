@@ -28,6 +28,22 @@
                     </a>
                 </li>
 
+                <!-- Monitoring Menu Item -->
+                 <li class="nav-item">
+                    <a href="{{ route('akademik.monitoring.index') }}" class="nav-link {{ Request::routeIs('akademik.monitoring.index') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-eye"></i>
+                        <p>Monitoring</p>
+                    </a>
+                </li>
+
+                 <!-- Arsip Surat -->
+                <li class="nav-item">
+                    <a href="{{ route('akademik.arsip.index') }}" class="nav-link {{ Request::routeIs('akademik.arsip.index') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-archive"></i>
+                        <p>Arsip Surat</p>
+                    </a>
+                </li>
+
                  <!-- Logout Button -->
                  <li class="nav-item">
                     <a href="{{ route('logout') }}" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

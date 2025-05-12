@@ -6,7 +6,7 @@
 
     @if($arsipProposals->isEmpty())
         <form method="GET" action="{{ route('tu.arsip.index') }}" class="p-2 rounded shadow-sm bg-info">
-            <input type="text" name="no_agenda" placeholder="No Agenda" value="{{ request('no_agenda') }}" class="form-control form-control-sm d-inline w-auto mr-1 mb-1" aria-label="Cari No Agenda">
+            <input type="text" name="kode_pengajuan" placeholder="Kode Pengajuan" value="{{ request('kode_pengajuan') }}" class="form-control form-control-sm d-inline w-auto mr-1 mb-1" aria-label="Cari Kode Pengajuan">
             <input type="date" name="tanggal_surat" value="{{ request('tanggal_surat') }}" class="form-control form-control-sm d-inline w-auto mr-1 mb-1" aria-label="Cari Tanggal Surat">
             <input type="text" name="asal_surat" placeholder="Asal Surat" value="{{ request('asal_surat') }}" class="form-control form-control-sm d-inline w-auto mr-1 mb-1" aria-label="Cari Asal Surat">
             <input type="text" name="perihal" placeholder="Perihal" value="{{ request('perihal') }}" class="form-control form-control-sm d-inline w-auto mr-1 mb-1" aria-label="Cari Perihal">
@@ -20,7 +20,7 @@
         <p class="text-center mt-4">Tidak ada proposal.</p>
     @else
         <form method="GET" action="{{ route('tu.arsip.index') }}" class="p-2 rounded shadow-sm bg-info">
-            <input type="text" name="no_agenda" placeholder="No Agenda" value="{{ request('no_agenda') }}" class="form-control form-control-sm d-inline w-auto mr-1 mb-1" aria-label="Cari No Agenda">
+            <input type="text" name="kode_pengajuan" placeholder="Kode Pengajuan" value="{{ request('kode_pengajuan') }}" class="form-control form-control-sm d-inline w-auto mr-1 mb-1" aria-label="Cari Kode Pengajuan">
             <input type="date" name="tanggal_surat" value="{{ request('tanggal_surat') }}" class="form-control form-control-sm d-inline w-auto mr-1 mb-1" aria-label="Cari Tanggal Surat">
             <input type="text" name="asal_surat" placeholder="Asal Surat" value="{{ request('asal_surat') }}" class="form-control form-control-sm d-inline w-auto mr-1 mb-1" aria-label="Cari Asal Surat">
             <input type="text" name="perihal" placeholder="Perihal" value="{{ request('perihal') }}" class="form-control form-control-sm d-inline w-auto mr-1 mb-1" aria-label="Cari Perihal">
@@ -42,13 +42,13 @@
             <table class="table table-bordered table-hover shadow-sm" style="background-color: #f8f9fa; border-radius: 8px;">
                 <thead style="background-color: #ECF0F1; color: #2C3E50;">
                     <tr>
-                        <th class="text-sm">No</th>
-                        <th class="text-sm">No Agenda</th>
+                        <th class="text-sm">Kode Pengajuan</th>
                         <th class="text-sm">Tanggal Surat</th>
                         <th class="text-sm">Asal Surat</th>
                         <th class="text-sm">Perihal</th>
                         <th class="text-sm">Jenis Surat</th>
-                        <th class="text-sm">File PDF</th>
+                        <th class="text-sm">File Surat Masuk</th>
+                        <th class="text-sm">File Surat Keluar</th>
                         <th class="text-sm">Status</th>
                         <th class="text-sm">Aksi</th>
                     </tr>
@@ -56,8 +56,7 @@
                 <tbody>
                     @foreach($arsipProposals as $key => $proposal)
                         <tr class="align-middle" style="transition: background-color 0.3s;">
-                            <td class="text-sm">{{ $key + 1 }}</td>
-                            <td class="text-sm">{{ $proposal->nomor_agenda }}</td>
+                            <td class="text-sm">{{ $proposal->kode_pengajuan }}</td>
                             <td class="text-sm">{{ $proposal->tanggal_surat }}</td>
                             <td class="text-sm">{{ $proposal->asal_surat }}</td>
                             <td class="text-sm">{{ $proposal->hal }}</td>
@@ -97,6 +96,15 @@
                                     <p class="text-muted">Tidak ada file atau link yang diunggah.</p>
                                 @endif
                             </td>
+                            <td class="text-sm">
+                                @if ($proposal->soft_file_sk)
+                                    <a href="{{ asset('storage/' . $proposal->soft_file_sk) }}" class="btn-sm btn-success" style="white-space: nowrap;" download>
+                                        <i class="fas fa-download"></i> Download SK
+                                    </a>
+                                @else
+                                    <span class="text-muted">Belum diunggah</span>
+                                @endif
+                            </td>  
                             <td>
                                 @php
                                                 $statusColors = [

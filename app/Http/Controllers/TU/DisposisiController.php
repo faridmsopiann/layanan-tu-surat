@@ -24,6 +24,25 @@ class DisposisiController extends Controller
         return view('tu.disposisi.index', compact('proposals'));
     }
 
+    public function uploadSK(Request $request, $id)
+    {
+        $request->validate([
+            'soft_file_sk' => 'required|file|mimes:pdf|max:10240',
+        ]);
+
+        $proposal = Proposal::findOrFail($id);
+
+        // Simpan file
+        $path = $request->file('soft_file_sk')->store('proposals', 'public');
+
+        // Update data proposal
+        $proposal->soft_file_sk = $path;
+        $proposal->sudah_sk = true;
+        $proposal->save();
+
+        return redirect()->back()->with('success', 'Surat Keluar berhasil diupload.');
+    }
+
     // Menampilkan halaman form disposisi untuk proposal
     public function edit($id)
     {
@@ -86,13 +105,12 @@ class DisposisiController extends Controller
                 'keterangan' => null,
             ]);
         } elseif ($modal_kabag_tu) {
-            $tuUser = 'Dra. Hj. Faojah, MA';
             $modal_kabag_tu->update([
                 'tujuan' => 'Kabag TU',
                 'status' => 'Disetujui',
                 'tanggal_diterima' => $proposal->diterima_tanggal,
                 'tanggal_proses' => now()->format('Y-m-d H:i:s'),
-                'diverifikasi_oleh' => $tuUser,
+                'diverifikasi_oleh' => auth()->user()->name,
                 'keterangan' => $request->pesan_disposisi,
             ]);
 
@@ -216,8 +234,8 @@ class DisposisiController extends Controller
             return 'Menunggu Approval Akademik';
         } elseif ($tujuan == 'Perpus') {
             return 'Menunggu Approval Perpus';
-        } elseif ($tujuan == 'Prodi') {
-            return 'Menunggu Approval Prodi';
+        } elseif ($tujuan == 'Prodi Teknik Informatika') {
+            return 'Menunggu Approval Prodi Teknik Informatika';
         } elseif ($tujuan == 'Dekan') {
             return 'Menunggu Approval Dekan';
         } elseif ($tujuan == 'Kabag TU') {

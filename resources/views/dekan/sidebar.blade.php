@@ -5,7 +5,7 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 
                 <li class="nav-item">
-                    <a href="{{ route('dekan.dashboard') }}" class="brand-link logo-switch">
+                    <a href="{{ route('dekanat.dashboard') }}" class="brand-link logo-switch">
                         <!-- Logo kecil untuk sidebar collapsed -->
                         <img src="{{ asset('images/uinxs.png') }}" alt="Logo UIN XS" class="logo-xs" id="small-logo">
                         <!-- Logo besar untuk sidebar expanded -->
@@ -14,7 +14,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ route('dekan.dashboard') }}" class="nav-link {{ Request::routeIs('dekan.dashboard') ? 'active' : '' }} mt-2">
+                    <a href="{{ route('dekanat.dashboard') }}" class="nav-link {{ Request::routeIs('dekanat.dashboard') ? 'active' : '' }} mt-2">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>
@@ -22,32 +22,26 @@
 
                 <!-- Disposisi Menu Item -->
                 <li class="nav-item">
-                    <a href="{{ route('disposisi.index') }}" class="nav-link {{ Request::routeIs('disposisi.index') ? 'active' : '' }}">
+                    <a href="{{ route('dekanat.disposisi.index') }}" class="nav-link {{ Request::routeIs('dekanat.disposisi.index') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-clipboard-list"></i>
                         <p>Disposisi</p>
                     </a>
                 </li>
 
-                 {{-- <!-- Monitoring Menu Item -->
+                 <!-- Monitoring Menu Item -->
                  <li class="nav-item">
-                    <a href="{{ route('monitoring.index') }}" class="nav-link">
+                    <a href="{{ route('dekanat.monitoring.index') }}" class="nav-link {{ Request::routeIs('dekanat.monitoring.index') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-eye"></i>
                         <p>Monitoring</p>
                     </a>
-                </li> --}}
-
-                <li class="nav-item">
-                    {{-- <a href="{{ route('admin.manage-users') }}" class="nav-link">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>Manage Users</p>
-                    </a> --}}
                 </li>
 
+                <!-- Arsip Surat -->
                 <li class="nav-item">
-                    {{-- <a href="{{ route('admin.proposals') }}" class="nav-link">
-                        <i class="nav-icon fas fa-file-alt"></i>
-                        <p>Manage Proposals</p>
-                    </a> --}}
+                    <a href="{{ route('dekanat.arsip.index') }}" class="nav-link {{ Request::routeIs('dekanat.arsip.index') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-archive"></i>
+                        <p>Arsip Surat</p>
+                    </a>
                 </li>
 
                  <!-- Logout Button -->

@@ -15,7 +15,7 @@ class PengajuanProposalController extends Controller
     {
         // $proposals = Proposal::all(); // Mengambil semua proposal
         $proposals = Proposal::withTrashed()
-            ->WhereIn('status_disposisi', ['Memproses', 'Menunggu Approval Kabag', 'Menunggu Approval Dekan', 'Menunggu Approval Wadek Akademik', 'Menunggu Approval Wadek Kemahasiswaan', 'Menunggu Approval Wadek Administrasi Umum', 'Menunggu Approval Prodi', 'Menunggu Approval Keuangan', 'Menunggu Approval PLT',  'Menunggu Approval Akademik', 'Menunggu Approval Umum', 'Menunggu Approval Perpus', 'Ditolak', 'Selesai'])
+            ->WhereIn('status_disposisi', ['Memproses', 'Menunggu Approval Kabag', 'Menunggu Approval Dekan', 'Menunggu Approval Wadek Akademik', 'Menunggu Approval Wadek Kemahasiswaan', 'Menunggu Approval Wadek Administrasi Umum', 'Menunggu Approval Prodi Teknik Informatika', 'Menunggu Approval Prodi Agribisnis', 'Menunggu Approval Prodi Sistem Informasi', 'Menunggu Approval Prodi Matematika', 'Menunggu Approval Prodi Fisika', 'Menunggu Approval Prodi Kimia', 'Menunggu Approval Prodi Biologi', 'Menunggu Approval Prodi Teknik Pertambangan', 'Menunggu Approval PLT',  'Menunggu Approval Akademik', 'Menunggu Approval Umum', 'Menunggu Approval Perpus', 'Ditolak', 'Selesai'])
             ->paginate(3);
         return view('tu.proposals.indexpengajuan', compact('proposals'));
     }
@@ -89,7 +89,6 @@ class PengajuanProposalController extends Controller
             'hal' => 'required|string|max:255',
             'diterima_tanggal' => 'required|date',
             'untuk' => 'required|string|max:255',
-            'status_disposisi' => 'required|string|max:255',
             'jenis_surat' => 'required|string|max:255',
         ]);
 
@@ -101,8 +100,10 @@ class PengajuanProposalController extends Controller
             'hal' => $request->hal,
             'diterima_tanggal' => $request->diterima_tanggal,
             'untuk' => $request->untuk,
-            'status_disposisi' => $request->status_disposisi,
-            'jenis_proposal' => $request->jenis_surat,  // Pastikan ini terupdate
+            'jenis_proposal' => $request->jenis_surat,
+            'perlu_sk' => $request->input('perlu_sk', 0),
+            'pihak_pembuat_sk' => $request->input('pihak_pembuat_sk'),
+            'pihak_ttd' => $request->has('pihak_ttd') ? json_encode($request->pihak_ttd) : null,
         ]);
 
         // Ambil modal_disposisi yang terkait dengan proposal
