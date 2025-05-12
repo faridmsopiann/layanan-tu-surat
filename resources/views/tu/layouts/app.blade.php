@@ -12,6 +12,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     @livewireStyles
+    <link rel="stylesheet" href="{{ asset('build/assets/app-2d0e2823.css') }}">
 </head>
 
 <script src="https://unpkg.com/alpinejs" defer></script>
@@ -63,16 +64,18 @@
     <script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>
     @stack('js')
     @livewireScripts
+    <script type="module" src="{{ asset('build/assets/app-f703142f.js') }}"></script>
 
     <!-- Memuat Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<!-- Memuat jQuery (hanya jika Anda menggunakan Bootstrap 4 atau lebih rendah) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Memuat jQuery (hanya jika Anda menggunakan Bootstrap 4 atau lebih rendah) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Memuat Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
-     <!-- Script tambahan lainnya -->
+    <!-- Memuat Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Script tambahan lainnya -->
      @stack('scripts')
+     
 </body>
 </html>
