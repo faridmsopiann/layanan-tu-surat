@@ -14,7 +14,7 @@
     @livewireStyles
 </head>
 
-<script src="//unpkg.com/alpinejs" defer></script>
+<script src="https://unpkg.com/alpinejs" defer></script>
 <body class="hold-transition sidebar-mini sidebar-collapse">
     <div class="wrapper">
 
