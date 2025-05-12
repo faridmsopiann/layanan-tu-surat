@@ -224,47 +224,22 @@
     }
     
     @media (max-width: 768px) {
-    .auth-container {
-        flex-direction: column;
-        padding: 1rem;
-        min-height: auto;
+        .auth-container {
+            flex-direction: column;
+        }
+    
+        .auth-left, .auth-right {
+            flex: unset;
+            width: 100%;
+        }
+    
+        .auth-left {
+            padding: 1rem;
+        }
+    
+        .login-card {
+            padding: 1.5rem;
+            margin: 1rem;
+        }
     }
-
-    .auth-left {
-        padding-left: 0;
-        text-align: center;
-        margin-bottom: 1.5rem;
-    }
-
-    .auth-slogan {
-        font-size: 1.2rem;
-        padding: 0 1rem;
-    }
-
-    .auth-image-small {
-        width: 250px;
-    }
-
-    .auth-right {
-        margin-right: 0;
-    }
-
-    .login-card {
-        max-width: 100%;
-        padding: 1.25rem;
-        margin: 0 auto;
-    }
-
-    .form-label {
-        font-size: 0.85rem;
-    }
-
-    .form-input {
-        font-size: 0.95rem;
-    }
-
-    .btn-login {
-        font-size: 0.95rem;
-    }
-}
 </style>
