@@ -23,25 +23,25 @@
                     <label for="name" class="form-label">Nama</label>
                     <div class="input-icon">
                         <input id="name" class="form-input" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-                        {{-- <i class="fas fa-user icon"></i> --}}
+                        <i class="fas fa-user icon"></i>
                     </div>
 
                     <label for="email" class="form-label">Email</label>
                     <div class="input-icon">
                         <input id="email" class="form-input" type="email" name="email" :value="old('email')" required autocomplete="username" />
-                        {{-- <i class="fas fa-envelope icon"></i> --}}
+                        <i class="fas fa-envelope icon"></i>
                     </div>
 
                     <label for="password" class="form-label">Password</label>
                     <div class="input-icon">
                         <input id="password" class="form-input" type="password" name="password" required autocomplete="new-password" />
-                        {{-- <i class="fas fa-lock icon"></i> --}}
+                        <i class="fas fa-lock icon"></i>
                     </div>
 
                     <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
                     <div class="input-icon">
                         <input id="password_confirmation" class="form-input" type="password" name="password_confirmation" required autocomplete="new-password" />
-                        {{-- <i class="fas fa-lock icon"></i> --}}
+                        <i class="fas fa-lock icon"></i>
                     </div>
 
                     @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
@@ -224,22 +224,47 @@
     }
     
     @media (max-width: 768px) {
-        .auth-container {
-            flex-direction: column;
-        }
-    
-        .auth-left, .auth-right {
-            flex: unset;
-            width: 100%;
-        }
-    
-        .auth-left {
-            padding: 1rem;
-        }
-    
-        .login-card {
-            padding: 1.5rem;
-            margin: 1rem;
-        }
+    .auth-container {
+        flex-direction: column;
+        padding: 1rem;
+        min-height: auto;
     }
+
+    .auth-left {
+        padding-left: 0;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-slogan {
+        font-size: 1.2rem;
+        padding: 0 1rem;
+    }
+
+    .auth-image-small {
+        width: 250px;
+    }
+
+    .auth-right {
+        margin-right: 0;
+    }
+
+    .login-card {
+        max-width: 100%;
+        padding: 1.25rem;
+        margin: 0 auto;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+    }
+
+    .form-input {
+        font-size: 0.95rem;
+    }
+
+    .btn-login {
+        font-size: 0.95rem;
+    }
+}
 </style>

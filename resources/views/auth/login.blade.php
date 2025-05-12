@@ -31,13 +31,13 @@
                     <label for="email" class="form-label">Email</label>
                     <div class="input-icon">
                         <input id="email" class="form-input" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-                        {{-- <i class="fas fa-envelope icon"></i> --}}
+                        <i class="fas fa-envelope icon"></i>
                     </div>
 
                     <label for="password" class="form-label">Password</label>
                     <div class="input-icon">
                         <input id="password" class="form-input" type="password" name="password" required autocomplete="current-password" />
-                        {{-- <i class="fas fa-lock icon"></i> --}}
+                        <i class="fas fa-lock icon"></i>
                     </div>
 
                     <div class="form-extra">
@@ -293,23 +293,45 @@
     }
     
     @media (max-width: 768px) {
-        .auth-container {
-            flex-direction: column;
-        }
-    
-        .auth-left, .auth-right {
-            flex: unset;
-            width: 100%;
-        }
-    
-        .auth-left {
-            padding: 1rem;
-        }
-    
-        .login-card {
-            padding: 1.5rem;
-            margin: 1rem;
-        }
+    .auth-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
     }
+
+    .auth-left {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .auth-image-small {
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .auth-slogan {
+        font-size: 1.25rem;
+        margin-top: 1rem;
+    }
+
+    .auth-right {
+        margin-right: 0;
+        width: 100%;
+        padding: 0 1rem;
+    }
+
+    .login-card {
+        padding: 1.5rem;
+        width: 100%;
+        max-width: 400px;
+        margin: 1rem auto;
+    }
+
+    .form-extra {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+}
     </style>
     
