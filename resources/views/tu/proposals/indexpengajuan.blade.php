@@ -49,13 +49,13 @@
 
                             @if (count($files) == 1)
                                 <div class="mt-0">
-                                    <a href="{{ asset('storage/' . $files[0]) }}" class="btn-sm btn-info" download>
+                                    <a href="{{ asset('storage/' . $files[0]) }}" class="btn-sm btn-info" style="white-space: nowrap;" download>
                                         <i class="fas fa-download"></i> Download File
                                     </a>
                                 </div>
                             @elseif (count($files) > 1)
                                 <div class="mt-0">
-                                    <a href="{{ route('tu.proposals.downloadZip', $proposal->id) }}" class="btn-sm btn-info">
+                                    <a href="{{ route('tu.proposals.downloadZip', $proposal->id) }}" class="btn-sm btn-info" style="white-space: nowrap;">
                                         <i class="fas fa-file-archive"></i> Download ZIP
                                     </a>
                                 </div>
