@@ -55,7 +55,7 @@
                     </button>
 
                     <a href="{{ route('qr.login') }}" class="btn-qr">
-                        <i class="fas fa-qrcode"></i> QR Tracking
+                        <i class="fas fa-qrcode"></i> Tracking Surat
                     </a>
 
                     <a href="{{ route('auth.google') }}" class="btn-google">
