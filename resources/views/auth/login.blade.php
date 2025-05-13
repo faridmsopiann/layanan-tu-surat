@@ -54,7 +54,7 @@
                         <i class="fas fa-sign-in-alt"></i> Masuk
                     </button>
 
-                    <a href="{{ route('auth.google', ['from' => 'qr']) }}" class="btn-qr">
+                    <a href="{{ route('qr.login') }}" class="btn-qr">
                         <i class="fas fa-qrcode"></i> QR Tracking
                     </a>
 

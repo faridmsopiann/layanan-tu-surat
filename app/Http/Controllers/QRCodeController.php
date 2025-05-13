@@ -10,14 +10,8 @@ class QRCodeController extends Controller
 {
     public function generateLoginQR()
     {
-        // Buat URL login Google dengan tambahan 'state=qr'
-        $googleLoginUrl = Socialite::driver('google')
-            ->with(['state' => 'qr']) // untuk menandai bahwa ini login via QR
-            ->stateless()
-            ->redirect()
-            ->getTargetUrl();
+        $googleLoginUrl = route('auth.google', ['from' => 'qr']);
 
-        // Generate QR code dengan URL di atas
         $qrCode = QrCode::size(300)->generate($googleLoginUrl);
 
         return view('auth.qr-login', compact('qrCode'));
