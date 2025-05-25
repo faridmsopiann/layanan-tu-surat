@@ -1,14 +1,311 @@
-<x-guest-layout>
-    <div class="auth-container">
-        <!-- KIRI: Ilustrasi & Slogan -->
-        <div class="auth-left">
-            {{-- <img src="{{ asset('images/fst.png') }}" alt="Mail Sent" class="fst-logo"> --}}
-            <img src="{{ asset('images/layanan-tu.png') }}" alt="Mail Sent" class="auth-image-small">
-            <h2 class="auth-slogan">Satu Portal, Semua Layanan Surat Anda</h2>
-        </div>
 
-        <!-- KANAN: Form Login -->
-        <div class="auth-right">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Portal Surat FST</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            overflow-x: hidden;
+        }
+
+        .auth-container {
+            display: flex;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: linear-gradient(135deg, #e6f0fa 0%, #d1e3f6 100%); /* Retained gradient background */
+            overflow: hidden;
+        }
+
+        /* Background floating circles */
+        .auth-container::before,
+        .auth-container::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(74, 144, 226, 0.15); /* Subtle blue circles */
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .auth-container::before {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 15%;
+            opacity: 0.7;
+        }
+
+        .auth-container::after {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            right: 10%;
+            opacity: 0.5;
+            animation-delay: 5s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-30px);
+            }
+        }
+
+        .login-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 2rem; /* Increased padding for larger form */
+            width: 100%;
+            max-width: 400px; /* Larger form width */
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); /* Retained soft shadow */
+            border: 1px solid transparent;
+            background: linear-gradient(#ffffff, #ffffff) padding-box,
+                        linear-gradient(135deg, #4a90e2, #d1e3f6) border-box; /* Retained gradient border */
+            animation: fadeInScale 0.8s ease-out; /* Form load animation */
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .login-card:hover {
+            transform: translateY(-3px); /* Retained subtle lift on hover */
+        }
+
+        .login-logo img {
+            height: 70px; /* Slightly larger logo */
+            margin: 0 auto 1.2rem; /* Adjusted margin */
+            display: block;
+        }
+
+        .login-title {
+            font-size: 1.4rem; /* Larger title */
+            font-weight: 600;
+            text-align: center;
+            color: #1a202c;
+            margin-bottom: 0.4rem;
+        }
+
+        .login-subtitle {
+            font-size: 0.9rem; /* Slightly larger subtitle */
+            text-align: center;
+            color: #718096;
+            margin-bottom: 1.2rem; /* Adjusted margin */
+        }
+
+        .form-label {
+            font-size: 0.9rem; /* Larger label */
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+
+        .input-icon {
+            position: relative;
+            margin-bottom: 1rem; /* Adjusted margin */
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.7rem 2.2rem 0.7rem 0.9rem; /* Slightly larger padding */
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9rem; /* Larger font */
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+        }
+
+        .input-icon i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 0.9rem; /* Slightly larger icon */
+        }
+
+        .form-extra {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem; /* Slightly larger font */
+            margin-bottom: 1rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #4a5568;
+        }
+
+        .forgot-link {
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .btn-login, .btn-qr, .btn-google {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 0.7rem; /* Slightly larger padding */
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem; /* Larger font */
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 0.8rem; /* Adjusted margin */
+        }
+
+        .btn-login:hover, .btn-qr:hover, .btn-google:hover {
+            animation: pulse 0.3s ease; /* Pulse animation on hover */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Soft shadow on hover */
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.08);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .btn-login {
+            background: #4a90e2;
+            color: #ffffff;
+        }
+
+        .btn-login:hover {
+            background: #357abd;
+        }
+
+        .btn-qr {
+            background: #2d3748;
+            color: #ffffff;
+        }
+
+        .btn-qr:hover {
+            background: #1a202c;
+        }
+
+        .btn-google {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #2d3748;
+            gap: 8px;
+        }
+
+        .btn-google img {
+            width: 18px; /* Slightly larger icon */
+            height: 18px;
+        }
+
+        .btn-google:hover {
+            background: #f7fafc;
+        }
+
+        .register-text {
+            text-align: center;
+            font-size: 0.85rem; /* Slightly larger font */
+            color: #718096;
+            margin-top: 1rem; /* Adjusted margin */
+        }
+
+        .register-text a {
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .register-text a:hover {
+            text-decoration: underline;
+        }
+
+        .alert-success {
+            background: #e6fffa;
+            color: #2e7d32;
+            border: 1px solid #b2f5ea;
+            padding: 0.6rem; /* Slightly larger padding */
+            border-radius: 6px;
+            font-size: 0.85rem; /* Larger font */
+            margin-bottom: 1rem; /* Adjusted margin */
+            text-align: center;
+        }
+
+        .error_message {
+            background: #fff5f5;
+            color: #c53030;
+            border: 1px solid #feb2b2;
+            padding: 0.6rem; /* Slightly larger padding */
+            border-radius: 6px;
+            font-size: 0.85rem; /* Larger font */
+            margin-bottom: 1rem; /* Adjusted margin */
+            text-align: center;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .login-card {
+                padding: 1.5rem; /* Slightly larger than previous mobile */
+                max-width: 90%;
+            }
+
+            .login-logo img {
+                height: 60px; /* Adjusted for mobile */
+            }
+
+            .auth-container::before,
+            .auth-container::after {
+                width: 100px;
+                height: 100px; /* Retained smaller circles on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <x-guest-layout>
+        <div class="auth-container">
+            <!-- Form Login -->
             <div class="login-card">
                 <div class="login-logo">
                     <img src="{{ asset('images/fst.png') }}" alt="Logo">
@@ -71,245 +368,22 @@
                 </form>
             </div>
         </div>
-    </div>
-</x-guest-layout>
+    </x-guest-layout>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const errorBox = document.querySelector('.error_message');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const errorBox = document.querySelector('.error_message');
 
-        if (errorBox) {
-            setTimeout(() => {
-                errorBox.style.transition = 'opacity 0.5s ease';
-                errorBox.style.opacity = '0';
+            if (errorBox && errorBox.textContent.trim()) {
                 setTimeout(() => {
-                    errorBox.style.display = 'none';
-                }, 500);
-            }, 3000);
-        }
-    });
-</script>
-<!-- Tambahkan ini di dalam <head> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-    
-    body {
-        font-family: 'Poppins', sans-serif;
-    }
-    
-    .auth-container {
-        display: flex;
-        min-height: 100vh;
-        background: linear-gradient(135deg, #d0e7f4, #ffffff); /* satu gradient menyatu */
-    }
-    .auth-left,
-    .auth-right {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center; /* ini bikin konten di tengah secara horizontal */
-        /* padding: 2rem; */
-        background: transparent; /* hilangkan background masing-masing */
-    }
-
-    .auth-left {
-       padding-left: 10rem; /* gradient untuk kiri */
-    }
-
-    .auth-right {
-       margin-right: 5rem; /* gradient untuk kiri */
-    }
-    
-    .auth-slogan {
-        font-size: 1.75rem;
-        color: #2c3e50;
-        font-weight: 600;
-        text-align: center;
-    }
-
-    .auth-image-small {
-        width: 450px;
-        max-width: 100%;
-        height: auto;
-        padding-top: 0px;
-    }
-    
-    .login-card {
-        background: white;
-        border-radius: 16px;
-        padding: 2rem;
-        width: 100%;
-        max-width: 400px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-    }
-    
-    .login-logo img {
-        height: 100px;
-        margin: 0 auto 1rem;
-        display: block;
-    }
-    
-    .login-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        text-align: center;
-        margin-bottom: 0.25rem;
-    }
-    
-    .login-subtitle {
-        font-size: 0.95rem;
-        text-align: center;
-        color: #666;
-        margin-bottom: 1.5rem;
-    }
-    
-    .form-label {
-        font-weight: 600;
-        font-size: 0.95rem;
-        margin-bottom: 0.25rem;
-    }
-    
-    .form-input {
-        width: 100%;
-        padding: 0.75rem 2.25rem 0.75rem 0.75rem;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        font-size: 1rem;
-    }
-    
-    .input-icon {
-        position: relative;
-    }
-    
-    .input-icon i {
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #999;
-    }
-    
-    .form-extra {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-    }
-    
-    .remember-me {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-    
-    .forgot-link {
-        color: #007bff;
-        text-decoration: none;
-    }
-    
-    .forgot-link:hover {
-        text-decoration: underline;
-    }
-    
-    .btn-login, .btn-qr, .btn-google {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        gap: 8px;
-        padding: 0.75rem;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 1rem;
-        margin-top: 0.5rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    
-    .btn-login {
-        background-color: #2c3e50;
-        color: white;
-    }
-    
-    .btn-login:hover {
-        background-color: #1a3445;
-    }
-    
-    .btn-qr {
-        background-color: #004080;
-        color: white;
-    }
-    
-    .btn-qr:hover {
-        background-color: #003060;
-    }
-    
-    .btn-google {
-        background: white;
-        border: 1px solid #ddd;
-        color: #444;
-        gap: 12px;
-    }
-    
-    .btn-google img {
-        width: 20px;
-        height: 20px;
-    }
-    
-    .btn-google:hover {
-        background: #f8f8f8;
-    }
-    
-    .register-text {
-        text-align: center;
-        font-size: 0.9rem;
-        margin-top: 1rem;
-    }
-    
-    .register-text a {
-        color: #007bff;
-        text-decoration: none;
-    }
-    
-    .register-text a:hover {
-        text-decoration: underline;
-    }
-    
-    .alert-success {
-        background: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-        padding: 0.75rem;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        margin-bottom: 1rem;
-        text-align: center;
-    }
-    
-    @media (max-width: 768px) {
-        .auth-container {
-            flex-direction: column;
-        }
-    
-        .auth-left, .auth-right {
-            flex: unset;
-            width: 100%;
-        }
-    
-        .auth-left {
-            padding: 1rem;
-        }
-    
-        .login-card {
-            padding: 1.5rem;
-            margin: 1rem;
-        }
-    }
-    </style>
-    
+                    errorBox.style.transition = 'opacity 0.5s ease';
+                    errorBox.style.opacity = '0';
+                    setTimeout(() => {
+                        errorBox.style.display = 'none';
+                    }, 500);
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -5,7 +5,7 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 
                 <li class="nav-item">
-                    <a href="{{ route('prodi-ti.dashboard') }}" class="brand-link logo-switch">
+                    <a href="{{ route('perpus.dashboard') }}" class="brand-link logo-switch">
                         <!-- Logo kecil untuk sidebar collapsed -->
                         <img src="{{ asset('images/uinxs.png') }}" alt="Logo UIN XS" class="logo-xs" id="small-logo">
                         <!-- Logo besar untuk sidebar expanded -->

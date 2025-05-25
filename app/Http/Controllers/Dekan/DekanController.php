@@ -10,30 +10,46 @@ class DekanController extends Controller
 {
     public function dashboard()
     {
-        // $userId = auth()->id(); // Mendapatkan ID pemohon yang sedang login
+        $totalProposals = Proposal::whereHas('modalDisposisi', function ($query) {
+            $query->whereIn('tujuan', [
+                'Dekan',
+                'Wadek Akademik',
+                'Wadek Kemahasiswaan',
+                'Wadek Administrasi Umum'
+            ]);
+        })->withTrashed()->count();
 
-        // // Menghitung jumlah proposal yang diajukan oleh pemohon
-        // $totalProposals = Proposal::where('status_disposisi', 'Menunggu Approval Dekan')
-        //     ->OrwhereIn('dari', ['Dekan', 'Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum'])
-        //     ->count();
-
-        // Menghitung proposal dengan status_disposisi selain 'Selesai' atau 'Ditolak'
         $pendingApprovals = Proposal::whereIn('status_disposisi', ['Menunggu Approval Dekan', 'Menunggu Approval Wadek Akademik', 'Menunggu Approval Wadek Kemahasiswaan', 'Menunggu Approval Wadek Administrasi Umum'])
             ->count();
 
-        // // Menghitung proposal yang status_disposisinya 'Selesai'
-        // $approvedProposals = Proposal::whereIn('dari', ['Dekan', 'Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum'])
-        //     ->where('status_disposisi', 'Menunggu Approval Kabag')
-        //     ->count();
+        $approvedProposals = Proposal::whereHas('modalDisposisi', function ($query) {
+            $query->whereIn('tujuan', [
+                'Dekan',
+                'Wadek Akademik',
+                'Wadek Kemahasiswaan',
+                'Wadek Administrasi Umum'
+            ]);
+        })
+            ->where('status_disposisi', 'Selesai')
+            ->withTrashed()
+            ->count();
 
-        // // Menghitung proposal yang status_disposisinya 'Ditolak'
-        // $rejectedProposals = Proposal::whereIn('dari', ['Dekan', 'Wadek Akademik', 'Wadek Kemahasiswaan', 'Wadek Administrasi Umum'])
-        //     ->where('status_disposisi', 'Ditolak')
-        //     ->count();
+        $rejectedProposals = Proposal::whereHas('modalDisposisi', function ($query) {
+            $query->whereIn('tujuan', [
+                'Dekan',
+                'Wadek Akademik',
+                'Wadek Kemahasiswaan',
+                'Wadek Administrasi Umum'
+            ]);
+        })->where('status_disposisi', 'Ditolak')
+            ->withTrashed()
+            ->count();
 
-        // Mengirim data ke view
         return view('dekan.dashboard', compact(
+            'totalProposals',
+            'approvedProposals',
             'pendingApprovals',
+            'rejectedProposals',
         ));
     }
 }
