@@ -119,6 +119,8 @@
                     <th>Periode</th>
                     <th>Lokasi</th>
                     <th>Status</th>
+                    <th>Pengajuan</th>
+                    <th>Surat Keluar</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -143,6 +145,50 @@
                         @endphp
                         <span class="badge badge-pill {{ $statusColors[$st->status_disposisi] ?? 'badge-secondary' }}">{{ $st->status_disposisi }}</span>
                     </td>
+                    <td>
+                        @if ($st->soft_file)
+                            @php
+                                $files = json_decode($st->soft_file, true) ?? []; 
+                            @endphp
+
+                            @if (count($files) == 1)
+                                <div class="mt-0">
+                                    <a href="{{ asset('storage/' . $files[0]) }}" class="btn-sm btn-info" style="white-space: nowrap;" download>
+                                        <i class="fas fa-download"></i> Download File
+                                    </a>
+                                </div>
+                            @elseif (count($files) > 1)
+                                <div class="mt-0">
+                                    <a href="{{ route('pemohon.proposals.downloadZip', $st->id) }}" class="btn-sm btn-info" style="white-space: nowrap;">
+                                        <i class="fas fa-file-archive"></i> Download ZIP
+                                    </a>
+                                </div>
+                            @endif
+                        @endif
+
+                        @if ($st->soft_file_link)
+                            <div class="mt-3">
+                                <p>Link Terkait Dokumen:
+                                    <a href="{{ $st->soft_file_link }}" target="_blank">
+                                        {{ $st->soft_file_link }}
+                                    </a>
+                                </p>
+                            </div>
+                        @endif
+
+                        @if (!$st->soft_file && !$st->soft_file_link)
+                            <p class="text-muted">Tidak ada file atau link yang diunggah.</p>
+                        @endif
+                    </td>
+                    <td class="text-sm">
+                        @if ($st->soft_file_sk)
+                            <a href="{{ asset('storage/' . $st->soft_file_sk) }}" class="btn-sm btn-success" style="white-space: nowrap;" download>
+                                <i class="fas fa-download"></i> 
+                            </a>
+                        @else
+                            <span class="text-muted">Tidak Ada/Belum diunggah</span>
+                        @endif
+                    </td>  
                     <td>
                         <button data-toggle="modal" data-target="#detailModal{{ $st->id }}" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></button>
                         <button data-toggle="modal" data-target="#editModal{{ $st->id }}" class="btn btn-sm btn-outline-warning"><i class="fas fa-edit"></i></button>
