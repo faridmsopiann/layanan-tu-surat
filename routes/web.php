@@ -18,6 +18,7 @@ use App\Http\Controllers\Keuangan\KeuanganDisposisiController;
 use App\Http\Controllers\Keuangan\MonitoringKeuanganController;
 use App\Http\Controllers\Pemohon\PemohonController;
 use App\Http\Controllers\Pemohon\PengajuanSuratController;
+use App\Http\Controllers\Pemohon\SuratTugasController;
 use App\Http\Controllers\Perpus\ArsipSuratPerpusController;
 use App\Http\Controllers\Perpus\MonitoringPerpusController;
 use App\Http\Controllers\Perpus\PerpusController;
@@ -167,6 +168,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Manajemen Role
         Route::resource('roles', RoleController::class);
+
+        // Master Surat Tugas
+        Route::resource('admin/jenis-kegiatan', App\Http\Controllers\Admin\JenisKegiatanController::class)->names('admin.jenis-kegiatan');
+        Route::resource('admin/instansi', App\Http\Controllers\Admin\InstansiController::class)->names('admin.instansi');
+        Route::resource('admin/peran-tugas', App\Http\Controllers\Admin\PeranTugasController::class)->names('admin.peran-tugas');
+        Route::resource('admin/unit-kerja', App\Http\Controllers\Admin\UnitKerjaController::class)->names('admin.unit-kerja');
+        Route::resource('admin/dosen', App\Http\Controllers\Admin\DosenController::class)->names('admin.dosen');
     });
 
     Route::middleware(['auth', 'role:Pemohon'])->group(function () {
@@ -179,6 +187,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/pemohon/proposals/{id}', [PengajuanSuratController::class, 'show'])->name('pemohon.proposals.show');
         Route::put('/pemohon/proposal/update/{id}', [PengajuanSuratController::class, 'update'])->name('pemohon.proposals.update');
         Route::get('/pemohon/proposal/{id}/download-zip', [PengajuanSuratController::class, 'downloadZip'])->name('pemohon.proposals.downloadZip');
+
+        Route::get('/pemohon/surat-tugas', [SuratTugasController::class, 'index'])->name('pemohon.surat-tugas.index');
+        Route::get('/pemohon/surat-tugas/create', [SuratTugasController::class, 'create'])->name('pemohon.surat-tugas.create');
+        Route::post('/pemohon/surat-tugas', [SuratTugasController::class, 'store'])->name('pemohon.surat-tugas.store');
+        Route::get('/pemohon/surat-tugas/{id}', [SuratTugasController::class, 'show'])->name('pemohon.surat-tugas.show');
+        Route::put('/pemohon/surat-tugas/{id}', [SuratTugasController::class, 'update'])->name('pemohon.surat-tugas.update');
+        Route::delete('/pemohon/surat-tugas/{id}', [SuratTugasController::class, 'destroy'])->name('pemohon.surat-tugas.destroy');
     });
 
     Route::middleware(['auth', 'role:Tata Usaha'])->group(function () {

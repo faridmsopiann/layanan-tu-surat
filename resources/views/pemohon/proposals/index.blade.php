@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container pb-4" style="font-family: 'Roboto', sans-serif;">
-    <h1 class="pt-4" style="font-weight: 700; color: #2C3E50;">Pengajuan Surat</h1>
+    <h1 class="pt-4" style="font-weight: 700; color: #2C3E50;">Pengajuan Surat Masuk</h1>
 
     @if(session('success'))
         <div id="success-alert" class="alert alert-success mb-3 shadow-sm" style="border-left: 5px solid #28a745;">
@@ -109,7 +109,7 @@
                     <td>
                         @if ($p->soft_file)
                             @php
-                                $files = json_decode($p->soft_file, true) ?? []; // Jika null, set sebagai array kosong
+                                $files = json_decode($p->soft_file, true) ?? []; 
                             @endphp
 
                             @if (count($files) == 1)
@@ -284,10 +284,7 @@
                                                 <label for="tanggal_surat"><strong>Tanggal Surat</strong></label>
                                                 <input type="date" name="tanggal_surat" id="tanggal_surat" class="form-control" value="{{ $p->tanggal_surat }}" required>
                                             </div>
-                                            <div class="form-group">
-                                                <label for="asal_surat"><strong>Asal Surat</strong></label>
-                                                <input type="text" name="asal_surat" id="asal_surat" class="form-control" value="{{ $p->asal_surat }}" required>
-                                            </div>
+                                            
                                             <div class="form-group">
                                                 <label for="hal"><strong>Hal</strong></label>
                                                 <input type="text" name="hal" id="hal" class="form-control" value="{{ $p->hal }}" required>

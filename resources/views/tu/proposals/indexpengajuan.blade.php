@@ -155,15 +155,11 @@
                                                 <p><strong>Tanggal Surat:</strong> {{ $proposal->tanggal_surat }}</p>
                                                 <p><strong>Nomor Surat:</strong> {{ $proposal->nomor_surat }}</p>
                                                 <p><strong>Untuk:</strong> {{ $proposal->untuk }}</p>
-                                                <p><strong>Status Terkini:</strong> 
+                                                <p><strong>Status Terkini:</strong>
                                                     @if($proposal->status_disposisi == 'Memproses')
                                                         <span class="badge badge-pill badge-warning">{{ $proposal->status_disposisi }}</span>
-                                                    @elseif($proposal->status_disposisi == 'Menunggu Approval Dekan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Akademik' || $proposal->status_disposisi == 'Menunggu Approval Wadek Kemahasiswaan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Administrasi Umum')
+                                                    @elseif(Str::startsWith($proposal->status_disposisi, 'Menunggu Approval'))
                                                         <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
-                                                    @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag')
-                                                        <span class="badge badge-pill badge-success">{{ $proposal->status_disposisi }}</span>
-                                                    @elseif($proposal->status_disposisi == 'Menunggu Approval Keuangan')
-                                                        <span class="badge badge-pill badge-info">{{ $proposal->status_disposisi }}</span>
                                                     @elseif($proposal->status_disposisi == 'Selesai')
                                                         <span class="badge badge-pill badge-success">{{ $proposal->status_disposisi }}</span>
                                                     @elseif($proposal->status_disposisi == 'Ditolak')
@@ -177,16 +173,14 @@
                                                 <p><strong>Nama Pemohon:</strong> {{ $proposal->pemohon->name }}</p>
                                                 <p><strong>Diterima Tanggal:</strong> {{ $proposal->diterima_tanggal }}</p>
                                                 @if ($proposal->status_disposisi == 'Selesai')
-                                                    
-                                                        <p class="text-success">
-                                                            <strong>Selesai Dalam:</strong>
-                                                            {{
-                                                                \Carbon\Carbon::parse($proposal->diterima_tanggal)
-                                                                    ->diff(\Carbon\Carbon::parse($proposal->updated_at))
-                                                                    ->format('%d hari, %h jam, %i menit, %s detik')
-                                                            }}
-                                                        </p>
-                                                    
+                                                    <p class="text-success">
+                                                        <strong>Selesai Dalam:</strong>
+                                                        {{
+                                                            \Carbon\Carbon::parse($proposal->diterima_tanggal)
+                                                                ->diff(\Carbon\Carbon::parse($proposal->updated_at))
+                                                                ->format('%d hari, %h jam, %i menit, %s detik')
+                                                        }}
+                                                    </p>
                                                 @elseif($proposal->status_disposisi == 'Ditolak')
                                                     <p class="text-danger">
                                                         <strong>Ditolak Dalam:</strong>
@@ -199,16 +193,77 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        {{-- <div class="row">
-                                            <div class="col-md-6">
-                                                
+
+                                        @if($proposal->jenis_proposal === 'Surat Tugas')
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label><strong>Jenis Kegiatan</strong></label>
+                                                        <input type="text" class="form-control" value="{{ $proposal->jenisKegiatan->nama ?? '-' }}" readonly>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label><strong>Tanggal Mulai</strong></label>
+                                                        <input type="text" class="form-control" value="{{ $proposal->tanggal_mulai }}" readonly>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label><strong>Tanggal Selesai</strong></label>
+                                                        <input type="text" class="form-control" value="{{ $proposal->tanggal_selesai }}" readonly>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label><strong>Lokasi Kegiatan</strong></label>
+                                                        <input type="text" class="form-control" value="{{ $proposal->lokasi_kegiatan }}" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label><strong>Instansi Terkait</strong></label>
+                                                        @php
+                                                            $instansiTerkait = $proposal->instansi->pluck('instansi.nama')->filter()->implode(', ');
+                                                            $instansiManual = $proposal->instansi->pluck('nama_manual')->filter()->implode(', ');
+                                                            $instansiGabung = trim($instansiTerkait . ($instansiTerkait && $instansiManual ? ', ' : '') . $instansiManual);
+                                                        @endphp
+                                                        <textarea class="form-control" rows="2" readonly>{{ $instansiGabung ?: '-' }}</textarea>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label><strong>Soft File</strong></label><br>
+                                                        @if ($proposal->soft_file)
+                                                            @php $files = json_decode($proposal->soft_file, true); @endphp
+                                                            <div class="d-flex flex-wrap">
+                                                                @foreach ($files as $file)
+                                                                    <a href="{{ asset('storage/'.$file) }}" target="_blank" class="badge badge-primary mb-2 mr-2">
+                                                                        📂 Lihat File
+                                                                    </a>
+                                                                @endforeach
+                                                            </div>
+                                                        @elseif ($proposal->soft_file_link)
+                                                            <a href="{{ $proposal->soft_file_link }}" target="_blank">{{ $proposal->soft_file_link }}</a>
+                                                        @else
+                                                            <p class="text-muted">Tidak ada file.</p>
+                                                        @endif
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label><strong>Daftar Penugasan</strong></label>
+                                                        @forelse ($proposal->penugasan as $p)
+                                                            <p class="mb-1">
+                                                                <strong>{{ $p->dosen->nama ?? $p->nama_manual }}</strong><br>
+                                                                <small>Peran: {{ $p->peranTugas->nama ?? '-' }}</small><br>
+                                                                <small>Unit: {{ $p->unit_asal }}</small>
+                                                            </p>
+                                                        @empty
+                                                            <p class="text-muted">Belum ada penugasan.</p>
+                                                        @endforelse
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                
-                                               
-                                            </div>
-                                        </div> --}}
-    
+                                        @endif
+
                                         <!-- Tabel Detail Disposisi -->
                                         <h5>Detail Disposisi:</h5>
                                         <div class="table-responsive">
@@ -237,7 +292,7 @@
                                                         <td>{{ \Carbon\Carbon::parse($m->tanggal_diterima)->format('Y-m-d H:i:s') }}</td>
                                                         <td>{{ \Carbon\Carbon::parse($m->tanggal_proses)->format('Y-m-d H:i:s') }}</td>
                                                         <td>{{ $m->diverifikasi_oleh }}</td>
-                                                        <td>{{ $m->keterangan }}</td> 
+                                                        <td>{{ $m->keterangan }}</td>
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
@@ -251,7 +306,7 @@
                         @if($proposal->status_disposisi !== 'Ditolak' && $proposal->status_disposisi !== 'Selesai')
                             <!-- Tombol Edit -->
                             <button class="btn btn-outline-warning btn-sm mr-1" data-toggle="modal" data-target="#editProposalModal-{{ $proposal->id }}">
-                                <i class="fas fa-edit"></i>
+                                <i class="fas fa-edit"></i> Edit
                             </button>
                         @endif
     
@@ -294,10 +349,7 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label><strong>Jenis Surat</strong></label>
-                                                        <select name="jenis_surat" class="form-select" required>
-                                                            <option value="Surat Pembayaran" {{ $proposal->jenis_surat == 'Surat Pembayaran' ? 'selected' : '' }}>Surat Pembayaran</option>
-                                                            <option value="Surat Masuk" {{ $proposal->jenis_surat == 'Surat Masuk' ? 'selected' : '' }}>Surat Masuk</option>
-                                                        </select>
+                                                        <input type="text" name="jenis_surat" class="form-control" value="{{ $proposal->jenis_proposal }}" readonly>
                                                     </div>
                                                     <!-- Perlu SK -->
                                                     <div class="mb-3">

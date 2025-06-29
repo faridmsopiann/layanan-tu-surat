@@ -175,6 +175,76 @@
                                             </div>
                                         </div>
 
+                                        @if($proposal->jenis_proposal === 'Surat Tugas')
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label><strong>Jenis Kegiatan</strong></label>
+                                                        <input type="text" class="form-control" value="{{ $proposal->jenisKegiatan->nama ?? '-' }}" readonly>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label><strong>Tanggal Mulai</strong></label>
+                                                        <input type="text" class="form-control" value="{{ $proposal->tanggal_mulai }}" readonly>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label><strong>Tanggal Selesai</strong></label>
+                                                        <input type="text" class="form-control" value="{{ $proposal->tanggal_selesai }}" readonly>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label><strong>Lokasi Kegiatan</strong></label>
+                                                        <input type="text" class="form-control" value="{{ $proposal->lokasi_kegiatan }}" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label><strong>Instansi Terkait</strong></label>
+                                                        @php
+                                                            $instansiTerkait = $proposal->instansi->pluck('instansi.nama')->filter()->implode(', ');
+                                                            $instansiManual = $proposal->instansi->pluck('nama_manual')->filter()->implode(', ');
+                                                            $instansiGabung = trim($instansiTerkait . ($instansiTerkait && $instansiManual ? ', ' : '') . $instansiManual);
+                                                        @endphp
+                                                        <textarea class="form-control" rows="2" readonly>{{ $instansiGabung ?: '-' }}</textarea>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label><strong>Soft File</strong></label><br>
+                                                        @if ($proposal->soft_file)
+                                                            @php $files = json_decode($proposal->soft_file, true); @endphp
+                                                            <div class="d-flex flex-wrap">
+                                                                @foreach ($files as $file)
+                                                                    <a href="{{ asset('storage/'.$file) }}" target="_blank" class="badge badge-primary mb-2 mr-2">
+                                                                        📂 Lihat File
+                                                                    </a>
+                                                                @endforeach
+                                                            </div>
+                                                        @elseif ($proposal->soft_file_link)
+                                                            <a href="{{ $proposal->soft_file_link }}" target="_blank">{{ $proposal->soft_file_link }}</a>
+                                                        @else
+                                                            <p class="text-muted">Tidak ada file.</p>
+                                                        @endif
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label><strong>Daftar Penugasan</strong></label>
+                                                        @forelse ($proposal->penugasan as $p)
+                                                            <p class="mb-1">
+                                                                <strong>{{ $p->dosen->nama ?? $p->nama_manual }}</strong><br>
+                                                                <small>Peran: {{ $p->peranTugas->nama ?? '-' }}</small><br>
+                                                                <small>Unit: {{ $p->unit_asal }}</small>
+                                                            </p>
+                                                        @empty
+                                                            <p class="text-muted">Belum ada penugasan.</p>
+                                                        @endforelse
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+
                                         <h5 class="mt-4">Detail Disposisi:</h5>
                                         <div class="table-responsive">
                                             <table class="table table-bordered table-sm">

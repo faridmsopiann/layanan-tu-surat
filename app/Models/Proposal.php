@@ -33,17 +33,40 @@ class Proposal extends Model
         'pihak_pembuat_sk',
         'perlu_ttd',
         'pihak_ttd',
+        'jenis_kegiatan_id',
+        'tanggal_mulai',
+        'tanggal_selesai',
+        'lokasi_kegiatan',
+        'instansi_terkait',
     ];
 
-    // Di dalam model Proposal (app/Models/Proposal.php)
     public function pemohon()
     {
-        return $this->belongsTo(User::class, 'pemohon_id');  // Menyatakan bahwa 'pemohon_id' mengarah ke model User
+        return $this->belongsTo(User::class, 'pemohon_id');
     }
 
-    // Model Proposal.php
     public function modalDisposisi()
     {
         return $this->hasMany(ModalDisposisi::class, 'proposal_id');
+    }
+
+    public function jenisKegiatan()
+    {
+        return $this->belongsTo(JenisKegiatan::class);
+    }
+
+    public function peran()
+    {
+        return $this->belongsTo(PeranTugas::class);
+    }
+
+    public function instansi()
+    {
+        return $this->hasMany(ProposalInstansi::class);
+    }
+
+    public function penugasan()
+    {
+        return $this->hasMany(ProposalPenugasan::class);
     }
 }

@@ -20,34 +20,20 @@
                     </a>
                 </li>
 
-                <!-- Pengajuan Menu Item -->
+                <!-- Pengajuan SM -->
                 <li class="nav-item">
                     <a href="{{ route('pemohon.proposals.index') }}" class="nav-link {{ Request::routeIs('pemohon.proposals.index') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-file-upload"></i>
-                        <p>Pengajuan</p>
+                        <p>Pengajuan Surat Masuk</p>
                     </a>
                 </li>
 
-                {{-- <!-- Arsip Pengajuan Menu Item -->
+                <!-- Pengajuan Surat Tugas -->
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-archive"></i>
-                        <p>Arsip Pengajuan</p>
+                    <a href="{{ route('pemohon.surat-tugas.index') }}" class="nav-link {{ Request::routeIs('pemohon.surat-tugas.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-briefcase"></i>
+                        <p>Pengajuan Surat Tugas</p>
                     </a>
-                </li> --}}
-
-                <li class="nav-item">
-                    {{-- <a href="{{ route('admin.manage-users') }}" class="nav-link">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>Manage Users</p>
-                    </a> --}}
-                </li>
-
-                <li class="nav-item">
-                    {{-- <a href="{{ route('admin.proposals') }}" class="nav-link">
-                        <i class="nav-icon fas fa-file-alt"></i>
-                        <p>Manage Proposals</p>
-                    </a> --}}
                 </li>
 
                  <!-- Logout Button -->

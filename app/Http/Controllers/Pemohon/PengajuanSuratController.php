@@ -13,22 +13,15 @@ use ZipArchive;
 
 class PengajuanSuratController extends Controller
 {
-    // Tampilkan halaman pengajuan surat
     public function index()
     {
-        // Ambil semua proposal yang belum dihapus (soft delete)
         $proposals = Proposal::with(['pemohon', 'modalDisposisi'])
             ->where('pemohon_id', auth()->id())
+            ->where('jenis_proposal', 'Surat Masuk')
             ->whereNull('deleted_at')
             ->paginate(4);
 
         return view('pemohon.proposals.index', compact('proposals'));
-    }
-
-    // Tampilkan form untuk membuat surat
-    public function create()
-    {
-        return view('pemohon.proposals.create');
     }
 
     public function downloadZip($id)
@@ -58,7 +51,6 @@ class PengajuanSuratController extends Controller
         return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 
-    // Simpan pengajuan surat
     public function store(Request $request)
     {
         $request->validate([
@@ -79,11 +71,9 @@ class PengajuanSuratController extends Controller
             }
         }
 
-        // Ambil tahun dan bulan dari tanggal saat ini
         $tahun = now()->year;
         $bulan = now()->month;
 
-        // Ambil nomor urut terakhir yang digunakan untuk kode_pengajuan
         $lastProposal = Proposal::withTrashed()
             ->whereYear('created_at', $tahun)
             ->whereMonth('created_at', $bulan)
@@ -96,10 +86,8 @@ class PengajuanSuratController extends Controller
             $increment = (int)$lastKode + 1;
         }
 
-        // Format kode_pengajuan (misal: P2024311001)
         $kodePengajuan = 'P' . $tahun . $bulan . str_pad($increment, 4, '0', STR_PAD_LEFT);
 
-        // Hitung jumlah proposal dalam tahun ini yang tidak dihapus (soft delete)
         $nomorAgenda = Proposal::withTrashed()
             ->whereYear('created_at', $tahun)
             ->count() + 1;
@@ -113,6 +101,7 @@ class PengajuanSuratController extends Controller
             'soft_file' => count($softFilePaths) > 0 ? json_encode($softFilePaths) : null,
             'soft_file_link' => $softFileLink,
             'nomor_agenda' => $nomorAgenda,
+            'jenis_proposal' => 'Surat Masuk',
         ]);
 
         ModalDisposisi::create([
@@ -146,7 +135,7 @@ class PengajuanSuratController extends Controller
             foreach ($request->file('soft_file') as $file) {
                 $filePaths[] = $file->store('proposals', 'public');
             }
-            $proposal->soft_file = json_encode($filePaths); // Simpan dalam format JSON
+            $proposal->soft_file = json_encode($filePaths);
         }
 
         $proposal->update([
