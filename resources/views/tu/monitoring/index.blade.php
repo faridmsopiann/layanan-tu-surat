@@ -301,6 +301,18 @@
                                             </table>
                                         </div>
                                     </div>
+                                    <div class="modal-footer">
+                                        @if ($proposal->status_disposisi == 'Selesai' && $proposal->jenis_proposal === 'Surat Masuk')
+                                            <a href="{{ route('tu.proposals.pdf', $proposal->id) }}" target="_blank" class="btn btn-primary">
+                                                <i class="fas fa-print"></i> Cetak PDF
+                                            </a>
+                                        @elseif ($proposal->status_disposisi == 'Selesai' && $proposal->jenis_proposal === 'Surat Tugas')
+                                            <a href="{{ route('tu.surat-tugas.pdf', $proposal->id) }}" target="_blank" class="btn btn-primary">
+                                                <i class="fas fa-print"></i> Cetak PDF
+                                            </a>
+                                        @endif
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

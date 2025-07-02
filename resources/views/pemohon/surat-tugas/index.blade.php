@@ -190,15 +190,25 @@
                         @endif
                     </td>  
                     <td>
-                        <button data-toggle="modal" data-target="#detailModal{{ $st->id }}" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></button>
-                        <button data-toggle="modal" data-target="#editModal{{ $st->id }}" class="btn btn-sm btn-outline-warning"><i class="fas fa-edit"></i></button>
-                        @if ($st->status_disposisi == 'Ditolak' || $st->status_disposisi == 'Selesai' && $st->alasan_penolakan)
-                            <button data-toggle="modal" data-target="#alasanModal{{ $st->id }}" class="btn btn-sm btn-outline-success"><i class="fas fa-exclamation-circle"></i></button>
-                        @endif
-                        <form action="{{ route('pemohon.surat-tugas.destroy', $st->id) }}" method="POST" style="display:inline;">
+                        <div class="d-inline-flex gap-1 align-items-center">
+                            <button data-toggle="modal" data-target="#detailModal{{ $st->id }}" class="btn btn-sm btn-outline-info">
+                            <i class="fas fa-eye"></i>
+                            </button>
+                            <button data-toggle="modal" data-target="#editModal{{ $st->id }}" class="btn btn-sm btn-outline-warning">
+                            <i class="fas fa-edit"></i>
+                            </button>
+                            @if ($st->status_disposisi == 'Ditolak' || ($st->status_disposisi == 'Selesai' && $st->alasan_penolakan))
+                            <button data-toggle="modal" data-target="#alasanModal{{ $st->id }}" class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </button>
+                            @endif
+                            <form action="{{ route('pemohon.surat-tugas.destroy', $st->id) }}" method="POST" class="d-inline m-0 p-0">
                             @csrf @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Hapus data ini?')"><i class="fas fa-trash"></i></button>
-                        </form>
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 @endforeach
@@ -432,7 +442,7 @@
 
                     <hr>
 
-                    <!-- DETAIL FIELD MIRIP EDIT -->
+                    <!-- DETAIL FIELD SURAT TUGAS -->
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -535,6 +545,11 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    @if ($st->status_disposisi == 'Selesai')
+                        <a href="{{ route('pemohon.surat-tugas.pdf', $st->id) }}" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-print"></i> Cetak PDF
+                        </a>
+                    @endif
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                 </div>
             </div>

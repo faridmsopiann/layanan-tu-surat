@@ -9,6 +9,7 @@ use App\Models\Instansi;
 use App\Models\Dosen;
 use App\Models\ModalDisposisi;
 use App\Models\PeranTugas;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,6 +35,22 @@ class SuratTugasController extends Controller
             'dosenList',
             'peranList'
         ));
+    }
+
+    public function exportPdf($id)
+    {
+        $proposal = Proposal::with(['pemohon', 'jenisKegiatan', 'instansi', 'penugasan', 'penugasan.peranTugas', 'modalDisposisi'])
+            ->findOrFail($id);
+
+        if ($proposal->status_disposisi !== 'Selesai') {
+            abort(403, 'Surat belum selesai.');
+        }
+
+        // Surat Tugas ➜ Semua detail KECUALI file
+        $pdf = Pdf::loadView('pdf.surat_tugas_detail', compact('proposal'))
+                ->setPaper('a4', 'portrait');
+
+        return $pdf->stream('surat-tugas-'.$proposal->kode_pengajuan.'.pdf');
     }
 
     public function store(Request $request)

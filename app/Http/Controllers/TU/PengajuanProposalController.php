@@ -5,6 +5,7 @@ namespace App\Http\Controllers\TU;
 use App\Http\Controllers\Controller;
 use App\Models\ModalDisposisi;
 use App\Models\Proposal;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use ZipArchive;
 
@@ -18,6 +19,38 @@ class PengajuanProposalController extends Controller
             ->WhereIn('status_disposisi', ['Memproses', 'Menunggu Approval Kabag', 'Menunggu Approval Dekan', 'Menunggu Approval Wadek Akademik', 'Menunggu Approval Wadek Kemahasiswaan', 'Menunggu Approval Wadek Administrasi Umum', 'Menunggu Approval Prodi Teknik Informatika', 'Menunggu Approval Prodi Agribisnis', 'Menunggu Approval Prodi Sistem Informasi', 'Menunggu Approval Prodi Matematika', 'Menunggu Approval Prodi Fisika', 'Menunggu Approval Prodi Kimia', 'Menunggu Approval Prodi Biologi', 'Menunggu Approval Prodi Teknik Pertambangan', 'Menunggu Approval PLT',  'Menunggu Approval Akademik', 'Menunggu Approval Umum', 'Menunggu Approval Perpus', 'Ditolak', 'Selesai'])
             ->paginate(3);
         return view('tu.proposals.indexpengajuan', compact('proposals'));
+    }
+
+    public function exportPdfSuratMasuk($id)
+    {
+        $proposal = Proposal::with(['pemohon', 'modalDisposisi'])
+            ->findOrFail($id);
+
+        if ($proposal->status_disposisi !== 'Selesai') {
+            abort(403, 'Surat belum selesai.');
+        }
+
+        // Surat Masuk ➜ HANYA data utama + modalDisposisi
+        $pdf = Pdf::loadView('pdf.proposal_detail', compact('proposal'))
+                ->setPaper('a4', 'portrait');
+
+        return $pdf->stream('surat-masuk-'.$proposal->kode_pengajuan.'.pdf');
+    }
+
+    public function exportPdfSuratTugas($id)
+    {
+        $proposal = Proposal::with(['pemohon', 'jenisKegiatan', 'instansi', 'penugasan', 'penugasan.peranTugas', 'modalDisposisi'])
+            ->findOrFail($id);
+
+        if ($proposal->status_disposisi !== 'Selesai') {
+            abort(403, 'Surat belum selesai.');
+        }
+
+        // Surat Tugas ➜ Semua detail KECUALI file
+        $pdf = Pdf::loadView('pdf.surat_tugas_detail', compact('proposal'))
+                ->setPaper('a4', 'portrait');
+
+        return $pdf->stream('surat-tugas-'.$proposal->kode_pengajuan.'.pdf');
     }
 
     // Menampilkan form untuk membuat proposal baru

@@ -255,6 +255,11 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
+                                        @if ($p->status_disposisi == 'Selesai')
+                                            <a href="{{ route('pemohon.proposals.pdf', $p->id) }}" target="_blank" class="btn btn-primary">
+                                                <i class="fas fa-print"></i> Cetak PDF
+                                            </a>
+                                        @endif
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                                     </div>
                                 </div>

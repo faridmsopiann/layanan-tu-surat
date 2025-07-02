@@ -7,6 +7,7 @@ use App\Models\Disposisi;
 use App\Models\ModalDisposisi;
 use App\Models\PengajuanSurat;
 use App\Models\Proposal;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use ZipArchive;
@@ -22,6 +23,22 @@ class PengajuanSuratController extends Controller
             ->paginate(4);
 
         return view('pemohon.proposals.index', compact('proposals'));
+    }
+
+    public function exportPdf($id)
+    {
+        $proposal = Proposal::with(['pemohon', 'modalDisposisi'])
+            ->findOrFail($id);
+
+        if ($proposal->status_disposisi !== 'Selesai') {
+            abort(403, 'Surat belum selesai.');
+        }
+
+        // Surat Masuk ➜ HANYA data utama + modalDisposisi
+        $pdf = Pdf::loadView('pdf.proposal_detail', compact('proposal'))
+                ->setPaper('a4', 'portrait');
+
+        return $pdf->stream('surat-masuk-'.$proposal->kode_pengajuan.'.pdf');
     }
 
     public function downloadZip($id)
