@@ -195,8 +195,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/pemohon/surat-tugas/{id}', [SuratTugasController::class, 'show'])->name('pemohon.surat-tugas.show');
         Route::put('/pemohon/surat-tugas/{id}', [SuratTugasController::class, 'update'])->name('pemohon.surat-tugas.update');
         Route::delete('/pemohon/surat-tugas/{id}', [SuratTugasController::class, 'destroy'])->name('pemohon.surat-tugas.destroy');
-        Route::get('/proposal/{id}/pdf', [PengajuanSuratController::class, 'exportPdfSuratMasuk'])->name('pemohon.proposals.pdf');
-        Route::get('/surat-tugas/{id}/pdf', [SuratTugasController::class, 'exportPdfSuratTugas'])->name('pemohon.surat-tugas.pdf');
+        Route::get('/pemohon/proposal/{id}/pdf', [PengajuanSuratController::class, 'exportPdf'])->name('pemohon.proposals.pdf');
+        Route::get('/pemohon/surat-tugas/{id}/pdf', [SuratTugasController::class, 'exportPdf'])->name('pemohon.surat-tugas.pdf');
     });
 
     Route::middleware(['auth', 'role:Tata Usaha'])->group(function () {
@@ -235,8 +235,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('proposals/{proposal}/reject', [PengajuanProposalController::class, 'reject'])->name('tu.proposals.reject');
         Route::post('/tu/proposal/{id}/upload-sk', [DisposisiController::class, 'uploadSK'])->name('tu.proposal.upload-sk');
 
-        Route::get('/proposal/{id}/pdf', [TuExportPdfController::class, 'exportPdfSuratMasuk'])->name('tu.proposals.pdf');
-        Route::get('/surat-tugas/{id}/pdf', [TuExportPdfController::class, 'exportPdfSuratTugas'])->name('tu.surat-tugas.pdf');
+        Route::get('/tu/proposal/{id}/pdf', [TuExportPdfController::class, 'exportPdfSuratMasuk'])->name('tu.proposals.pdf');
+        Route::get('/tu/surat-tugas/{id}/pdf', [TuExportPdfController::class, 'exportPdfSuratTugas'])->name('tu.surat-tugas.pdf');
     });
 
     Route::middleware(['auth', 'role:Dekanat'])->group(function () {
