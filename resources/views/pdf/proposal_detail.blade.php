@@ -70,11 +70,12 @@
     </style>
 </head>
 <body>
-    <!-- Kop Surat -->
+    {{-- kop --}}
+    @if($kop && $kop->kop_surat)
     <div class="kop">
-        <h1>INSTANSI ANDA</h1>
-        <p>Jl. Contoh Alamat No. 123, Jakarta | Telp: (021) 123456 | www.contohinstansi.go.id</p>
+        <img src="{{ public_path($kop->kop_surat) }}" style="width: 100%; height: auto; margin-bottom: 20px;">
     </div>
+    @endif
 
     <h2>Detail Surat Masuk</h2>
     <table>

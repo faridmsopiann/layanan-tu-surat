@@ -72,6 +72,21 @@
                             </div>
                         </div>
 
+                        <div class="row mt-2">
+                            <div class="col-md-4">
+                                <label><strong>Pertimbangan</strong></label>
+                                <input type="text" name="pertimbangan" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label><strong>Dasar Penugasan</strong></label>
+                                <input type="text" name="dasar_penugasan" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label><strong>Sumber Biaya</strong></label>
+                                <input type="text" name="sumber_biaya" class="form-control" required>
+                            </div>
+                        </div>
+
                         <div class="mt-3">
                             <label><strong>Instansi Terkait</strong></label>
                             <select name="instansi_ids[]" id="instansi-select" class="form-control select2" multiple>
@@ -272,6 +287,21 @@
                         <input type="text" name="asal_surat" class="form-control" value="{{ $st->asal_surat }}" required>
                     </div>
 
+                    <div class="row mt-2">
+                            <div class="col-md-4">
+                                <label><strong>Pertimbangan</strong></label>
+                                <input type="text" value="{{ $st->pertimbangan }}" name="pertimbangan" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label><strong>Dasar Penugasan</strong></label>
+                                <input type="text" value="{{ $st->dasar_penugasan }}" name="dasar_penugasan" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label><strong>Sumber Biaya</strong></label>
+                                <input type="text" value="{{ $st->sumber_biaya }}" name="sumber_biaya" class="form-control" required>
+                            </div>
+                    </div>
+
                     <div class="form-group">
                         <label><strong>Instansi Terkait</strong></label>
                         <select name="instansi_ids[]" id="instansi-select-{{ $st->id }}" class="form-control select2" multiple>
@@ -333,19 +363,19 @@
                         @foreach ($st->penugasan as $idx => $pen)
                             <div class="border p-3 mb-2 penugasan-item" data-index="{{ $idx }}">
                             <div class="row">
-                                @if ($pen->dosen_id)
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" value="{{ $pen->dosen->nama }}">
-                                    <input type="hidden" name="penugasan[{{ $idx }}][dosen_id]" value="{{ $pen->dosen_id }}">
+                                @if ($pen->pegawai_id)
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" value="{{ $pen->pegawaiPenugasan->nama }}">
+                                    <input type="hidden" name="penugasan[{{ $idx }}][pegawai_id]" value="{{ $pen->pegawai_id }}">
                                 </div>
                                 @else
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <input type="text" name="penugasan[{{ $idx }}][nama_manual]" class="form-control"
-                                    value="{{ $pen->nama_manual }}" placeholder="Nama Dosen Manual" required>
+                                    value="{{ $pen->nama_manual }}" placeholder="Nama Pegawai Manual" required>
                                 </div>
                                 @endif
 
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                 <select name="penugasan[{{ $idx }}][peran_tugas_id]" class="form-control" required>
                                     <option value="">-- Pilih Peran --</option>
                                     @foreach ($peranList as $pr)
@@ -356,9 +386,14 @@
                                 </select>
                                 </div>
 
-                                <div class="col-md-4">
-                                <input type="text" name="penugasan[{{ $idx }}][unit_asal]" class="form-control"
-                                    value="{{ $pen->unit_asal }}" placeholder="Unit Asal" required>
+                                <div class="col-md-6 mt-3 mb-3">
+                                    <input type="text" name="penugasan[{{ $idx }}][unit_asal]" class="form-control"
+                                        value="{{ $pen->unit_asal }}" placeholder="Unit Asal" required>
+                                </div>
+
+                                <div class="col-md-6 mt-3 mb-3">
+                                    <input type="text" name="penugasan[{{ $idx }}][jabatan]" class="form-control"
+                                    value="{{ $pen->jabatan }}" placeholder="Jabatan" required>
                                 </div>
                             </div>
                             <button type="button" class="btn btn-sm btn-danger remove-penugasan mt-2">Hapus</button>
@@ -499,7 +534,7 @@
                                 <label><strong>Daftar Penugasan</strong></label>
                                 @forelse ($st->penugasan as $p)
                                     <p class="mb-1">
-                                        <strong>{{ $p->dosen->nama ?? $p->nama_manual }}</strong><br>
+                                        <strong>{{ $p->pegawaiPenugasan->nama ?? $p->nama_manual }}</strong><br>
                                         <small>Peran: {{ $p->peranTugas->nama ?? '-' }}</small><br>
                                         <small>Unit: {{ $p->unit_asal }}</small>
                                     </p>
@@ -583,15 +618,17 @@
 <template id="penugasan-template">
   <div class="border p-3 mb-2 penugasan-item rounded" data-index="__INDEX__">
     <div class="row">
-      <div class="col-md-4">
-        <select name="penugasan[__INDEX__][dosen_id]" class="form-control dosen-select">
-          <option value="">-- Pilih Dosen --</option>
-          @foreach ($dosenList as $d)
-            <option value="{{ $d->id }}" data-unit="{{ $d->unit->nama ?? '' }}">{{ $d->nama }}</option>
+      <div class="col-md-6">
+        <select name="penugasan[__INDEX__][pegawai_id]" class="form-control pegawai-select">
+          <option value="">-- Pilih Pegawai --</option>
+          @foreach ($pegawaiPenugasanList as $d)
+            <option value="{{ $d->id }}" data-unit="{{ $d->unit->nama ?? '' }}" data-jabatan="{{ $d->jabatan->nama ?? '' }}">
+                {{ $d->nama }}
+            </option>
           @endforeach
         </select>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-6">
         <select name="penugasan[__INDEX__][peran_tugas_id]" class="form-control" required>
           <option value="">-- Pilih Peran --</option>
           @foreach ($peranList as $pr)
@@ -599,11 +636,14 @@
           @endforeach
         </select>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-6 mt-3 mb-3">
         <input type="text" name="penugasan[__INDEX__][unit_asal]" class="form-control unit-asal" placeholder="Unit Asal" readonly required>
       </div>
+      <div class="col-md-6 mt-3 mb-3">
+        <input type="text" name="penugasan[__INDEX__][jabatan]" class="form-control jabatan" placeholder="Jabatan" readonly required>
+      </div>
     </div>
-    <button type="button" class="btn btn-sm btn-outline-secondary add-dosen-manual mt-2">+ Dosen Manual</button>
+    <button type="button" class="btn btn-sm btn-outline-secondary add-pegawai-manual mt-2">+ Pegawai Manual</button>
     <button type="button" class="btn btn-sm btn-danger remove-penugasan mt-2">Hapus</button>
   </div>
 </template>
@@ -611,15 +651,17 @@
 <template id="penugasan-template-edit">
   <div class="border p-3 mb-2 penugasan-item" data-index="__INDEX__">
     <div class="row">
-      <div class="col-md-4">
-        <select name="penugasan[__INDEX__][dosen_id]" class="form-control dosen-select">
-          <option value="">-- Pilih Dosen --</option>
-          @foreach ($dosenList as $d)
-            <option value="{{ $d->id }}" data-unit="{{ $d->unit->nama ?? '' }}">{{ $d->nama }}</option>
+      <div class="col-md-6">
+        <select name="penugasan[__INDEX__][pegawai_id]" class="form-control pegawai-select">
+          <option value="">-- Pilih Pegawai --</option>
+          @foreach ($pegawaiPenugasanList as $d)
+            <option value="{{ $d->id }}" data-unit="{{ $d->unit->nama ?? '' }}" data-jabatan="{{ $d->jabatan->nama ?? '' }}">
+                {{ $d->nama }}
+            </option>
           @endforeach
         </select>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-6">
         <select name="penugasan[__INDEX__][peran_tugas_id]" class="form-control" required>
           <option value="">-- Pilih Peran --</option>
           @foreach ($peranList as $pr)
@@ -627,11 +669,14 @@
           @endforeach
         </select>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-6 mt-3 mb-3">
         <input type="text" name="penugasan[__INDEX__][unit_asal]" class="form-control unit-asal" placeholder="Unit Asal" readonly required>
       </div>
+      <div class="col-md-6 mt-3 mb-3">
+        <input type="text" name="penugasan[__INDEX__][jabatan]" class="form-control jabatan" placeholder="Jabatan" readonly required>
+      </div>
     </div>
-    <button type="button" class="btn btn-sm btn-outline-secondary add-dosen-manual mt-2">+ Dosen Manual</button>
+    <button type="button" class="btn btn-sm btn-outline-secondary add-pegawai-manual mt-2">+ Pegawai Manual</button>
     <button type="button" class="btn btn-sm btn-danger remove-penugasan mt-2">Hapus</button>
   </div>
 </template>
@@ -684,20 +729,22 @@ $(document).ready(function() {
     });
 
     // === Universal ===
-    $(document).on('change', '.dosen-select', function() {
+    $(document).on('change', '.pegawai-select', function() {
         let unit = $(this).find(':selected').data('unit') ?? '';
+        let jabatan = $(this).find(':selected').data('jabatan') ?? '';
         $(this).closest('.penugasan-item').find('.unit-asal').val(unit);
+        $(this).closest('.penugasan-item').find('.jabatan').val(jabatan);
     });
 
-    $(document).on('click', '.add-dosen-manual', function() {
+    $(document).on('click', '.add-pegawai-manual', function() {
         let wrap = $(this).closest('.penugasan-item');
         let index = wrap.attr('data-index');
 
-        wrap.find('.dosen-select').closest('.col-md-4').remove();
+        wrap.find('.pegawai-select').closest('.col-md-6').remove();
 
         let manualInput = `
-            <div class="col-md-4">
-            <input type="text" name="penugasan[${index}][nama_manual]" class="form-control" placeholder="Nama Dosen Manual" required>
+            <div class="col-md-6">
+            <input type="text" name="penugasan[${index}][nama_manual]" class="form-control" placeholder="Nama Pegawai Manual" required>
             </div>
         `;
 
@@ -706,6 +753,11 @@ $(document).ready(function() {
         wrap.find('.unit-asal')
             .prop('readonly', false)
             .attr('placeholder', 'Unit Asal Manual')
+            .attr('required', true);
+        
+        wrap.find('.jabatan')
+            .prop('readonly', false)
+            .attr('placeholder', 'Jabatan Manual')
             .attr('required', true);
 
         $(this).remove();

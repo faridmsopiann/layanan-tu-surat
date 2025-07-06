@@ -37,7 +37,9 @@ class Proposal extends Model
         'tanggal_mulai',
         'tanggal_selesai',
         'lokasi_kegiatan',
-        'instansi_terkait',
+        'sumber_biaya',
+        'pertimbangan',
+        'dasar_penugasan',
     ];
 
     public function pemohon()

@@ -9,14 +9,15 @@ class ProposalPenugasan extends Model
 {
     use HasFactory;
 
-    protected $table = 'proposal_penugasan';
+    protected $table = 'proposal_penugasans';
 
     protected $fillable = [
         'proposal_id',
-        'dosen_id',
+        'pegawai_id',
         'nama_manual',
         'peran_tugas_id',
         'unit_asal',
+        'jabatan',
     ];
 
     public function proposal()
@@ -24,9 +25,9 @@ class ProposalPenugasan extends Model
         return $this->belongsTo(Proposal::class);
     }
 
-    public function dosen()
+    public function pegawaiPenugasan()
     {
-        return $this->belongsTo(Dosen::class);
+        return $this->belongsTo(PegawaiPenugasan::class, 'pegawai_id');
     }
 
     public function peranTugas()

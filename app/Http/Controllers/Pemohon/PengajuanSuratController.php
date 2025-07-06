@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pemohon;
 
 use App\Http\Controllers\Controller;
 use App\Models\Disposisi;
+use App\Models\KopSurat;
 use App\Models\ModalDisposisi;
 use App\Models\PengajuanSurat;
 use App\Models\Proposal;
@@ -34,11 +35,13 @@ class PengajuanSuratController extends Controller
             abort(403, 'Surat belum selesai.');
         }
 
-        // Surat Masuk ➜ HANYA data utama + modalDisposisi
-        $pdf = Pdf::loadView('pdf.proposal_detail', compact('proposal'))
-                ->setPaper('a4', 'portrait');
+        $kop = KopSurat::where('nama', 'Kop Surat Tugas')->first();
 
-        return $pdf->stream('surat-masuk-'.$proposal->kode_pengajuan.'.pdf');
+        // Surat Masuk ➜ HANYA data utama + modalDisposisi
+        $pdf = Pdf::loadView('pdf.proposal_detail', compact('proposal', 'kop'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->stream('surat-masuk-' . $proposal->kode_pengajuan . '.pdf');
     }
 
     public function downloadZip($id)
@@ -89,17 +92,16 @@ class PengajuanSuratController extends Controller
         }
 
         $tahun = now()->year;
-        $bulan = now()->month;
+        $bulan = str_pad(now()->month, 2, '0', STR_PAD_LEFT); 
 
         $lastProposal = Proposal::withTrashed()
-            ->whereYear('created_at', $tahun)
-            ->whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun) 
             ->latest()
             ->first();
 
         $increment = 1;
         if ($lastProposal) {
-            $lastKode = substr($lastProposal->kode_pengajuan, -4);
+            $lastKode = substr($lastProposal->kode_pengajuan, -4); 
             $increment = (int)$lastKode + 1;
         }
 

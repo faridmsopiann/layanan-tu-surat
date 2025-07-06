@@ -13,13 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('proposal_penugasan', function (Blueprint $table) {
+        Schema::create('proposal_penugasans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('proposal_id')->constrained()->onDelete('cascade');
-            $table->foreignId('dosen_id')->nullable()->constrained('dosen')->onDelete('set null');
+            $table->foreignId('pegawai_id')->nullable()->constrained('pegawai_penugasans')->onDelete('set null');
             $table->string('nama_manual')->nullable();
-            $table->foreignId('peran_tugas_id')->nullable()->constrained('peran_tugas')->onDelete('set null');
+            $table->foreignId('peran_tugas_id')->nullable()->constrained('perans')->onDelete('set null');
             $table->string('unit_asal')->nullable(); 
+            $table->string('jabatan')->nullable(); 
             $table->timestamps();
         });
     }
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('proposal_penugasan');
+        Schema::dropIfExists('proposal_penugasans');
     }
 };

@@ -1,12 +1,24 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\InstansiController;
+use App\Http\Controllers\Admin\JabatanController;
+use App\Http\Controllers\Admin\JenisKegiatanController;
+use App\Http\Controllers\Admin\KopSuratController;
+use App\Http\Controllers\Admin\PegawaiPenugasanController;
+use App\Http\Controllers\Admin\PejabatPenandatanganController;
+use App\Http\Controllers\Admin\PeranTugasController;
+use App\Http\Controllers\Admin\ProposalController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UnitKerjaController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Akademik\AkademikController;
 use App\Http\Controllers\Akademik\AkademikDisposisiController;
 use App\Http\Controllers\Akademik\ArsipSuratAkademikController;
 use App\Http\Controllers\Akademik\MonitoringAkademikController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Dekan\ArsipSuratDekanController;
 use App\Http\Controllers\Dekan\DekanController;
 use App\Http\Controllers\Dekan\DisposisiController as DekanDisposisiController;
@@ -60,7 +72,6 @@ use App\Http\Controllers\ProdiTP\MonitoringProdiTPController;
 use App\Http\Controllers\ProdiTP\ProdiTPController;
 use App\Http\Controllers\ProdiTP\ProdiTPDisposisiController;
 use App\Http\Controllers\QRCodeController;
-use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\TU\ArsipSuratController;
 use App\Http\Controllers\TU\DisposisiController;
@@ -73,7 +84,7 @@ use App\Http\Controllers\Umum\ArsipSuratUmumController;
 use App\Http\Controllers\Umum\MonitoringUmumController;
 use App\Http\Controllers\Umum\UmumController;
 use App\Http\Controllers\Umum\UmumDisposisiController;
-use App\Http\Controllers\UserController;
+use App\Models\Jabatan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -87,6 +98,9 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::post('/register', [RegisteredUserController::class, 'store'])
+    ->middleware(['guest']);
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -160,22 +174,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 
         // Routes untuk fitur manajemen proposal
-        Route::get('/admin/proposals', [App\Http\Controllers\Admin\ProposalController::class, 'index'])->name('admin.proposals.index');
-        Route::get('/admin/proposals/create', [App\Http\Controllers\Admin\ProposalController::class, 'create'])->name('admin.proposals.create');
-        Route::post('/admin/proposals', [App\Http\Controllers\Admin\ProposalController::class, 'store'])->name('admin.proposals.store');
-        Route::get('/admin/proposals/{proposal}/edit', [App\Http\Controllers\Admin\ProposalController::class, 'edit'])->name('admin.proposals.edit');
-        Route::put('/admin/proposals/{proposal}', [App\Http\Controllers\Admin\ProposalController::class, 'update'])->name('admin.proposals.update');
-        Route::delete('/admin/proposals/{proposal}', [App\Http\Controllers\Admin\ProposalController::class, 'destroy'])->name('admin.proposals.destroy');
+        Route::get('/admin/proposals', [ProposalController::class, 'index'])->name('admin.proposals.index');
+        Route::get('/admin/proposals/create', [ProposalController::class, 'create'])->name('admin.proposals.create');
+        Route::post('/admin/proposals', [ProposalController::class, 'store'])->name('admin.proposals.store');
+        Route::get('/admin/proposals/{proposal}/edit', [ProposalController::class, 'edit'])->name('admin.proposals.edit');
+        Route::put('/admin/proposals/{proposal}', [ProposalController::class, 'update'])->name('admin.proposals.update');
+        Route::delete('/admin/proposals/{proposal}', [ProposalController::class, 'destroy'])->name('admin.proposals.destroy');
 
         // Manajemen Role
         Route::resource('roles', RoleController::class);
 
         // Master Surat Tugas
-        Route::resource('admin/jenis-kegiatan', App\Http\Controllers\Admin\JenisKegiatanController::class)->names('admin.jenis-kegiatan');
-        Route::resource('admin/instansi', App\Http\Controllers\Admin\InstansiController::class)->names('admin.instansi');
-        Route::resource('admin/peran-tugas', App\Http\Controllers\Admin\PeranTugasController::class)->names('admin.peran-tugas');
-        Route::resource('admin/unit-kerja', App\Http\Controllers\Admin\UnitKerjaController::class)->names('admin.unit-kerja');
-        Route::resource('admin/dosen', App\Http\Controllers\Admin\DosenController::class)->names('admin.dosen');
+        Route::resource('admin/jenis-kegiatan', JenisKegiatanController::class)->names('admin.jenis-kegiatan');
+        Route::resource('admin/jabatan', JabatanController::class)->names('admin.jabatan');
+        Route::resource('admin/instansi', InstansiController::class)->names('admin.instansi');
+        Route::resource('admin/peran-tugas', PeranTugasController::class)->names('admin.peran-tugas');
+        Route::resource('admin/unit-kerja', UnitKerjaController::class)->names('admin.unit-kerja');
+        Route::resource('admin/pegawai-penugasan', PegawaiPenugasanController::class)->names('admin.pegawai-penugasan');
+
+        // Master Kop Surat
+        Route::resource('admin/kop-surat', KopSuratController::class)->names('admin.kop-surat');
+        Route::resource('admin/pejabat-penandatangan', PejabatPenandatanganController::class)->names('admin.pejabat-penandatangan');
     });
 
     Route::middleware(['auth', 'role:Pemohon'])->group(function () {

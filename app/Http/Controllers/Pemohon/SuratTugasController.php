@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Proposal;
 use App\Models\JenisKegiatan;
 use App\Models\Instansi;
-use App\Models\Dosen;
+use App\Models\Jabatan;
+use App\Models\KopSurat;
 use App\Models\ModalDisposisi;
+use App\Models\PegawaiPenugasan;
+use App\Models\PejabatPenandatangan;
 use App\Models\PeranTugas;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -25,40 +28,50 @@ class SuratTugasController extends Controller
 
         $jenisKegiatanList = JenisKegiatan::all();
         $instansiList = Instansi::all();
-        $dosenList = Dosen::with('unit')->get();
+        $pegawaiPenugasanList = PegawaiPenugasan::with('unit')->with('jabatan')->get();
         $peranList = PeranTugas::all();
 
         return view('pemohon.surat-tugas.index', compact(
             'suratTugasList',
             'jenisKegiatanList',
             'instansiList',
-            'dosenList',
+            'pegawaiPenugasanList',
             'peranList'
         ));
     }
 
     public function exportPdf($id)
     {
-        $proposal = Proposal::with(['pemohon', 'jenisKegiatan', 'instansi', 'penugasan', 'penugasan.peranTugas', 'modalDisposisi'])
-            ->findOrFail($id);
+        $proposal = Proposal::with([
+            'pemohon',
+            'jenisKegiatan',
+            'instansi',
+            'penugasan',
+            'penugasan.peranTugas',
+            'modalDisposisi'
+        ])->findOrFail($id);
 
         if ($proposal->status_disposisi !== 'Selesai') {
             abort(403, 'Surat belum selesai.');
         }
 
-        // Surat Tugas ➜ Semua detail KECUALI file
-        $pdf = Pdf::loadView('pdf.surat_tugas_detail', compact('proposal'))
-                ->setPaper('a4', 'portrait');
+        $kop = KopSurat::where('nama', 'Kop Surat Tugas')->first();
 
-        return $pdf->stream('surat-tugas-'.$proposal->kode_pengajuan.'.pdf');
+        $dekanJabatan = Jabatan::where('nama', 'Dekan')->first();
+        $penandatangan = $dekanJabatan
+            ? PejabatPenandatangan::where('jabatan_id', $dekanJabatan->id)->latest()->first()
+            : null;
+
+        $pdf = Pdf::loadView('pdf.surat_tugas_detail', compact('proposal', 'kop', 'penandatangan'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->stream('surat-tugas-' . $proposal->kode_pengajuan . '.pdf');
     }
 
     public function store(Request $request)
     {
-
-        // dd($request->all());
         $request->validate([
-            'jenis_kegiatan_id' => 'required|exists:jenis_kegiatan,id',
+            'jenis_kegiatan_id' => 'required|exists:kegiatans,id',
             'hal' => 'required|string',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
@@ -67,10 +80,13 @@ class SuratTugasController extends Controller
             'instansi_manual' => 'array',
             'penugasan' => 'array',
             'penugasan.*.unit_asal' => 'required|string|min:2',
-            'penugasan.*.peran_tugas_id' => 'required|integer|exists:peran_tugas,id',
+            'penugasan.*.jabatan' => 'required|string|min:2',
+            'penugasan.*.peran_tugas_id' => 'required|integer|exists:perans,id',
             'soft_file.*' => 'nullable|file|max:10240',
             'file_link' => 'nullable|url',
-            'asal_surat' => 'required|string',
+            'pertimbangan' => 'required|string',
+            'dasar_penugasan' => 'required|string',
+            'sumber_biaya' => 'required|string',
         ]);
 
         $softFilePaths = [];
@@ -81,13 +97,37 @@ class SuratTugasController extends Controller
         }
 
         $tahun = now()->year;
-        $bulan = now()->month;
-        $last = Proposal::withTrashed()->whereYear('created_at', $tahun)->whereMonth('created_at', $bulan)->latest()->first();
-        $increment = $last ? ((int)substr($last->kode_pengajuan, -4)) + 1 : 1;
-        $kode = 'P' . $tahun . $bulan . str_pad($increment, 4, '0', STR_PAD_LEFT);
+        $bulan = str_pad(now()->month, 2, '0', STR_PAD_LEFT);
+
+        $lastProposal = Proposal::withTrashed()
+            ->whereYear('created_at', $tahun)
+            ->latest()
+            ->first();
+
+        // Increment kode pengajuan
+        $increment = 1;
+        if ($lastProposal) {
+            $lastKode = substr($lastProposal->kode_pengajuan, -4);
+            $increment = (int)$lastKode + 1;
+        }
+
+        $kodePengajuan = 'P' . $tahun . $bulan . str_pad($increment, 4, '0', STR_PAD_LEFT);
         $nomorAgenda = Proposal::withTrashed()
             ->whereYear('created_at', $tahun)
             ->count() + 1;
+
+        // === Nomor Surat ===
+        $incrementNomor = 1;
+        if ($lastProposal && $lastProposal->nomor_surat) {
+            $parts = explode('/', $lastProposal->nomor_surat);
+            if (isset($parts[0])) {
+                $lastIncrementPart = str_replace('B-', '', $parts[0]);
+                $incrementNomor = (int)$lastIncrementPart + 1;
+            }
+        }
+
+        $nomorSurat = 'B-' . str_pad($incrementNomor, 3, '0', STR_PAD_LEFT)
+            . '/F.9/KP.01.1/' . $bulan . '/' . $tahun;
 
         $proposal = Proposal::create([
             'pemohon_id' => Auth::id(),
@@ -97,12 +137,16 @@ class SuratTugasController extends Controller
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
             'lokasi_kegiatan' => $request->lokasi_kegiatan,
-            'kode_pengajuan' => $kode,
+            'kode_pengajuan' => $kodePengajuan,
             'soft_file' => $softFilePaths ? json_encode($softFilePaths) : null,
             'soft_file_link' => $request->file_link,
             'tanggal_surat' => now(),
             'asal_surat' => $request->asal_surat,
+            'pertimbangan' => $request->pertimbangan,
+            'dasar_penugasan' => $request->dasar_penugasan,
+            'sumber_biaya' => $request->sumber_biaya,
             'nomor_agenda' => $nomorAgenda,
+            'nomor_surat' => $nomorSurat,
         ]);
 
         ModalDisposisi::create([
@@ -124,10 +168,11 @@ class SuratTugasController extends Controller
 
         foreach ($request->penugasan ?? [] as $p) {
             $proposal->penugasan()->create([
-                'dosen_id' => $p['dosen_id'] ?? null,
+                'pegawai_id' => $p['pegawai_id'] ?? null,
                 'nama_manual' => $p['nama_manual'] ?? null,
                 'peran_tugas_id' => $p['peran_tugas_id'],
                 'unit_asal' => $p['unit_asal'],
+                'jabatan' => $p['jabatan'],
             ]);
         }
 
@@ -137,7 +182,7 @@ class SuratTugasController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'jenis_kegiatan_id' => 'required|exists:jenis_kegiatan,id',
+            'jenis_kegiatan_id' => 'required|exists:kegiatans,id',
             'hal' => 'required|string',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
@@ -165,6 +210,9 @@ class SuratTugasController extends Controller
             'tanggal_selesai' => $request->tanggal_selesai,
             'lokasi_kegiatan' => $request->lokasi_kegiatan,
             'asal_surat' => $request->asal_surat,
+            'pertimbangan' => $request->pertimbangan,
+            'dasar_penugasan' => $request->dasar_penugasan,
+            'sumber_biaya' => $request->sumber_biaya,
         ]);
 
         $proposal->instansi()->delete();
@@ -179,10 +227,11 @@ class SuratTugasController extends Controller
 
         foreach ($request->penugasan ?? [] as $p) {
             $proposal->penugasan()->create([
-                'dosen_id' => $p['dosen_id'] ?? null,
+                'pegawai_id' => $p['pegawai_id'] ?? null,
                 'nama_manual' => $p['nama_manual'] ?? null,
                 'peran_tugas_id' => $p['peran_tugas_id'],
                 'unit_asal' => $p['unit_asal'],
+                'jabatan' => $p['jabatan'],
             ]);
         }
 

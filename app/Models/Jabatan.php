@@ -9,9 +9,9 @@ class Jabatan extends Model
 {
     use HasFactory;
 
-    protected $table = 'jabatan'; // Nama tabel yang digunakan
+    protected $table = 'jabatans'; 
 
-    protected $fillable = ['nama_jabatan']; // Kolom yang dapat diisi
+    protected $fillable = ['nama']; 
 
     // Relasi dengan PengajuanSurat
     public function pengajuanSurats()

@@ -44,12 +44,12 @@
                     </ul>
                 </li>
 
-                <!-- MASTER SURAT MASUK -->
-                <li class="nav-item has-treeview {{ Request::is('admin/proposals*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ Request::is('admin/proposals*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-envelope-open-text"></i>
+                <!-- MASTER SURAT TUGAS -->
+                <li class="nav-item has-treeview {{ Request::is('admin/jenis-kegiatan*') || Request::is('admin/instansi*') || Request::is('admin/peran-tugas*') || Request::is('admin/unit-kerja*') || Request::is('admin/pegawai-penugasan*') || Request::is('admin/proposals*') || Request::routeIs('admin.kop-surat.*') || Request::routeIs('admin.pejabat-penandatangan.*') || Request::routeIs('admin.jabatan.*')  ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ Request::is('admin/jenis-kegiatan*') || Request::is('admin/instansi*') || Request::is('admin/peran-tugas*') || Request::is('admin/unit-kerja*') || Request::is('admin/pegawai-penugasan*') || Request::is('admin/proposals*') || Request::routeIs('admin.kop-surat.*') || Request::routeIs('admin.pejabat-penandatangan.*') || Request::routeIs('admin.jabatan.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-briefcase"></i>
                         <p>
-                            Master Surat Masuk
+                            Master Surat
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
@@ -61,22 +61,17 @@
                             </a>
                         </li>
                     </ul>
-                </li>
-
-                <!-- MASTER SURAT TUGAS -->
-                <li class="nav-item has-treeview {{ Request::is('admin/jenis-kegiatan*') || Request::is('admin/instansi*') || Request::is('admin/peran-tugas*') || Request::is('admin/unit-kerja*') || Request::is('admin/dosen*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ Request::is('admin/jenis-kegiatan*') || Request::is('admin/instansi*') || Request::is('admin/peran-tugas*') || Request::is('admin/unit-kerja*') || Request::is('admin/dosen*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-briefcase"></i>
-                        <p>
-                            Master Surat Tugas
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('admin.jenis-kegiatan.index') }}" class="nav-link {{ Request::routeIs('admin.jenis-kegiatan.*') ? 'active' : '' }}">
                                 <i class="fas fa-list-alt nav-icon"></i>
                                 <p>Jenis Kegiatan</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.jabatan.index') }}" class="nav-link {{ Request::routeIs('admin.jabatan.*') ? 'active' : '' }}">
+                                <i class="fas fa-user-tag nav-icon"></i>
+                                <p>Jabatan</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -98,9 +93,22 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('admin.dosen.index') }}" class="nav-link {{ Request::routeIs('admin.dosen.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.pegawai-penugasan.index') }}" class="nav-link {{ Request::routeIs('admin.pegawai-penugasan.*') ? 'active' : '' }}">
                                 <i class="fas fa-chalkboard-teacher nav-icon"></i>
-                                <p>Dosen</p>
+                                <p>Pegawai</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.kop-surat.index') }}" class="nav-link {{ Request::routeIs('admin.kop-surat.*') ? 'active' : '' }}">
+                                <i class="fas fa-file-alt nav-icon"></i>
+                                <p>Kop Surat</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('admin.pejabat-penandatangan.index') }}" class="nav-link {{ Request::routeIs('admin.pejabat-penandatangan.*') ? 'active' : '' }}">
+                                <i class="fas fa-user-edit nav-icon"></i>
+                                <p>Pejabat Penandatangan</p>
                             </a>
                         </li>
                     </ul>

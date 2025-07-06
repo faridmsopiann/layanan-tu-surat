@@ -1,10 +1,10 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Manajemen Dosen')
+@section('title', 'Manajemen Pegawai Penugasan')
 
 @section('content')
 <div class="container pt-4" style="font-family: 'Roboto', sans-serif;">
-    <h2 style="font-weight: 700; color: #2C3E50;">Manajemen Dosen</h2>
+    <h2 style="font-weight: 700; color: #2C3E50;">Manajemen Pegawai Penugasan</h2>
 
     @if(session('success'))
     <div id="success-alert" class="alert alert-success mb-3 shadow-sm" style="border-left: 5px solid #28a745;">
@@ -14,7 +14,7 @@
 
     <!-- Tombol Tambah -->
     <button class="btn btn-primary mb-3 shadow-sm" style="background-color: #3498DB; border: none; border-radius: 50px; padding: 8px 20px;" data-toggle="modal" data-target="#createModal">
-        <i class="fas fa-plus-circle"></i> Tambah Dosen
+        <i class="fas fa-plus-circle"></i> Tambah Pegawai
     </button>
 
     <!-- Tabel -->
@@ -24,7 +24,7 @@
                 <tr>
                     <th>No</th>
                     <th>Nama</th>
-                    <th>NIDN</th>
+                    <th>NIP</th>
                     <th>Unit Kerja</th>
                     <th style="width: 1px; white-space: nowrap;">Aksi</th>
                 </tr>
@@ -41,7 +41,7 @@
                                 <i class="fas fa-edit"></i>
                             </button>
 
-                            <form action="{{ route('admin.dosen.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus?')">
+                            <form action="{{ route('admin.pegawai-penugasan.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-outline-danger btn-sm" type="submit">
                                     <i class="fas fa-trash-alt"></i>
@@ -53,11 +53,11 @@
                     <!-- Modal Edit -->
                     <div class="modal fade" id="editModal{{ $item->id }}" tabindex="-1" role="dialog">
                         <div class="modal-dialog" role="document">
-                            <form action="{{ route('admin.dosen.update', $item->id) }}" method="POST">
+                            <form action="{{ route('admin.pegawai-penugasan.update', $item->id) }}" method="POST">
                                 @csrf @method('PUT')
                                 <div class="modal-content">
                                     <div class="modal-header" style="background-color: #2C3E50; color: white;">
-                                        <h5 class="modal-title">Edit Dosen</h5>
+                                        <h5 class="modal-title">Edit Pegawai</h5>
                                         <button type="button" class="close text-white" data-dismiss="modal">
                                             <span>&times;</span>
                                         </button>
@@ -82,6 +82,17 @@
                                                 @endforeach
                                             </select>
                                         </div>
+                                        <div class="form-group">
+                                            <label>Jabatan</label>
+                                            <select name="jabatan_id" class="form-control" required>
+                                                <option value="">-- Pilih Jabatan --</option>
+                                                @foreach($jabatans as $jabatan)
+                                                    <option value="{{ $jabatan->id }}" {{ $item->jabatan_id == $jabatan->id ? 'selected' : '' }}>
+                                                        {{ $jabatan->nama }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -100,11 +111,11 @@
 <!-- Modal Create -->
 <div class="modal fade" id="createModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
-        <form action="{{ route('admin.dosen.store') }}" method="POST">
+        <form action="{{ route('admin.pegawai-penugasan.store') }}" method="POST">
             @csrf
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #2C3E50; color: white;">
-                    <h5 class="modal-title">Tambah Dosen</h5>
+                    <h5 class="modal-title">Tambah Pegawai</h5>
                     <button type="button" class="close text-white" data-dismiss="modal">
                         <span>&times;</span>
                     </button>
@@ -124,6 +135,15 @@
                             <option value="">-- Pilih Unit --</option>
                             @foreach($unitKerja as $unit)
                                 <option value="{{ $unit->id }}">{{ $unit->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Jabatan</label>
+                        <select name="jabatan_id" class="form-control" required>
+                            <option value="">-- Pilih Jabatan --</option>
+                            @foreach($jabatans as $jabatan)
+                                <option value="{{ $jabatan->id }}">{{ $jabatan->nama }}</option>
                             @endforeach
                         </select>
                     </div>

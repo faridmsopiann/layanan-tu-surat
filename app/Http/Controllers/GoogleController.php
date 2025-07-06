@@ -27,33 +27,39 @@ class GoogleController extends Controller
     {
         try {
             $googleUser = Socialite::driver('google')->user();
-            Log::info('Google User Data:', ['user' => $googleUser]);
 
-            $user = User::firstOrCreate(
-                ['email' => $googleUser->getEmail()],
-                [
+            $user = User::where('email', $googleUser->getEmail())->first();
+
+            if (!$user) {
+                $user = User::create([
                     'name' => $googleUser->getName(),
+                    'email' => $googleUser->getEmail(),
                     'password' => Hash::make(Str::random(24)),
-                ]
-            );
+                    'status' => 'inactive', 
+                ]);
 
-            $user->roles()->syncWithoutDetaching(
-                [Role::where('name', 'pemohon')->first()?->id]
-            );
+                $user->roles()->syncWithoutDetaching(
+                    [Role::where('name', 'pemohon')->first()?->id]
+                );
+
+                return redirect()->route('login')
+                    ->with('status', 'Pendaftaran akun berhasil. Akun Anda sedang diverifikasi oleh admin.');
+            }
+
+            if ($user->status !== 'active') {
+                return redirect()->route('login')
+                    ->with('status', 'Akun Anda belum aktif. Tunggu verifikasi admin.');
+            }
 
             Auth::login($user, true);
-            $user->load('roles');
 
-            Log::info('User login berhasil dengan role:', ['roles' => $user->roles->pluck('name')]);
-
-            // Ambil source dari session
             $source = session()->pull('login_source');
 
             return $source === 'qr'
                 ? redirect()->route('tracking.surat')
                 : redirect()->route('dashboard');
+
         } catch (\Exception $e) {
-            Log::error('Google login error:', ['error' => $e->getMessage()]);
             return redirect()->route('login')->with('error', 'Something went wrong!');
         }
     }

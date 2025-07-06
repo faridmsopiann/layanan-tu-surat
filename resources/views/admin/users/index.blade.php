@@ -26,6 +26,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
+                    <th>Status</th>
                     <th style="width: 1px; white-space: nowrap;">Actions</th>
                 </tr>
             </thead>
@@ -35,7 +36,14 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
-                        <td>{{ ucfirst($user->role) }}</td>
+                        <td>{{ $user->roles->pluck('name')->implode(', ') }}</td>
+                        <td>
+                            @if ($user->status == 'active')
+                                <span class="badge badge-success">Active</span>
+                            @else
+                                <span class="badge badge-danger">Inactive</span>
+                            @endif
+                        </td>
                         <td class="d-flex justify-content-center">
                             <!-- Tombol Edit dengan Modal -->
                             <button class="btn btn-outline-warning btn-sm mr-2" data-toggle="modal" data-target="#editUserModal{{ $user->id }}" title="Edit">
@@ -87,6 +95,14 @@
                                                         {{ $role->name }}
                                                     </option>
                                                 @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="status">Status:</label>
+                                            <select name="status" class="form-select">
+                                                <option value="active" {{ $user->status == 'active' ? 'selected' : '' }}>Active</option>
+                                                <option value="inactive" {{ $user->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
                                             </select>
                                         </div>                                        
 

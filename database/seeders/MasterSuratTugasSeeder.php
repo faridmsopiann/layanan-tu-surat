@@ -16,7 +16,7 @@ class MasterSuratTugasSeeder extends Seeder
     public function run()
     {
         // Jenis Kegiatan
-        DB::table('jenis_kegiatan')->insert([
+        DB::table('kegiatans')->insert([
             ['nama' => 'Kuliah Lapangan'],
             ['nama' => 'Seminar'],
             ['nama' => 'Kerja Praktik'],
@@ -24,7 +24,7 @@ class MasterSuratTugasSeeder extends Seeder
         ]);
 
         // Instansi
-        DB::table('instansi')->insert([
+        DB::table('instansis')->insert([
             ['nama' => 'BRIN'],
             ['nama' => 'Kominfo'],
             ['nama' => 'Prodi TI'],
@@ -32,7 +32,7 @@ class MasterSuratTugasSeeder extends Seeder
         ]);
 
         // Peran Tugas
-        DB::table('peran_tugas')->insert([
+        DB::table('perans')->insert([
             ['nama' => 'Narasumber'],
             ['nama' => 'Pendamping'],
             ['nama' => 'Peserta'],
@@ -42,24 +42,34 @@ class MasterSuratTugasSeeder extends Seeder
         ]);
 
         // Unit Kerja
-        DB::table('unit_kerja')->insert([
+        DB::table('units')->insert([
             ['id' => 1, 'nama' => 'Prodi TI'],
             ['id' => 2, 'nama' => 'Prodi Tambang'],
             ['id' => 3, 'nama' => 'Fakultas Teknik'],
             ['id' => 4, 'nama' => 'Fakultas Sains dan Teknologi'],
         ]);
 
-        // Dosen (Contoh)
-        DB::table('dosen')->insert([
+        // Jabatan
+        DB::table('jabatans')->insert([
+            ['id' => 1, 'nama' => 'Ketua Prodi TI'],
+            ['id' => 2, 'nama' => 'Ketua Prodi Tambang'],
+            ['id' => 3, 'nama' => 'Ketua Fakultas Teknik'],
+            ['id' => 4, 'nama' => 'Ketua Fakultas Sains dan Teknologi'],
+        ]);
+
+        // Pegawai Penugasan 
+        DB::table('pegawai_penugasans')->insert([
             [
                 'nama' => 'Dr. Andi Saputra',
                 'nip' => '197812312003121001',
                 'unit_id' => 2,
+                'jabatan_id' => 2,
             ],
             [
                 'nama' => 'Siti Marlina, M.T.',
                 'nip' => '198504052010122001',
                 'unit_id' => 1,
+                'jabatan_id' => 1,
             ],
         ]);
     }

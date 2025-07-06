@@ -2,12 +2,12 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Detail Surat Tugas</title>
+    <title>Surat Tugas</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            font-size: 12px; 
-            color: #333; 
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 14px; 
+            line-height: 1.6;
         }
 
         .kop {
@@ -27,131 +27,171 @@
             font-size: 10px;
         }
 
-        table {
+        .content {
+            margin-top: 20px;
+        }
+
+        .tengah {
+            text-align: center;
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .nomor {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table.detail {
             width: 100%;
-            border-collapse: collapse;
             margin-top: 10px;
         }
 
-        th, td {
-            border: 1px solid #666;
-            padding: 6px;
-            text-align: left;
+        table.detail td {
+            vertical-align: top;
         }
 
-        th {
-            background: #f0f0f0;
-        }
-
-        .status {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            color: #fff;
-            font-weight: bold;
-            font-size: 11px;
-        }
-
-        .status.Diproses { background: #f1c40f; }
-        .status.Selesai, .status.Disetujui { background: #2ecc71; }
-        .status.Ditolak { background: #e74c3c; }
-
-        h2 {
-            margin-top: 30px;
-            margin-bottom: 10px;
-        }
-
-        .footer {
-            margin-top: 30px;
+        .ttd {
+            margin-top: 200px;
             text-align: right;
-            font-size: 10px;
-            color: #666;
+        }
+
+        .ttd img {
+            height: 80px;
+        }
+
+        .lampiran-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .lampiran-table th, .lampiran-table td {
+            border: 1px solid #000;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        .footer-fixed {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            text-align: center;
+        }
+        .footer-fixed img {
+            width: 80%;
+            height: auto;
         }
     </style>
 </head>
 <body>
-    <!-- Kop Surat -->
+    {{-- kop --}}
+    @if($kop && $kop->kop_surat)
     <div class="kop">
-        <h1>INSTANSI ANDA</h1>
-        <p>Jl. Contoh Alamat No. 123, Jakarta | Telp: (021) 123456 | www.contohinstansi.go.id</p>
+        <img src="{{ public_path($kop->kop_surat) }}" style="width: 100%; height: auto; margin-bottom: 20px;">
+    </div>
+    @endif
+
+    {{-- JUDUL --}}
+    <div class="tengah">SURAT TUGAS</div>
+    <div class="nomor">Nomor: {{ $proposal->nomor_surat }}</div>
+
+    {{-- ISI UTAMA --}}
+    <div class="content">
+        <table class="detail">
+            <tr>
+                <td width="18%">Menimbang</td>
+                <td width="2%">:</td>
+                <td>{{ $proposal->pertimbangan }}</td>
+            </tr>
+            <tr>
+                <td>Dasar</td>
+                <td>:</td>
+                <td>{{ $proposal->dasar_penugasan }}</td>
+            </tr>
+        </table>
+
+        <p style="margin-top: 20px;">Memberi Tugas</p>
+
+        <table class="detail">
+            <tr>
+                <td width="18%">Kepada</td>
+                <td width="2%">:</td>
+                <td>Nama-nama terlampir</td>
+            </tr>
+            <tr>
+                <td>Untuk</td>
+                <td>:</td>
+                <td>{{ $proposal->hal }}</td>
+            </tr>
+            <tr>
+                <td>Sumber Biaya</td>
+                <td>:</td>
+                <td>{{ $proposal->sumber_biaya }}</td>
+            </tr>
+        </table>
+
+        <div class="ttd">
+            Jakarta, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}<br>
+            Dekan,<br><br>
+            <img src="{{ public_path('images/ttd.png') }}"><br>
+            <strong><u>Husni Teja Sukmana, S.T., M.Sc., Ph.D</u></strong><br>
+            NIP. 197106082005011005
+        </div>
+
+        {{-- FOOTER GAMBAR --}}
+        <div class="footer-fixed">
+            <img src="{{ public_path('images/footer.png') }}">
+        </div>
     </div>
 
-    <h2>Detail Surat Tugas</h2>
-    <table>
-        <tr><td><strong>Kode Pengajuan:</strong></td><td>{{ $proposal->kode_pengajuan }}</td></tr>
-        <tr><td><strong>Nomor Agenda:</strong></td><td>{{ $proposal->nomor_agenda }}</td></tr>
-        <tr><td><strong>Tanggal Surat:</strong></td><td>{{ $proposal->tanggal_surat }}</td></tr>
-        <tr><td><strong>Asal Surat:</strong></td><td>{{ $proposal->asal_surat }}</td></tr>
-        <tr><td><strong>Hal:</strong></td><td>{{ $proposal->hal }}</td></tr>
-        <tr>
-            <td><strong>Status:</strong></td>
-            <td>
-                <span class="status {{ $proposal->status_disposisi }}">{{ $proposal->status_disposisi }}</span>
-            </td>
-        </tr>
-        <tr><td><strong>Nama Pemohon:</strong></td><td>{{ $proposal->pemohon->name }}</td></tr>
-        <tr><td><strong>Diterima Tanggal:</strong></td><td>{{ $proposal->diterima_tanggal }}</td></tr>
-    </table>
+    {{-- HALAMAN LAMPIRAN --}}
+    <div style="page-break-before: always;"></div>
 
-    <h2>Detail Kegiatan</h2>
-    <table>
-        <tr><td><strong>Jenis Kegiatan:</strong></td><td>{{ $proposal->jenisKegiatan->nama ?? '-' }}</td></tr>
-        <tr><td><strong>Tanggal Mulai:</strong></td><td>{{ $proposal->tanggal_mulai }}</td></tr>
-        <tr><td><strong>Tanggal Selesai:</strong></td><td>{{ $proposal->tanggal_selesai }}</td></tr>
-        <tr><td><strong>Lokasi Kegiatan:</strong></td><td>{{ $proposal->lokasi_kegiatan }}</td></tr>
-        <tr>
-            <td><strong>Instansi Terkait:</strong></td>
-            <td>
-                @php
-                    $instansiTerkait = $proposal->instansi->pluck('instansi.nama')->filter()->implode(', ');
-                    $instansiManual = $proposal->instansi->pluck('nama_manual')->filter()->implode(', ');
-                    $instansiGabung = trim($instansiTerkait . ($instansiTerkait && $instansiManual ? ', ' : '') . $instansiManual);
-                @endphp
-                {{ $instansiGabung ?: '-' }}
-            </td>
-        </tr>
-        <tr>
-            <td><strong>Daftar Penugasan:</strong></td>
-            <td>
-                @forelse ($proposal->penugasan as $p)
-                    {{ $p->dosen->nama ?? $p->nama_manual }} ({{ $p->peranTugas->nama ?? '-' }}) - Unit: {{ $p->unit_asal }}<br>
-                @empty
-                    Belum ada penugasan.
-                @endforelse
-            </td>
-        </tr>
-    </table>
+    <p><strong>Lampiran Surat Nomor:</strong> {{ $proposal->nomor_surat }}</p>
+    <p><strong>Tanggal:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
 
-    <h2>Detail Disposisi</h2>
-    <table>
+    @php
+        $instansiTerkait = $proposal->instansi->pluck('instansi.nama')->filter()->implode(', ');
+        $instansiManual = $proposal->instansi->pluck('nama_manual')->filter()->implode(', ');
+        $instansiGabung = trim($instansiTerkait . ($instansiTerkait && $instansiManual ? ', ' : '') . $instansiManual);
+    @endphp
+
+    <p>
+        DAFTAR NAMA DOSEN PADA {{ strtoupper($proposal->hal) }}
+        PADA TANGGAL {{ \Carbon\Carbon::parse($proposal->tanggal_mulai)->translatedFormat('d') }}
+        s/d {{ \Carbon\Carbon::parse($proposal->tanggal_selesai)->translatedFormat('d F Y') }}
+        DI {{ $instansiGabung }}.
+    </p>
+
+    <table class="lampiran-table">
         <thead>
             <tr>
                 <th>No</th>
-                <th>Tujuan</th>
-                <th>Status</th>
-                <th>Tgl Diterima</th>
-                <th>Tgl Proses</th>
-                <th>Diverifikasi Oleh</th>
-                <th>Keterangan</th>
+                <th>Nama</th>
+                <th>Jabatan</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($proposal->modalDisposisi as $m)
+            @foreach($proposal->penugasan as $i => $p)
             <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $m->tujuan }}</td>
-                <td><span class="status {{ $m->status }}">{{ $m->status }}</span></td>
-                <td>{{ $m->tanggal_diterima ?? '-' }}</td>
-                <td>{{ $m->tanggal_proses ?? '-' }}</td>
-                <td>{{ $m->diverifikasi_oleh ?? '-' }}</td>
-                <td>{{ $m->keterangan ?? '-' }}</td>
+                <td>{{ $i + 1 }}</td>
+                <td>{{ $p->pegawaiPenugasan->nama ?? $p->nama_manual }}</td>
+                <td>{{ $p->jabatan ?? '-' }}</td>
             </tr>
             @endforeach
         </tbody>
     </table>
 
-    <div class="footer">
-        Dicetak pada: {{ now()->format('d-m-Y H:i') }}
+    <div class="ttd">
+        Dekan,<br><br>
+        <img src="{{ public_path('images/ttd.png') }}"><br>
+        <strong><u>Husni Teja Sukmana, S.T., M.Sc., Ph.D</u></strong><br>
+        NIP. 197710302001121003
     </div>
 </body>
 </html>

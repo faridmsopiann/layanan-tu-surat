@@ -9,6 +9,6 @@ class PeranTugas extends Model
 {
     use HasFactory;
 
-    protected $table = 'peran_tugas';
+    protected $table = 'perans';
     protected $fillable = ['nama'];
 }

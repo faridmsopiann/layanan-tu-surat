@@ -9,7 +9,7 @@ class ProposalInstansi extends Model
 {
     use HasFactory;
 
-    protected $table = 'proposal_instansi';
+    protected $table = 'proposal_instansis';
 
     protected $fillable = [
         'proposal_id',

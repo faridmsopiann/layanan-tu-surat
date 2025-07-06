@@ -252,7 +252,7 @@
                                                         <label><strong>Daftar Penugasan</strong></label>
                                                         @forelse ($proposal->penugasan as $p)
                                                             <p class="mb-1">
-                                                                <strong>{{ $p->dosen->nama ?? $p->nama_manual }}</strong><br>
+                                                                <strong>{{ $p->pegawaiPenugasan->nama ?? $p->nama_manual }}</strong><br>
                                                                 <small>Peran: {{ $p->peranTugas->nama ?? '-' }}</small><br>
                                                                 <small>Unit: {{ $p->unit_asal }}</small>
                                                             </p>
