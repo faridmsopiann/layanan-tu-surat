@@ -29,7 +29,6 @@
                     <th class="text-sm">Tanggal Surat</th>
                     <th class="text-sm">Nomor Surat</th>
                     <th class="text-sm">Asal Surat</th>
-                    <th class="text-sm">Hal</th>
                     <th class="text-sm">Diterima Tanggal</th>
                     <th class="text-sm">Untuk</th>
                     <th class="text-sm">Status Disposisi</th>
@@ -90,7 +89,6 @@
                     <td class="text-sm">{{ $proposal->tanggal_surat }}</td>
                     <td class="text-sm">{{ $proposal->nomor_surat }}</td>
                     <td class="text-sm">{{ $proposal->asal_surat }}</td>
-                    <td class="text-sm">{{ $proposal->hal }}</td>
                     <td class="text-sm">{{ $proposal->diterima_tanggal }}</td>
                     <td class="text-sm">{{ $proposal->untuk }}</td>
                     <td class="text-sm">
@@ -363,6 +361,7 @@
                                                         <label><strong>Jenis Surat</strong></label>
                                                         <input type="text" name="jenis_surat" class="form-control" value="{{ $proposal->jenis_proposal }}" readonly>
                                                     </div>
+                                                    @if($proposal->jenis_proposal === 'Surat Masuk')
                                                     <!-- Perlu SK -->
                                                     <div class="mb-3">
                                                         <label class="form-label">Perlu Surat Keluar?</label>
@@ -372,6 +371,7 @@
                                                             <option value="0" {{ $proposal->perlu_sk == 0 ? 'selected' : '' }}>Tidak</option>
                                                         </select>
                                                     </div>
+                                                    @endif
 
                                                     <div class="mb-3 pihakPembuatSk" style="{{ $proposal->perlu_sk == 1 ? '' : 'display:none;' }}">
                                                         <label class="form-label">Pihak Pembuat Surat Keluar</label>

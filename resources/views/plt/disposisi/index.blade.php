@@ -25,7 +25,6 @@
                     <th class="text-sm">Tanggal Surat</th>
                     <th class="text-sm">Nomor Surat</th>
                     <th class="text-sm">Asal Surat</th>
-                    <th class="text-sm">Hal</th>
                     <th class="text-sm">Diterima Tanggal</th>
                     <th class="text-sm">Status Disposisi</th>
                     <th class="text-sm">Dari</th>
@@ -86,7 +85,6 @@
                     <td class="text-sm">{{ $proposal->tanggal_surat }}</td>
                     <td class="text-sm">{{ $proposal->nomor_surat }}</td>
                     <td class="text-sm">{{ $proposal->asal_surat }}</td>
-                    <td class="text-sm">{{ $proposal->hal }}</td>
                     <td class="text-sm">{{ $proposal->diterima_tanggal }}</td>
                     <td class="text-sm">
                         @if($proposal->status_disposisi == 'Menunggu Approval PLT') 

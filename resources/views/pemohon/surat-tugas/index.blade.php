@@ -130,12 +130,10 @@
                 <tr>
                     <th>No</th>
                     <th>Jenis Kegiatan</th>
-                    <th>Perihal</th>
                     <th>Periode</th>
                     <th>Lokasi</th>
                     <th>Status</th>
                     <th>Pengajuan</th>
-                    <th>Surat Keluar</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -144,7 +142,6 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $st->jenisKegiatan->nama }}</td>
-                    <td>{{ $st->hal }}</td>
                     <td>{{ $st->tanggal_mulai }} s/d {{ $st->tanggal_selesai }}</td>
                     <td>{{ $st->lokasi_kegiatan }}</td>
                     <td>
@@ -194,16 +191,7 @@
                         @if (!$st->soft_file && !$st->soft_file_link)
                             <p class="text-muted">Tidak ada file atau link yang diunggah.</p>
                         @endif
-                    </td>
-                    <td class="text-sm">
-                        @if ($st->soft_file_sk)
-                            <a href="{{ asset('storage/' . $st->soft_file_sk) }}" class="btn-sm btn-success" style="white-space: nowrap;" download>
-                                <i class="fas fa-download"></i> 
-                            </a>
-                        @else
-                            <span class="text-muted">Tidak Ada/Belum diunggah</span>
-                        @endif
-                    </td>  
+                    </td> 
                     <td>
                         <div class="d-inline-flex gap-1 align-items-center">
                             <button data-toggle="modal" data-target="#detailModal{{ $st->id }}" class="btn btn-sm btn-outline-info">

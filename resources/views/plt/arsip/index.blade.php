@@ -45,7 +45,6 @@
                         <th class="text-sm">Kode Pengajuan</th>
                         <th class="text-sm">Tanggal Surat</th>
                         <th class="text-sm">Asal Surat</th>
-                        <th class="text-sm">Perihal</th>
                         <th class="text-sm">Jenis Surat</th>
                         <th class="text-sm">File Surat Masuk</th>
                         <th class="text-sm">File Surat Keluar</th>
@@ -59,7 +58,6 @@
                             <td class="text-sm">{{ $proposal->kode_pengajuan }}</td>
                             <td class="text-sm">{{ $proposal->tanggal_surat }}</td>
                             <td class="text-sm">{{ $proposal->asal_surat }}</td>
-                            <td class="text-sm">{{ $proposal->hal }}</td>
                             <td class="text-sm">{{ $proposal->jenis_proposal }}</td>
                             <td class="text-sm">
                                 @if ($proposal->soft_file)
