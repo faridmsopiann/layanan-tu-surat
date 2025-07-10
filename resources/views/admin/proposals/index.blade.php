@@ -141,17 +141,6 @@
                                                 <label for="edit_untuk" class="form-label">Untuk</label>
                                                 <input type="text" class="form-control" id="edit_untuk" name="untuk" value="{{ $proposal->untuk }}" required>
                                             </div>
-                                            <div class="mb-3">
-                                                <label for="edit_status_disposisi" class="form-label">Status Disposisi</label>
-                                                <select class="form-select" id="edit_status_disposisi" name="status_disposisi" required>
-                                                    <option value="Memproses" {{ $proposal->status_disposisi == 'Memproses' ? 'selected' : '' }}>Memproses</option>
-                                                    <option value="Menunggu Approval Dekan" {{ $proposal->status_disposisi == 'Menunggu Approval Dekan' ? 'selected' : '' }}>Menunggu Approval Dekan</option>
-                                                    <option value="Menunggu Approval Kabag" {{ $proposal->status_disposisi == 'Menunggu Approval Kabag' ? 'selected' : '' }}>Menunggu Approval Kabag</option>
-                                                    <option value="Menunggu Approval Keuangan" {{ $proposal->status_disposisi == 'Menunggu Approval Keuangan' ? 'selected' : '' }}>Menunggu Approval Keuangan</option>
-                                                    <option value="Selesai" {{ $proposal->status_disposisi == 'Selesai' ? 'selected' : '' }}>Selesai</option>
-                                                    <option value="Ditolak" {{ $proposal->status_disposisi == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
-                                                </select>
-                                            </div>
                                         </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Simpan</button>
