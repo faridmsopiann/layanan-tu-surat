@@ -29,7 +29,6 @@
                     <th class="text-sm">Nomor Surat</th>
                     <th class="text-sm">Jenis Surat</th>
                     <th class="text-sm">Asal Surat</th>
-                    <th class="text-sm">Hal</th>
                     <th class="text-sm">Diterima Tanggal</th>
                     <th class="text-sm">Untuk</th>
                     <th class="text-sm">Status Disposisi</th>
@@ -54,7 +53,6 @@
                     <td class="text-sm">{{ $proposal->nomor_surat }}</td>
                     <td class="text-sm">{{ $proposal->jenis_proposal }}</td>
                     <td class="text-sm">{{ $proposal->asal_surat }}</td>
-                    <td class="text-sm">{{ $proposal->hal }}</td>
                     <td class="text-sm">{{ $proposal->diterima_tanggal }}</td>
                     <td class="text-sm">{{ $proposal->untuk }}</td>
                     <td class="text-sm">
