@@ -311,7 +311,7 @@
                     <img src="{{ asset('images/fst.png') }}" alt="Logo">
                 </div>
 
-                <p class="login-title">Selamat Datang di Portal Surat FST</p>
+                <p class="login-title">Selamat Datang di MERINDU</p>
                 <p class="login-subtitle">Masuk untuk memulai sesi Anda</p>
 
                 <x-validation-errors class="error_message" />
