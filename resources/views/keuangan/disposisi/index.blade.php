@@ -21,11 +21,9 @@
                     <th class="text-sm">No</th>
                     <th class="text-sm">Nomor Agenda</th>
                     <th class="text-sm">File Surat Masuk</th>
-                    <th class="text-sm">File Surat Keluar</th>
                     <th class="text-sm">Tanggal Surat</th>
                     <th class="text-sm">Nomor Surat</th>
                     <th class="text-sm">Asal Surat</th>
-                    <th class="text-sm">Hal</th>
                     <th class="text-sm">Diterima Tanggal</th>
                     <th class="text-sm">Status Disposisi</th>
                     <th class="text-sm">Dari</th>
@@ -74,19 +72,9 @@
                             <p class="text-muted">Tidak ada file atau link yang diunggah.</p>
                         @endif
                     </td>
-                    <td class="text-sm">
-                        @if ($proposal->soft_file_sk)
-                            <a href="{{ asset('storage/' . $proposal->soft_file_sk) }}" class="btn-sm btn-success" style="white-space: nowrap;" download>
-                                <i class="fas fa-download"></i> Download SK
-                            </a>
-                        @else
-                            <span class="text-muted">Belum diunggah</span>
-                        @endif
-                    </td>   
                     <td class="text-sm">{{ $proposal->tanggal_surat }}</td>
                     <td class="text-sm">{{ $proposal->nomor_surat }}</td>
                     <td class="text-sm">{{ $proposal->asal_surat }}</td>
-                    <td class="text-sm">{{ $proposal->hal }}</td>
                     <td class="text-sm">{{ $proposal->diterima_tanggal }}</td>
                     <td class="text-sm">
                         @if($proposal->status_disposisi == 'Memproses')
@@ -169,6 +157,19 @@
                                                                 ->format('%d hari, %h jam, %i menit, %s detik')
                                                         }}
                                                     </p>
+                                                @endif
+                                                @if ($proposal->perlu_sk)
+                                                <div class="form-group">
+                                                        <label>File Surat Keluar:</label><br>
+                                                        @if ($proposal->soft_file_sk)
+                                                            <a href="{{ asset('storage/' . $proposal->soft_file_sk) }}"
+                                                            class="btn btn-sm btn-success" style="white-space: nowrap;" download>
+                                                                <i class="fas fa-download"></i> Download SK
+                                                            </a>
+                                                        @else
+                                                            <span class="text-muted">Belum diunggah</span>
+                                                        @endif
+                                                </div>
                                                 @endif
                                             </div>
                                         </div>

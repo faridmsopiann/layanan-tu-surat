@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\UnitKerjaController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Akademik\AkademikController;
 use App\Http\Controllers\Akademik\AkademikDisposisiController;
+use App\Http\Controllers\Akademik\AkademikExportController;
+use App\Http\Controllers\Akademik\AkademikExportPdfController;
 use App\Http\Controllers\Akademik\ArsipSuratAkademikController;
 use App\Http\Controllers\Akademik\MonitoringAkademikController;
 use App\Http\Controllers\Auth\NewPasswordController;
@@ -21,12 +23,16 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Dekan\ArsipSuratDekanController;
 use App\Http\Controllers\Dekan\DekanController;
+use App\Http\Controllers\Dekan\DekanExportController;
+use App\Http\Controllers\Dekan\DekanExportPdfController;
 use App\Http\Controllers\Dekan\DisposisiController as DekanDisposisiController;
 use App\Http\Controllers\Dekan\MonitoringController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\Keuangan\ArsipSuratKeuanganController;
 use App\Http\Controllers\Keuangan\KeuanganController;
 use App\Http\Controllers\Keuangan\KeuanganDisposisiController;
+use App\Http\Controllers\Keuangan\KeuanganExportController;
+use App\Http\Controllers\Keuangan\KeuanganExportPdfController;
 use App\Http\Controllers\Keuangan\MonitoringKeuanganController;
 use App\Http\Controllers\Pemohon\PemohonController;
 use App\Http\Controllers\Pemohon\PengajuanSuratController;
@@ -35,42 +41,62 @@ use App\Http\Controllers\Perpus\ArsipSuratPerpusController;
 use App\Http\Controllers\Perpus\MonitoringPerpusController;
 use App\Http\Controllers\Perpus\PerpusController;
 use App\Http\Controllers\Perpus\PerpusDisposisiController;
+use App\Http\Controllers\Perpus\PerpusExportController;
+use App\Http\Controllers\Perpus\PerpusExportPdfController;
 use App\Http\Controllers\Plt\ArsipSuratPltController;
 use App\Http\Controllers\Plt\MonitoringPltController;
 use App\Http\Controllers\Plt\PltController;
 use App\Http\Controllers\Plt\PltDisposisiController;
+use App\Http\Controllers\Plt\PltExportController;
+use App\Http\Controllers\Plt\PltExportPdfController;
 use App\Http\Controllers\ProdiAgribisnis\ArsipSuratProdiAgribisnisController;
 use App\Http\Controllers\ProdiAgribisnis\MonitoringProdiAgribisnisController;
 use App\Http\Controllers\ProdiAgribisnis\ProdiAgribisnisController;
 use App\Http\Controllers\ProdiAgribisnis\ProdiAgribisnisDisposisiController;
+use App\Http\Controllers\ProdiAgribisnis\ProdiAgribisnisExportController;
+use App\Http\Controllers\ProdiAgribisnis\ProdiAgribisnisExportPdfController;
 use App\Http\Controllers\ProdiBiologi\ArsipSuratProdiBiologiController;
 use App\Http\Controllers\ProdiBiologi\MonitoringProdiBiologiController;
 use App\Http\Controllers\ProdiBiologi\ProdiBiologiController;
 use App\Http\Controllers\ProdiBiologi\ProdiBiologiDisposisiController;
+use App\Http\Controllers\ProdiBiologi\ProdiBiologiExportController;
+use App\Http\Controllers\ProdiBiologi\ProdiBiologiExportPdfController;
 use App\Http\Controllers\ProdiFisika\ArsipSuratProdiFisikaController;
 use App\Http\Controllers\ProdiFisika\MonitoringProdiFisikaController;
 use App\Http\Controllers\ProdiFisika\ProdiFisikaController;
 use App\Http\Controllers\ProdiFisika\ProdiFisikaDisposisiController;
+use App\Http\Controllers\ProdiFisika\ProdiFisikaExportController;
+use App\Http\Controllers\ProdiFisika\ProdiFisikaExportPdfController;
 use App\Http\Controllers\ProdiKimia\ArsipSuratProdiKimiaController;
 use App\Http\Controllers\ProdiKimia\MonitoringProdiKimiaController;
 use App\Http\Controllers\ProdiKimia\ProdiKimiaController;
 use App\Http\Controllers\ProdiKimia\ProdiKimiaDisposisiController;
+use App\Http\Controllers\ProdiKimia\ProdiKimiaExportController;
+use App\Http\Controllers\ProdiKimia\ProdiKimiaExportPdfController;
 use App\Http\Controllers\ProdiMatematika\ArsipSuratProdiMatematikaController;
 use App\Http\Controllers\ProdiMatematika\MonitoringProdiMatematikaController;
 use App\Http\Controllers\ProdiMatematika\ProdiMatematikaController;
 use App\Http\Controllers\ProdiMatematika\ProdiMatematikaDisposisiController;
+use App\Http\Controllers\ProdiMatematika\ProdiMatematikaExportController;
+use App\Http\Controllers\ProdiMatematika\ProdiMatematikaExportPdfController;
 use App\Http\Controllers\ProdiSI\ArsipSuratProdiSIController;
 use App\Http\Controllers\ProdiSI\MonitoringProdiSIController;
 use App\Http\Controllers\ProdiSI\ProdiSIController;
 use App\Http\Controllers\ProdiSI\ProdiSIDisposisiController;
+use App\Http\Controllers\ProdiSI\ProdiSIExportController;
+use App\Http\Controllers\ProdiSI\ProdiSIExportPdfController;
 use App\Http\Controllers\ProdiTI\ArsipSuratProdiTIController;
 use App\Http\Controllers\ProdiTI\MonitoringProdiTIController;
 use App\Http\Controllers\ProdiTI\ProdiTIController;
 use App\Http\Controllers\ProdiTI\ProdiTIDisposisiController;
+use App\Http\Controllers\ProdiTI\ProdiTIExportController;
+use App\Http\Controllers\ProdiTI\ProdiTIExportPdfController;
 use App\Http\Controllers\ProdiTP\ArsipSuratProdiTPController;
 use App\Http\Controllers\ProdiTP\MonitoringProdiTPController;
 use App\Http\Controllers\ProdiTP\ProdiTPController;
 use App\Http\Controllers\ProdiTP\ProdiTPDisposisiController;
+use App\Http\Controllers\ProdiTP\ProdiTPExportController;
+use App\Http\Controllers\ProdiTP\ProdiTPExportPdfController;
 use App\Http\Controllers\QRCodeController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\TU\ArsipSuratController;
@@ -79,11 +105,13 @@ use App\Http\Controllers\TU\MonitoringTUController;
 use App\Http\Controllers\TU\PengajuanProposalController;
 use App\Http\Controllers\TU\ProposalMasukController;
 use App\Http\Controllers\TU\TUController;
-use App\Http\Controllers\TU\TuExportPdfController;
+use App\Http\Controllers\TU\TuExportController;
 use App\Http\Controllers\Umum\ArsipSuratUmumController;
 use App\Http\Controllers\Umum\MonitoringUmumController;
 use App\Http\Controllers\Umum\UmumController;
 use App\Http\Controllers\Umum\UmumDisposisiController;
+use App\Http\Controllers\Umum\UmumExportController;
+use App\Http\Controllers\Umum\UmumExportPdfController;
 use App\Models\Jabatan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -215,7 +243,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/pemohon/surat-tugas/{id}', [SuratTugasController::class, 'update'])->name('pemohon.surat-tugas.update');
         Route::delete('/pemohon/surat-tugas/{id}', [SuratTugasController::class, 'destroy'])->name('pemohon.surat-tugas.destroy');
         Route::get('/pemohon/proposal/{id}/pdf', [PengajuanSuratController::class, 'exportPdf'])->name('pemohon.proposals.pdf');
+        Route::get('pemohon/proposal/{id}/word', [PengajuanSuratController::class, 'exportWord'])->name('pemohon.proposals.word');
         Route::get('/pemohon/surat-tugas/{id}/pdf', [SuratTugasController::class, 'exportPdf'])->name('pemohon.surat-tugas.pdf');
+        Route::get('/pemohon/surat-tugas/{id}/word', [SuratTugasController::class, 'exportWord'])->name('pemohon.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:Tata Usaha'])->group(function () {
@@ -254,8 +284,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('proposals/{proposal}/reject', [PengajuanProposalController::class, 'reject'])->name('tu.proposals.reject');
         Route::post('/tu/proposal/{id}/upload-sk', [DisposisiController::class, 'uploadSK'])->name('tu.proposal.upload-sk');
 
-        Route::get('/tu/proposal/{id}/pdf', [TuExportPdfController::class, 'exportPdfSuratMasuk'])->name('tu.proposals.pdf');
-        Route::get('/tu/surat-tugas/{id}/pdf', [TuExportPdfController::class, 'exportPdfSuratTugas'])->name('tu.surat-tugas.pdf');
+        Route::get('/tu/proposal/{id}/pdf', [TuExportController::class, 'exportPdfSuratMasuk'])->name('tu.proposals.pdf');
+        Route::get('/tu/surat-tugas/{id}/pdf', [TuExportController::class, 'exportPdfSuratTugas'])->name('tu.surat-tugas.pdf');
+        Route::get('/tu/proposal/{id}/word', [TuExportController::class, 'exportWordSuratMasuk'])->name('tu.proposals.word');
+        Route::get('/tu/surat-tugas/{id}/word', [TuExportController::class, 'exportWordSuratTugas'])->name('tu.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:Dekanat'])->group(function () {
@@ -274,6 +306,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route Arsip Surat
         Route::get('/dekanat/arsip-surat', [ArsipSuratDekanController::class, 'index'])->name('dekanat.arsip.index');
         Route::delete('/dekanat/arsip-surat/{proposal}', [ArsipSuratDekanController::class, 'destroy'])->name('dekanat.arsip.destroy');
+
+        // export
+        Route::get('/dekanat/proposal/{id}/pdf', [DekanExportController::class, 'exportPdfSuratMasuk'])->name('dekanat.proposals.pdf');
+        Route::get('/dekanat/surat-tugas/{id}/pdf', [DekanExportController::class, 'exportPdfSuratTugas'])->name('dekanat.surat-tugas.pdf');
+        Route::get('/dekanat/proposal/{id}/word', [DekanExportController::class, 'exportWordSuratMasuk'])->name('dekanat.proposals.word');
+        Route::get('/dekanat/surat-tugas/{id}/word', [DekanExportController::class, 'exportWordSuratTugas'])->name('dekanat.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:PLT'])->group(function () {
@@ -294,6 +332,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route Arsip Surat
         Route::get('/plt/arsip-surat', [ArsipSuratPltController::class, 'index'])->name('plt.arsip.index');
         Route::delete('/plt/arsip-surat/{proposal}', [ArsipSuratPltController::class, 'destroy'])->name('plt.arsip.destroy');
+
+        //export
+        Route::get('/plt/proposal/{id}/pdf', [PltExportController::class, 'exportPdfSuratMasuk'])->name('plt.proposals.pdf');
+        Route::get('/plt/surat-tugas/{id}/pdf', [PltExportController::class, 'exportPdfSuratTugas'])->name('plt.surat-tugas.pdf');
+        Route::get('/plt/proposal/{id}/word', [PltExportController::class, 'exportWordSuratMasuk'])->name('plt.proposals.word');
+        Route::get('/plt/surat-tugas/{id}/word', [PltExportController::class, 'exportWordSuratTugas'])->name('plt.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:Akademik'])->group(function () {
@@ -314,6 +358,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route Arsip Surat
         Route::get('/akademik/arsip-surat', [ArsipSuratAkademikController::class, 'index'])->name('akademik.arsip.index');
         Route::delete('/akademik/arsip-surat/{proposal}', [ArsipSuratAkademikController::class, 'destroy'])->name('akademik.arsip.destroy');
+
+        // export
+        Route::get('/akademik/proposal/{id}/pdf', [AkademikExportController::class, 'exportPdfSuratMasuk'])->name('akademik.proposals.pdf');
+        Route::get('/akademik/surat-tugas/{id}/pdf', [AkademikExportController::class, 'exportPdfSuratTugas'])->name('akademik.surat-tugas.pdf');
+        Route::get('/akademik/proposal/{id}/word', [AkademikExportController::class, 'exportWordSuratMasuk'])->name('akademik.proposals.word');
+        Route::get('/akademik/surat-tugas/{id}/word', [AkademikExportController::class, 'exportWordSuratTugas'])->name('akademik.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:Umum'])->group(function () {
@@ -334,6 +384,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route Arsip Surat
         Route::get('/umum/arsip-surat', [ArsipSuratUmumController::class, 'index'])->name('umum.arsip.index');
         Route::delete('/umum/arsip-surat/{proposal}', [ArsipSuratUmumController::class, 'destroy'])->name('umum.arsip.destroy');
+
+        //export
+        Route::get('/umum/proposal/{id}/pdf', [UmumExportController::class, 'exportPdfSuratMasuk'])->name('umum.proposals.pdf');
+        Route::get('/umum/surat-tugas/{id}/pdf', [UmumExportController::class, 'exportPdfSuratTugas'])->name('umum.surat-tugas.pdf');
+        Route::get('/umum/proposal/{id}/word', [UmumExportController::class, 'exportWordSuratMasuk'])->name('umum.proposals.word');
+        Route::get('/umum/surat-tugas/{id}/word', [UmumExportController::class, 'exportWordSuratTugas'])->name('umum.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:Perpus'])->group(function () {
@@ -354,6 +410,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route Arsip Surat
         Route::get('/perpus/arsip-surat', [ArsipSuratPerpusController::class, 'index'])->name('perpus.arsip.index');
         Route::delete('/perpus/arsip-surat/{proposal}', [ArsipSuratPerpusController::class, 'destroy'])->name('perpus.arsip.destroy');
+
+        //export
+        Route::get('/perpus/proposal/{id}/pdf', [PerpusExportController::class, 'exportPdfSuratMasuk'])->name('perpus.proposals.pdf');
+        Route::get('/perpus/surat-tugas/{id}/pdf', [PerpusExportController::class, 'exportPdfSuratTugas'])->name('perpus.surat-tugas.pdf');
+        Route::get('/perpus/proposal/{id}/word', [PerpusExportController::class, 'exportWordSuratMasuk'])->name('perpus.proposals.word');
+        Route::get('/perpus/surat-tugas/{id}/word', [PerpusExportController::class, 'exportWordSuratTugas'])->name('perpus.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:Prodi Teknik Informatika'])->group(function () {
@@ -374,6 +436,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route Arsip Surat
         Route::get('/prodi-teknik-informatika/arsip-surat', [ArsipSuratProdiTIController::class, 'index'])->name('prodi-teknik-informatika.arsip.index');
         Route::delete('/prodi-teknik-informatika/arsip-surat/{proposal}', [ArsipSuratProdiTIController::class, 'destroy'])->name('prodi-teknik-informatika.arsip.destroy');
+
+        //export
+        Route::get('/prodi-teknik-informatika/proposal/{id}/pdf', [ProdiTIExportController::class, 'exportPdfSuratMasuk'])->name('prodi-teknik-informatika.proposals.pdf');
+        Route::get('/prodi-teknik-informatika/surat-tugas/{id}/pdf', [ProdiTIExportController::class, 'exportPdfSuratTugas'])->name('prodi-teknik-informatika.surat-tugas.pdf');
+        Route::get('/prodi-teknik-informatika/proposal/{id}/word', [ProdiTIExportController::class, 'exportWordSuratMasuk'])->name('prodi-teknik-informatika.proposals.word');
+        Route::get('/prodi-teknik-informatika/surat-tugas/{id}/word', [ProdiTIExportController::class, 'exportWordSuratTugas'])->name('prodi-teknik-informatika.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:Prodi Agribisnis'])->group(function () {
@@ -394,6 +462,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route Arsip Surat
         Route::get('/prodi-agribisnis/arsip-surat', [ArsipSuratProdiAgribisnisController::class, 'index'])->name('prodi-agribisnis.arsip.index');
         Route::delete('/prodi-agribisnis/arsip-surat/{proposal}', [ArsipSuratProdiAgribisnisController::class, 'destroy'])->name('prodi-agribisnis.arsip.destroy');
+        
+        //export
+        Route::get('/prodi-agribisnis/proposal/{id}/pdf', [ProdiAgribisnisExportController::class, 'exportPdfSuratMasuk'])->name('prodi-agribisnis.proposals.pdf');
+        Route::get('/prodi-agribisnis/surat-tugas/{id}/pdf', [ProdiAgribisnisExportController::class, 'exportPdfSuratTugas'])->name('prodi-agribisnis.surat-tugas.pdf');
+        Route::get('/prodi-agribisnis/proposal/{id}/word', [ProdiAgribisnisExportController::class, 'exportWordSuratMasuk'])->name('prodi-agribisnis.proposals.word');
+        Route::get('/prodi-agribisnis/surat-tugas/{id}/word', [ProdiAgribisnisExportController::class, 'exportWordSuratTugas'])->name('prodi-agribisnis.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:Prodi Sistem Informasi'])->group(function () {
@@ -414,6 +488,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route Arsip Surat
         Route::get('/prodi-sistem-informasi/arsip-surat', [ArsipSuratProdiSIController::class, 'index'])->name('prodi-sistem-informasi.arsip.index');
         Route::delete('/prodi-sistem-informasi/arsip-surat/{proposal}', [ArsipSuratProdiSIController::class, 'destroy'])->name('prodi-sistem-informasi.arsip.destroy');
+
+        //export
+        Route::get('/prodi-sistem-informasi/proposal/{id}/pdf', [ProdiSIExportController::class, 'exportPdfSuratMasuk'])->name('prodi-sistem-informasi.proposals.pdf');
+        Route::get('/prodi-sistem-informasi/surat-tugas/{id}/pdf', [ProdiSIExportController::class, 'exportPdfSuratTugas'])->name('prodi-sistem-informasi.surat-tugas.pdf');
+        Route::get('/prodi-sistem-informasi/proposal/{id}/word', [ProdiSIExportController::class, 'exportWordSuratMasuk'])->name('prodi-sistem-informasi.proposals.word');
+        Route::get('/prodi-sistem-informasi/surat-tugas/{id}/word', [ProdiSIExportController::class, 'exportWordSuratTugas'])->name('prodi-sistem-informasi.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:Prodi Matematika'])->group(function () {
@@ -434,6 +514,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route Arsip Surat
         Route::get('/prodi-matematika/arsip-surat', [ArsipSuratProdiMatematikaController::class, 'index'])->name('prodi-matematika.arsip.index');
         Route::delete('/prodi-matematika/arsip-surat/{proposal}', [ArsipSuratProdiMatematikaController::class, 'destroy'])->name('prodi-matematika.arsip.destroy');
+
+        //export
+        Route::get('/prodi-matematika/proposal/{id}/pdf', [ProdiMatematikaExportController::class, 'exportPdfSuratMasuk'])->name('prodi-matematika.proposals.pdf');
+        Route::get('/prodi-matematika/surat-tugas/{id}/pdf', [ProdiMatematikaExportController::class, 'exportPdfSuratTugas'])->name('prodi-matematika.surat-tugas.pdf');
+        Route::get('/prodi-matematika/proposal/{id}/word', [ProdiMatematikaExportController::class, 'exportWordSuratMasuk'])->name('prodi-matematika.proposals.word');
+        Route::get('/prodi-matematika/surat-tugas/{id}/word', [ProdiMatematikaExportController::class, 'exportWordSuratTugas'])->name('prodi-matematika.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:Prodi Fisika'])->group(function () {
@@ -454,6 +540,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route Arsip Surat
         Route::get('/prodi-fisika/arsip-surat', [ArsipSuratProdiFisikaController::class, 'index'])->name('prodi-fisika.arsip.index');
         Route::delete('/prodi-fisika/arsip-surat/{proposal}', [ArsipSuratProdiFisikaController::class, 'destroy'])->name('prodi-fisika.arsip.destroy');
+
+        //export
+        Route::get('/prodi-fisika/proposal/{id}/pdf', [ProdiFisikaExportController::class, 'exportPdfSuratMasuk'])->name('prodi-fisika.proposals.pdf');
+        Route::get('/prodi-fisika/surat-tugas/{id}/pdf', [ProdiFisikaExportController::class, 'exportPdfSuratTugas'])->name('prodi-fisika.surat-tugas.pdf');
+        Route::get('/prodi-fisika/proposal/{id}/word', [ProdiFisikaExportController::class, 'exportWordSuratMasuk'])->name('prodi-fisika.proposals.word');
+        Route::get('/prodi-fisika/surat-tugas/{id}/word', [ProdiFisikaExportController::class, 'exportWordSuratTugas'])->name('prodi-fisika.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:Prodi Kimia'])->group(function () {
@@ -474,6 +566,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route Arsip Surat
         Route::get('/prodi-kimia/arsip-surat', [ArsipSuratProdiKimiaController::class, 'index'])->name('prodi-kimia.arsip.index');
         Route::delete('/prodi-kimia/arsip-surat/{proposal}', [ArsipSuratProdiKimiaController::class, 'destroy'])->name('prodi-kimia.arsip.destroy');
+
+        //export
+        Route::get('/prodi-kimia/proposal/{id}/pdf', [ProdiKimiaExportController::class, 'exportPdfSuratMasuk'])->name('prodi-kimia.proposals.pdf');
+        Route::get('/prodi-kimia/surat-tugas/{id}/pdf', [ProdiKimiaExportController::class, 'exportPdfSuratTugas'])->name('prodi-kimia.surat-tugas.pdf');
+        Route::get('/prodi-kimia/proposal/{id}/word', [ProdiKimiaExportController::class, 'exportWordSuratMasuk'])->name('prodi-kimia.proposals.word');
+        Route::get('/prodi-kimia/surat-tugas/{id}/word', [ProdiKimiaExportController::class, 'exportWordSuratTugas'])->name('prodi-kimia.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:Prodi Biologi'])->group(function () {
@@ -494,6 +592,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route Arsip Surat
         Route::get('/prodi-biologi/arsip-surat', [ArsipSuratProdiBiologiController::class, 'index'])->name('prodi-biologi.arsip.index');
         Route::delete('/prodi-biologi/arsip-surat/{proposal}', [ArsipSuratProdiBiologiController::class, 'destroy'])->name('prodi-biologi.arsip.destroy');
+
+        //export
+        Route::get('/prodi-biologi/proposal/{id}/pdf', [ProdiBiologiExportController::class, 'exportPdfSuratMasuk'])->name('prodi-biologi.proposals.pdf');
+        Route::get('/prodi-biologi/surat-tugas/{id}/pdf', [ProdiBiologiExportController::class, 'exportPdfSuratTugas'])->name('prodi-biologi.surat-tugas.pdf');
+        Route::get('/prodi-biologi/proposal/{id}/word', [ProdiBiologiExportController::class, 'exportWordSuratMasuk'])->name('prodi-biologi.proposals.word');
+        Route::get('/prodi-biologi/surat-tugas/{id}/word', [ProdiBiologiExportController::class, 'exportWordSuratTugas'])->name('prodi-biologi.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:Prodi Teknik Pertambangan'])->group(function () {
@@ -514,6 +618,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route Arsip Surat
         Route::get('/prodi-teknik-pertambangan/arsip-surat', [ArsipSuratProdiTPController::class, 'index'])->name('prodi-teknik-pertambangan.arsip.index');
         Route::delete('/prodi-teknik-pertambangan/arsip-surat/{proposal}', [ArsipSuratProdiTPController::class, 'destroy'])->name('prodi-teknik-pertambangan.arsip.destroy');
+
+        //export
+        Route::get('/prodi-teknik-pertambangan/proposal/{id}/pdf', [ProdiTPExportController::class, 'exportPdfSuratMasuk'])->name('prodi-teknik-pertambangan.proposals.pdf');
+        Route::get('/prodi-teknik-pertambangan/surat-tugas/{id}/pdf', [ProdiTPExportController::class, 'exportPdfSuratTugas'])->name('prodi-teknik-pertambangan.surat-tugas.pdf');
+        Route::get('/prodi-teknik-pertambangan/proposal/{id}/word', [ProdiTPExportController::class, 'exportWordSuratMasuk'])->name('prodi-teknik-pertambangan.proposals.word');
+        Route::get('/prodi-teknik-pertambangan/surat-tugas/{id}/word', [ProdiTPExportController::class, 'exportWordSuratTugas'])->name('prodi-teknik-pertambangan.surat-tugas.word');
     });
 
     Route::middleware(['auth', 'role:Keuangan'])->group(function () {
@@ -534,6 +644,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route Arsip Surat
         Route::get('/keuangan/arsip-surat', [ArsipSuratKeuanganController::class, 'index'])->name('keuangan.arsip.index');
         Route::delete('/keuangan/arsip-surat/{proposal}', [ArsipSuratKeuanganController::class, 'destroy'])->name('keuangan.arsip.destroy');
+
+        //export
+        Route::get('/keuangan/proposal/{id}/pdf', [KeuanganExportController::class, 'exportPdfSuratMasuk'])->name('keuangan.proposals.pdf');
+        Route::get('/keuangan/surat-tugas/{id}/pdf', [KeuanganExportController::class, 'exportPdfSuratTugas'])->name('keuangan.surat-tugas.pdf');
+        Route::get('/keuangan/proposal/{id}/word', [KeuanganExportController::class, 'exportWordSuratMasuk'])->name('keuangan.proposals.word');
+        Route::get('/keuangan/surat-tugas/{id}/word', [KeuanganExportController::class, 'exportWordSuratTugas'])->name('keuangan.surat-tugas.word');
     });
 });
 

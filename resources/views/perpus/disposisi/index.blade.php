@@ -21,7 +21,6 @@
                     <th class="text-sm">No</th>
                     <th class="text-sm">Nomor Agenda</th>
                     <th class="text-sm">File Surat Masuk</th>
-                    <th class="text-sm">File Surat Keluar</th>
                     <th class="text-sm">Tanggal Surat</th>
                     <th class="text-sm">Nomor Surat</th>
                     <th class="text-sm">Asal Surat</th>
@@ -72,16 +71,7 @@
                         @if (!$proposal->soft_file && !$proposal->soft_file_link)
                             <p class="text-muted">Tidak ada file atau link yang diunggah.</p>
                         @endif
-                    </td>
-                    <td class="text-sm">
-                        @if ($proposal->soft_file_sk)
-                            <a href="{{ asset('storage/' . $proposal->soft_file_sk) }}" class="btn-sm btn-success" style="white-space: nowrap;" download>
-                                <i class="fas fa-download"></i> Download SK
-                            </a>
-                        @else
-                            <span class="text-muted">Belum diunggah</span>
-                        @endif
-                    </td>  
+                    </td> 
                     <td class="text-sm">{{ $proposal->tanggal_surat }}</td>
                     <td class="text-sm">{{ $proposal->nomor_surat }}</td>
                     <td class="text-sm">{{ $proposal->asal_surat }}</td>
@@ -119,16 +109,12 @@
                                                 <p><strong>Status Terkini:</strong> 
                                                     @if($proposal->status_disposisi == 'Memproses')
                                                         <span class="badge badge-pill badge-warning">{{ $proposal->status_disposisi }}</span>
-                                                    @elseif($proposal->status_disposisi == 'Menunggu Approval Dekan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Akademik' || $proposal->status_disposisi == 'Menunggu Approval Wadek Kemahasiswaan' || $proposal->status_disposisi == 'Menunggu Approval Wadek Administrasi Umum')
-                                                        <span class="badge badge-pill badge-primary">{{ $proposal->status_disposisi }}</span>
-                                                    @elseif($proposal->status_disposisi == 'Menunggu Approval Kabag')
-                                                        <span class="badge badge-pill badge-success">{{ $proposal->status_disposisi }}</span>
-                                                    @elseif($proposal->status_disposisi == 'Menunggu Approval Keuangan')
-                                                        <span class="badge badge-pill badge-info">{{ $proposal->status_disposisi }}</span>
                                                     @elseif($proposal->status_disposisi == 'Selesai')
                                                         <span class="badge badge-pill badge-success">{{ $proposal->status_disposisi }}</span>
                                                     @elseif($proposal->status_disposisi == 'Ditolak')
                                                         <span class="badge badge-pill badge-danger">{{ $proposal->status_disposisi }}</span>
+                                                    @else
+                                                        <span class="badge badge-pill badge-info">{{ $proposal->status_disposisi }}</span>
                                                     @endif
                                                 </p>
                                             </div>
@@ -157,6 +143,19 @@
                                                                 ->format('%d hari, %h jam, %i menit, %s detik')
                                                         }}
                                                     </p>
+                                                @endif
+                                                @if ($proposal->perlu_sk)
+                                                <div class="form-group">
+                                                        <label>File Surat Keluar:</label><br>
+                                                        @if ($proposal->soft_file_sk)
+                                                            <a href="{{ asset('storage/' . $proposal->soft_file_sk) }}"
+                                                            class="btn btn-sm btn-success" style="white-space: nowrap;" download>
+                                                                <i class="fas fa-download"></i> Download SK
+                                                            </a>
+                                                        @else
+                                                            <span class="text-muted">Belum diunggah</span>
+                                                        @endif
+                                                </div>
                                                 @endif
                                             </div>
                                         </div>

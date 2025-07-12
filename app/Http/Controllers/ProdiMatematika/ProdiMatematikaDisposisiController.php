@@ -188,7 +188,6 @@ class ProdiMatematikaDisposisiController extends Controller
 
     private function getStatusDisposisi($tujuan)
     {
-        // Status disposisi untuk Keuangan
         if ($tujuan == 'Keuangan') {
             return 'Menunggu Approval Keuangan';
         } elseif ($tujuan == 'Umum') {
@@ -205,7 +204,7 @@ class ProdiMatematikaDisposisiController extends Controller
             return 'Menunggu Approval Prodi Sistem Informasi';
         } elseif ($tujuan == 'Prodi Matematika') {
             return 'Menunggu Approval Prodi Matematika';
-        } elseif ($tujuan == 'Prodi Kimia') {
+        } elseif ($tujuan == 'Prodi Teknik Kimia') {
             return 'Menunggu Approval Prodi Kimia';
         } elseif ($tujuan == 'Prodi Fisika') {
             return 'Menunggu Approval Prodi Fisika';

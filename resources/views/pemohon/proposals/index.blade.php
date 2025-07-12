@@ -93,17 +93,15 @@
                     {{-- <td>{{ $p->jenis_proposal }}</td> --}}
                     <td>{{ $p->hal }}</td>
                     <td>
-                        @php
-                            $statusColors = [
-                                'Memproses' => 'badge-warning',
-                                'Menunggu Approval Dekan' => 'badge-primary',
-                                'Menunggu Approval Kabag' => 'badge-success',
-                                'Menunggu Approval Keuangan' => 'badge-info',
-                                'Selesai' => 'badge-success',
-                                'Ditolak' => 'badge-danger',
-                            ];
-                        @endphp
-                        <span class="badge badge-pill {{ $statusColors[$p->status_disposisi] ?? 'badge-secondary' }}">{{ $p->status_disposisi }}</span>
+                        @if($p->status_disposisi == 'Memproses')
+                            <span class="badge badge-pill badge-warning">{{ $p->status_disposisi }}</span>
+                        @elseif($p->status_disposisi == 'Selesai')
+                            <span class="badge badge-pill badge-success">{{ $p->status_disposisi }}</span>
+                        @elseif($p->status_disposisi == 'Ditolak')
+                            <span class="badge badge-pill badge-danger">{{ $p->status_disposisi }}</span>
+                        @else
+                            <span class="badge badge-pill badge-primary">{{ $p->status_disposisi }}</span>
+                        @endif
                     </td>
 
                     <td>
@@ -178,16 +176,12 @@
                                                 <p><strong>Status Terkini:</strong> 
                                                     @if($p->status_disposisi == 'Memproses')
                                                         <span class="badge badge-pill badge-warning">{{ $p->status_disposisi }}</span>
-                                                    @elseif($p->status_disposisi == 'Menunggu Approval Dekan' || $p->status_disposisi == 'Menunggu Approval Wadek Akademik' || $p->status_disposisi == 'Menunggu Approval Wadek Kemahasiswaan' || $p->status_disposisi == 'Menunggu Approval Wadek Administrasi Umum')
-                                                        <span class="badge badge-pill badge-primary">{{ $p->status_disposisi }}</span>
-                                                    @elseif($p->status_disposisi == 'Menunggu Approval Kabag')
-                                                        <span class="badge badge-pill badge-success">{{ $p->status_disposisi }}</span>
-                                                    @elseif($p->status_disposisi == 'Menunggu Approval Keuangan')
-                                                        <span class="badge badge-pill badge-info">{{ $p->status_disposisi }}</span>
                                                     @elseif($p->status_disposisi == 'Selesai')
                                                         <span class="badge badge-pill badge-success">{{ $p->status_disposisi }}</span>
                                                     @elseif($p->status_disposisi == 'Ditolak')
                                                         <span class="badge badge-pill badge-danger">{{ $p->status_disposisi }}</span>
+                                                    @else
+                                                        <span class="badge badge-pill badge-info">{{ $p->status_disposisi }}</span>
                                                     @endif
                                                 </p>
                                             </div>
@@ -258,6 +252,9 @@
                                         @if ($p->status_disposisi == 'Selesai')
                                             <a href="{{ route('pemohon.proposals.pdf', $p->id) }}" target="_blank" class="btn btn-primary">
                                                 <i class="fas fa-print"></i> Cetak PDF
+                                            </a>
+                                            <a href="{{ route('pemohon.proposals.word', $p->id) }}" class="btn btn-info" target="_blank">
+                                                <i class="fas fa-file-word"></i> Cetak Word
                                             </a>
                                         @endif
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>

@@ -21,7 +21,6 @@
                     <th class="text-sm">No</th>
                     <th class="text-sm">Nomor Agenda</th>
                     <th class="text-sm">File Surat Masuk</th>
-                    <th class="text-sm">File Surat Keluar</th>
                     <th class="text-sm">Tanggal Surat</th>
                     <th class="text-sm">Nomor Surat</th>
                     <th class="text-sm">Asal Surat</th>
@@ -38,7 +37,7 @@
                 <tr>
                     <td class="text-sm">{{ $loop->iteration }}</td>
                     <td class="text-sm">{{ $proposal->nomor_agenda }}</td>
-                     <td class="text-sm">
+                    <td class="text-sm">
                         @if ($proposal->soft_file)
                             @php
                                 $files = json_decode($proposal->soft_file, true);
@@ -73,15 +72,6 @@
                             <p class="text-muted">Tidak ada file atau link yang diunggah.</p>
                         @endif
                     </td>
-                    <td class="text-sm">
-                        @if ($proposal->soft_file_sk)
-                            <a href="{{ asset('storage/' . $proposal->soft_file_sk) }}" class="btn-sm btn-success" style="white-space: nowrap;" download>
-                                <i class="fas fa-download"></i> Download SK
-                            </a>
-                        @else
-                            <span class="text-muted">Belum diunggah</span>
-                        @endif
-                    </td>  
                     <td class="text-sm">{{ $proposal->tanggal_surat }}</td>
                     <td class="text-sm">{{ $proposal->nomor_surat }}</td>
                     <td class="text-sm">{{ $proposal->asal_surat }}</td>
@@ -192,6 +182,19 @@
                                                         }}
                                                     </p>
                                                 @endif
+                                                @if ($proposal->perlu_sk)
+                                                <div class="form-group">
+                                                        <label>File Surat Keluar:</label><br>
+                                                        @if ($proposal->soft_file_sk)
+                                                            <a href="{{ asset('storage/' . $proposal->soft_file_sk) }}"
+                                                            class="btn btn-sm btn-success" style="white-space: nowrap;" download>
+                                                                <i class="fas fa-download"></i> Download SK
+                                                            </a>
+                                                        @else
+                                                            <span class="text-muted">Belum diunggah</span>
+                                                        @endif
+                                                </div>
+                                                @endif
                                             </div>
                                         </div>
 
@@ -298,6 +301,24 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                                @if ($proposal->status_disposisi == 'Selesai' && $proposal->jenis_proposal === 'Surat Masuk')
+                                                    <a href="{{ route('prodi-teknik-informatika.proposals.pdf', $proposal->id) }}" target="_blank" class="btn btn-primary">
+                                                        <i class="fas fa-print"></i> Cetak PDF
+                                                    </a>
+                                                    <a href="{{ route('prodi-teknik-informatika.proposals.word', $proposal->id) }}" class="btn btn-info" target="_blank">
+                                                        <i class="fas fa-file-word"></i> Cetak Word
+                                                    </a>
+                                                @elseif ($proposal->status_disposisi == 'Selesai' && $proposal->jenis_proposal === 'Surat Tugas')
+                                                    <a href="{{ route('prodi-teknik-informatika.surat-tugas.pdf', $proposal->id) }}" target="_blank" class="btn btn-primary">
+                                                        <i class="fas fa-print"></i> Cetak PDF
+                                                    </a>
+                                                    <a href="{{ route('prodi-teknik-informatika.surat-tugas.word', $proposal->id) }}" class="btn btn-info" target="_blank">
+                                                        <i class="fas fa-file-word"></i> Cetak Word
+                                                    </a>
+                                                @endif
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                                     </div>
                                 </div>
                             </div>

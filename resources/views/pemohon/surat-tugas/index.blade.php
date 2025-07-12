@@ -130,7 +130,7 @@
                 <tr>
                     <th>No</th>
                     <th>Jenis Kegiatan</th>
-                    <th>Periode</th>
+                    <th>Tanggal Pengajuan</th>
                     <th>Lokasi</th>
                     <th>Status</th>
                     <th>Pengajuan</th>
@@ -142,20 +142,18 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $st->jenisKegiatan->nama }}</td>
-                    <td>{{ $st->tanggal_mulai }} s/d {{ $st->tanggal_selesai }}</td>
+                    <td>{{ $st->tanggal_surat }}</td>
                     <td>{{ $st->lokasi_kegiatan }}</td>
                     <td>
-                        @php
-                            $statusColors = [
-                                'Memproses' => 'badge-warning',
-                                'Menunggu Approval Dekan' => 'badge-primary',
-                                'Menunggu Approval Kabag' => 'badge-success',
-                                'Menunggu Approval Keuangan' => 'badge-info',
-                                'Selesai' => 'badge-success',
-                                'Ditolak' => 'badge-danger',
-                            ];
-                        @endphp
-                        <span class="badge badge-pill {{ $statusColors[$st->status_disposisi] ?? 'badge-secondary' }}">{{ $st->status_disposisi }}</span>
+                        @if($st->status_disposisi == 'Memproses')
+                            <span class="badge badge-pill badge-warning">{{ $st->status_disposisi }}</span>
+                        @elseif($st->status_disposisi == 'Selesai')
+                            <span class="badge badge-pill badge-success">{{ $st->status_disposisi }}</span>
+                        @elseif($st->status_disposisi == 'Ditolak')
+                            <span class="badge badge-pill badge-danger">{{ $st->status_disposisi }}</span>
+                        @else
+                            <span class="badge badge-pill badge-primary">{{ $st->status_disposisi }}</span>
+                        @endif
                     </td>
                     <td>
                         @if ($st->soft_file)
@@ -236,43 +234,46 @@
                     </div>
 
                     <div class="modal-body" style="font-size: 15px;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label><strong>Jenis Kegiatan</strong></label>
+                            <select name="jenis_kegiatan_id" class="form-control" required>
+                            <option value="">-- Pilih --</option>
+                            @foreach ($jenisKegiatanList as $jk)
+                                <option value="{{ $jk->id }}" {{ $st->jenis_kegiatan_id == $jk->id ? 'selected' : '' }}>
+                                {{ $jk->nama }}
+                                </option>
+                            @endforeach
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <label><strong>Jenis Kegiatan</strong></label>
-                        <select name="jenis_kegiatan_id" class="form-control" required>
-                        <option value="">-- Pilih --</option>
-                        @foreach ($jenisKegiatanList as $jk)
-                            <option value="{{ $jk->id }}" {{ $st->jenis_kegiatan_id == $jk->id ? 'selected' : '' }}>
-                            {{ $jk->nama }}
-                            </option>
-                        @endforeach
-                        </select>
+                        <div class="col-md-6">
+                            <label><strong>Perihal</strong></label>
+                            <input type="text" name="hal" class="form-control" value="{{ $st->hal }}" required>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label><strong>Perihal</strong></label>
-                        <input type="text" name="hal" class="form-control" value="{{ $st->hal }}" required>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
+                    <div class="row mt-2">
+                        <div class="col-md-6">
                         <label><strong>Tanggal Mulai</strong></label>
                         <input type="date" name="tanggal_mulai" class="form-control" value="{{ $st->tanggal_mulai }}" required>
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="col-md-6">
                         <label><strong>Tanggal Selesai</strong></label>
                         <input type="date" name="tanggal_selesai" class="form-control" value="{{ $st->tanggal_selesai }}" required>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label><strong>Lokasi Kegiatan</strong></label>
-                        <input type="text" name="lokasi_kegiatan" class="form-control" value="{{ $st->lokasi_kegiatan }}" required>
-                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <label><strong>Lokasi Kegiatan</strong></label>
+                            <input type="text" name="lokasi_kegiatan" class="form-control" value="{{ $st->lokasi_kegiatan }}" required>
+                        </div>
 
-                    <div class="form-group">
-                        <label><strong>Asal Surat</strong></label>
-                        <input type="text" name="asal_surat" class="form-control" value="{{ $st->asal_surat }}" required>
+                        <div class="col-md-6">
+                            <label><strong>Asal Surat</strong></label>
+                            <input type="text" name="asal_surat" class="form-control" value="{{ $st->asal_surat }}" required>
+                        </div>
                     </div>
 
                     <div class="row mt-2">
@@ -427,12 +428,12 @@
                             <p><strong>Status Terkini:</strong> 
                                 @if($st->status_disposisi == 'Memproses')
                                     <span class="badge badge-pill badge-warning">{{ $st->status_disposisi }}</span>
-                                @elseif(Str::startsWith($st->status_disposisi, 'Menunggu Approval'))
-                                    <span class="badge badge-pill badge-primary">{{ $st->status_disposisi }}</span>
                                 @elseif($st->status_disposisi == 'Selesai')
                                     <span class="badge badge-pill badge-success">{{ $st->status_disposisi }}</span>
                                 @elseif($st->status_disposisi == 'Ditolak')
                                     <span class="badge badge-pill badge-danger">{{ $st->status_disposisi }}</span>
+                                @else
+                                    <span class="badge badge-pill badge-info">{{ $st->status_disposisi }}</span>
                                 @endif
                             </p>
                         </div>
@@ -571,6 +572,9 @@
                     @if ($st->status_disposisi == 'Selesai')
                         <a href="{{ route('pemohon.surat-tugas.pdf', $st->id) }}" target="_blank" class="btn btn-primary">
                             <i class="fas fa-print"></i> Cetak PDF
+                        </a>
+                        <a href="{{ route('pemohon.surat-tugas.word', $st->id) }}" class="btn btn-info" target="_blank">
+                            <i class="fas fa-file-word"></i> Cetak Word
                         </a>
                     @endif
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>

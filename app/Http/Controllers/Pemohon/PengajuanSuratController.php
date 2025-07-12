@@ -11,6 +11,10 @@ use App\Models\Proposal;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\SimpleType\Jc;
+use PhpOffice\PhpWord\Style\TablePosition;
 use ZipArchive;
 
 class PengajuanSuratController extends Controller
@@ -35,13 +39,138 @@ class PengajuanSuratController extends Controller
             abort(403, 'Surat belum selesai.');
         }
 
-        $kop = KopSurat::where('nama', 'Kop Surat Tugas')->first();
+        $kop = KopSurat::where('nama', 'Kop Surat Masuk')->first();
 
         // Surat Masuk ➜ HANYA data utama + modalDisposisi
         $pdf = Pdf::loadView('pdf.proposal_detail', compact('proposal', 'kop'))
             ->setPaper('a4', 'portrait');
 
         return $pdf->stream('surat-masuk-' . $proposal->kode_pengajuan . '.pdf');
+    }
+
+    public function exportWord($id)
+    {
+        $proposal = Proposal::with(['pemohon', 'modalDisposisi'])->findOrFail($id);
+
+        if ($proposal->status_disposisi !== 'Selesai') {
+            abort(403, 'Surat belum selesai.');
+        }
+
+        $kop = KopSurat::where('nama', 'Kop Surat Masuk')->first();
+        $phpWord = new PhpWord();
+
+        $section = $phpWord->addSection([
+            'marginTop' => 1000,
+            'marginBottom' => 800,
+            'footerHeight' => 300,
+        ]);
+
+        // Kop surat
+        if ($kop && $kop->kop_surat && file_exists(public_path($kop->kop_surat))) {
+            $section->addImage(public_path($kop->kop_surat), [
+                'width' => 460,
+                'alignment' => Jc::CENTER,
+            ]);
+            $section->addTextBreak(1);
+        }
+
+        // Judul
+        $section->addText('DETAIL SURAT MASUK', [
+            'bold' => true,
+            'size' => 16,
+            'allCaps' => true,
+            'underline' => 'single',
+        ], ['alignment' => Jc::CENTER]);
+        $section->addTextBreak(1);
+
+        // Informasi Surat - TABEL
+        $infoTableStyle = [
+            'borderSize' => 6,
+            'borderColor' => '999999',
+            'cellMargin' => 80,
+            'alignment' => Jc::CENTER,
+        ];
+        $phpWord->addTableStyle('infoTable', $infoTableStyle);
+        $infoTable = $section->addTable('infoTable');
+
+        $data = [
+            'Kode Pengajuan'    => $proposal->kode_pengajuan,
+            'Nomor Agenda'      => $proposal->nomor_agenda,
+            'Tanggal Surat'     => \Carbon\Carbon::parse($proposal->tanggal_surat)->translatedFormat('d F Y'),
+            'Asal Surat'        => $proposal->asal_surat,
+            'Hal'               => $proposal->hal,
+            'Status'            => $proposal->status_disposisi,
+            'Nama Pemohon'      => $proposal->pemohon->name,
+            'Diterima Tanggal'  => $proposal->diterima_tanggal
+                ? \Carbon\Carbon::parse($proposal->diterima_tanggal)->translatedFormat('d F Y') : '-',
+        ];
+
+        foreach ($data as $label => $value) {
+            $infoTable->addRow();
+            $infoTable->addCell(3000, ['bgColor' => 'D9EAF7'])->addText($label, ['bold' => true]);
+            if ($label === 'Status') {
+                $infoTable->addCell(7000, ['bgColor' => 'DFF6DD'])->addText((string) $value);
+            } else {
+                $infoTable->addCell(7000)->addText((string) $value);
+            }
+        }
+
+        $section->addTextBreak(1);
+
+        // Riwayat Disposisi
+        $section->addText('Riwayat Disposisi:', ['bold' => true]);
+
+        $disposisiTableStyle = [
+            'borderSize' => 6,
+            'borderColor' => '999999',
+            'cellMargin' => 80,
+            'alignment' => Jc::CENTER,
+            'position' => TablePosition::XALIGN_CENTER,
+        ];
+        $phpWord->addTableStyle('disposisiTable', $disposisiTableStyle);
+        $table = $section->addTable('disposisiTable');
+
+        // Header
+        $headerStyle = ['bold' => true, 'size' => 11];
+        $headerCellStyle = ['bgColor' => 'D9EAF7'];
+        $table->addRow();
+        $table->addCell(500, $headerCellStyle)->addText('No', $headerStyle);
+        $table->addCell(1500, $headerCellStyle)->addText('Tujuan', $headerStyle);
+        $table->addCell(1200, $headerCellStyle)->addText('Status', $headerStyle);
+        $table->addCell(1500, $headerCellStyle)->addText('Tgl Diterima', $headerStyle);
+        $table->addCell(1500, $headerCellStyle)->addText('Tgl Proses', $headerStyle);
+        $table->addCell(2000, $headerCellStyle)->addText('Diverifikasi Oleh', $headerStyle);
+        $table->addCell(2500, $headerCellStyle)->addText('Keterangan', $headerStyle);
+
+        foreach ($proposal->modalDisposisi as $i => $dis) {
+            $table->addRow();
+            $table->addCell()->addText((string) ($i + 1));
+            $table->addCell()->addText($dis->tujuan ?? '-');
+            $table->addCell(null, ['bgColor' => 'DFF6DD'])->addText((string) $dis->status);
+            $table->addCell()->addText($dis->tanggal_diterima
+                ? \Carbon\Carbon::parse($dis->tanggal_diterima)->translatedFormat('d F Y') : '-');
+            $table->addCell()->addText($dis->tanggal_proses
+                ? \Carbon\Carbon::parse($dis->tanggal_proses)->translatedFormat('d F Y') : '-');
+            $table->addCell()->addText($dis->diverifikasi_oleh ?? '-');
+            $table->addCell()->addText($dis->keterangan ?? '-');
+        }
+
+        $section->addTextBreak(1);
+
+        // Footer
+        $footer = $section->addFooter();
+        $footer->addText('Dicetak pada: ' . now()->format('d-m-Y H:i'), [
+            'size' => 10,
+            'italic' => true,
+            'color' => '777777',
+        ], ['alignment' => Jc::RIGHT]);
+
+        // Export
+        $filename = 'surat-masuk-' . $proposal->kode_pengajuan . '.docx';
+        $tempFile = tempnam(sys_get_temp_dir(), $filename);
+        IOFactory::createWriter($phpWord, 'Word2007')->save($tempFile);
+
+        return response()->download($tempFile, $filename)->deleteFileAfterSend(true);
     }
 
     public function downloadZip($id)

@@ -23,7 +23,6 @@
                     <th class="text-sm">No</th>
                     <th class="text-sm">Nama Pemohon</th>
                     <th class="text-sm">File Surat Masuk</th>
-                    <th class="text-sm">File Surat Keluar</th>
                     <th class="text-sm">Nomor Agenda</th>
                     <th class="text-sm">Jenis</th>
                     <th class="text-sm">Tanggal Surat</th>
@@ -75,15 +74,6 @@
                             <p class="text-muted">Tidak ada file atau link yang diunggah.</p>
                         @endif
                     </td>
-                    <td class="text-sm">
-                                @if ($proposal->soft_file_sk)
-                                    <a href="{{ asset('storage/' . $proposal->soft_file_sk) }}" class="btn-sm btn-success" style="white-space: nowrap;" download>
-                                        <i class="fas fa-download"></i> Download SK
-                                    </a>
-                                @else
-                                    <span class="text-muted">Belum diunggah</span>
-                                @endif
-                    </td> 
                     <td class="text-sm">{{ $proposal->nomor_agenda }}</td>
                     <td class="text-sm">{{ $proposal->jenis_proposal }}</td>
                     <td class="text-sm">{{ $proposal->tanggal_surat }}</td>
@@ -188,6 +178,19 @@
                                                                 ->format('%d hari, %h jam, %i menit, %s detik')
                                                         }}
                                                     </p>
+                                                @endif
+                                                @if ($proposal->perlu_sk)
+                                                <div class="form-group">
+                                                        <label>File Surat Keluar:</label><br>
+                                                        @if ($proposal->soft_file_sk)
+                                                            <a href="{{ asset('storage/' . $proposal->soft_file_sk) }}"
+                                                            class="btn btn-sm btn-success" style="white-space: nowrap;" download>
+                                                                <i class="fas fa-download"></i> Download SK
+                                                            </a>
+                                                        @else
+                                                            <span class="text-muted">Belum diunggah</span>
+                                                        @endif
+                                                </div>
                                                 @endif
                                             </div>
                                         </div>
@@ -302,9 +305,15 @@
                                             <a href="{{ route('tu.proposals.pdf', $proposal->id) }}" target="_blank" class="btn btn-primary">
                                                 <i class="fas fa-print"></i> Cetak PDF
                                             </a>
+                                            <a href="{{ route('tu.proposals.word', $proposal->id) }}" class="btn btn-info" target="_blank">
+                                                <i class="fas fa-file-word"></i> Cetak Word
+                                            </a>
                                         @elseif ($proposal->status_disposisi == 'Selesai' && $proposal->jenis_proposal === 'Surat Tugas')
                                             <a href="{{ route('tu.surat-tugas.pdf', $proposal->id) }}" target="_blank" class="btn btn-primary">
                                                 <i class="fas fa-print"></i> Cetak PDF
+                                            </a>
+                                            <a href="{{ route('tu.surat-tugas.word', $proposal->id) }}" class="btn btn-info" target="_blank">
+                                                <i class="fas fa-file-word"></i> Cetak Word
                                             </a>
                                         @endif
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>

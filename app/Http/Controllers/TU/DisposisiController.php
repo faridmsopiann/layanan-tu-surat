@@ -204,6 +204,20 @@ class DisposisiController extends Controller
             return 'Menunggu Approval Perpus';
         } elseif ($tujuan == 'Prodi Teknik Informatika') {
             return 'Menunggu Approval Prodi Teknik Informatika';
+        } elseif ($tujuan == 'Prodi Teknik Pertambangan') {
+            return 'Menunggu Approval Prodi Teknik Pertambangan';
+        } elseif ($tujuan == 'Prodi Sistem Informasi') {
+            return 'Menunggu Approval Prodi Sistem Informasi';
+        } elseif ($tujuan == 'Prodi Matematika') {
+            return 'Menunggu Approval Prodi Matematika';
+        } elseif ($tujuan == 'Prodi Teknik Kimia') {
+            return 'Menunggu Approval Prodi Kimia';
+        } elseif ($tujuan == 'Prodi Fisika') {
+            return 'Menunggu Approval Prodi Fisika';
+        } elseif ($tujuan == 'Prodi Biologi') {
+            return 'Menunggu Approval Prodi Biologi';
+        } elseif ($tujuan == 'Prodi Agribisnis') {
+            return 'Menunggu Approval Prodi Agribisnis';
         } elseif ($tujuan == 'Dekan') {
             return 'Menunggu Approval Dekan';
         } elseif ($tujuan == 'Kabag TU') {
