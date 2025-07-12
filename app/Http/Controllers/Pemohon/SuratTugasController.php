@@ -246,29 +246,33 @@ class SuratTugasController extends Controller
         $tahun = now()->year;
         $bulan = str_pad(now()->month, 2, '0', STR_PAD_LEFT);
 
-        $lastProposal = Proposal::withTrashed()
-            ->where('jenis_proposal', 'Surat Tugas')
+        $lastProposalAll = Proposal::withTrashed()
             ->whereYear('created_at', $tahun)
             ->latest()
             ->first();
 
         // Increment kode pengajuan
         $increment = 1;
-        if ($lastProposal) {
-            $lastKode = substr($lastProposal->kode_pengajuan, -4);
+        if ($lastProposalAll) {
+            $lastKode = substr($lastProposalAll->kode_pengajuan, -4);
             $increment = (int)$lastKode + 1;
         }
 
         $kodePengajuan = 'P' . $tahun . $bulan . str_pad($increment, 4, '0', STR_PAD_LEFT);
         $nomorAgenda = Proposal::withTrashed()
-            ->where('jenis_proposal', 'Surat Tugas')
             ->whereYear('created_at', $tahun)
             ->count() + 1;
 
+        $lastProposalSt = Proposal::withTrashed()
+            ->where('jenis_proposal', 'Surat Tugas')
+            ->whereYear('created_at', $tahun)
+            ->latest()
+            ->first();
+
         // === Nomor Surat ===
         $incrementNomor = 1;
-        if ($lastProposal && $lastProposal->nomor_surat) {
-            $parts = explode('/', $lastProposal->nomor_surat);
+        if ($lastProposalSt && $lastProposalSt->nomor_surat) {
+            $parts = explode('/', $lastProposalSt->nomor_surat);
             if (isset($parts[0])) {
                 $lastIncrementPart = str_replace('B-', '', $parts[0]);
                 $incrementNomor = (int)$lastIncrementPart + 1;
