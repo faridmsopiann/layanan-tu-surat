@@ -77,7 +77,7 @@
                     <th>Tanggal Surat</th>
                     <th>Asal Surat</th>
                     {{-- <th>Jenis</th> --}}
-                    <th>Hal</th>
+                    {{-- <th>Hal</th> --}}
                     <th>Status</th>
                     <th>Pengajuan</th>
                     <th>Surat Keluar</th>
@@ -91,7 +91,7 @@
                     <td>{{ $p->tanggal_surat }}</td>
                     <td>{{ $p->asal_surat }}</td>
                     {{-- <td>{{ $p->jenis_proposal }}</td> --}}
-                    <td>{{ $p->hal }}</td>
+                    {{-- <td>{{ $p->hal }}</td> --}}
                     <td>
                         @if($p->status_disposisi == 'Memproses')
                             <span class="badge badge-pill badge-warning">{{ $p->status_disposisi }}</span>
