@@ -264,11 +264,13 @@
             background: #e6fffa;
             color: #2e7d32;
             border: 1px solid #b2f5ea;
-            padding: 0.6rem; /* Slightly larger padding */
+            padding: 0.6rem;
             border-radius: 6px;
-            font-size: 0.85rem; /* Larger font */
-            margin-bottom: 1rem; /* Adjusted margin */
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
             text-align: center;
+            opacity: 1;
+            transition: opacity 0.5s ease;
         }
 
         .error_message {
@@ -372,17 +374,20 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const errorBox = document.querySelector('.error_message');
-
-            if (errorBox && errorBox.textContent.trim()) {
-                setTimeout(() => {
-                    errorBox.style.transition = 'opacity 0.5s ease';
-                    errorBox.style.opacity = '0';
+            const fadeOut = (selector) => {
+                const el = document.querySelector(selector);
+                if (el && el.textContent.trim()) {
                     setTimeout(() => {
-                        errorBox.style.display = 'none';
-                    }, 500);
-                }, 3000);
-            }
+                        el.style.opacity = '0';
+                        setTimeout(() => {
+                            el.style.display = 'none';
+                        }, 500);
+                    }, 3000);
+                }
+            };
+
+            fadeOut('.error_message');
+            fadeOut('.alert-success');
         });
     </script>
 </body>
